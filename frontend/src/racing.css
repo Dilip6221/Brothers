@@ -1,0 +1,36 @@
+/* src/pages/NotFound.css */
+.notfound-container {
+  text-align: center;
+  padding: 50px 20px;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+
+.notfound-graphic img {
+  max-width: 300px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.home-button {
+  background-color: #0078D4;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.home-button:hover {
+  background-color: #005a9e;
+}

@@ -1,0 +1,39 @@
+/* Underline hover animation */
+.cool-link {
+  position: relative;
+  display: inline-block;
+}
+.cool-link::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  display: block;
+  margin-top: 5px;
+  right: 0;
+  background: #ffc107;
+  transition: width 0.3s ease;
+  -webkit-transition: width 0.3s ease;
+}
+.cool-link:hover::after {
+  width: 100%;
+  left: 0;
+  background: #ffc107;
+}
+
+/* Social icons hover */
+.social-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+.social-icon:hover {
+  transform: scale(1.2);
+  color: #ffc107 !important;
+}
+
+/* Brand tagline */
+.tagline {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #ccc;
+}
