@@ -9,13 +9,10 @@ import axios from "axios";
 const Login = () => {
   const { login, register} = useContext(UserContext);
   const navigate = useNavigate();
-
   const [isRegister, setIsRegister] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showForgetModal, setShowForgetModal] = useState(false);
   const [forgetEmail, setForgetEmail] = useState("");
-
-  
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -60,7 +57,10 @@ const Login = () => {
       if (res.data.success) {
         toast.success(res.data.message);
         setShowForgetModal(false);
-        setForgetEmail("");
+        setForgetEmail();
+        setEmail('');
+        setPassword('');
+        navigate("/login");
       } else {
         toast.error(res.data.message);
       }
@@ -88,28 +88,28 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           {isRegister && (
             <div className="mb-3">
-              <input type="text" className="form-control bg-transparent border-light" value={name} onChange={(e) => setName(e.target.value)} placeholder="Full Name" />
+              <input type="text" className="form-control bg-transparent text-white border-white" value={name} onChange={(e) => setName(e.target.value)} placeholder="Full Name" />
             </div>
           )}
 
           <div className="mb-3">
-            <input type="email" className="form-control bg-transparent border-light"  placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+            <input type="email" className="form-control bg-transparent text-white border-light"  placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
           </div>
 
           {isRegister && (
             <div className="mb-3">
-              <input type="number" className="form-control bg-transparent border-light" placeholder="Phone Number" value={number} onChange={(e) => setNumber(e.target.value)} />
+              <input type="number" className="form-control bg-transparent text-white border-white" placeholder="Phone Number" value={number} onChange={(e) => setNumber(e.target.value)} />
             </div>
           )}
           <div className="mb-3 position-relative">
-            <input type={showPassword ? "text" : "password"} className="form-control bg-transparent border-light" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input type={showPassword ? "text" : "password"} className="form-control bg-transparent text-white border-white" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
             <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"} text-light`}
               style={{position: "absolute",right: "15px",top: "50%", transform: "translateY(-50%)", cursor: "pointer"}}
               onClick={() => setShowPassword(!showPassword)}
             ></i>
           </div>
           <div className="d-grid mb-3">
-            <button type="submit" className="btn btn-lg text-white fw-bold" style={{background: "linear-gradient(90deg, #ff4b2b, #72545bff)"}}>
+            <button type="submit" className="btn btn-light w-100  fw-bold" style={{background: "linear-gradient(90deg, #ff4b2b, #72545bff)"}}>
               {isRegister ? "Register" : "Login"}
             </button>
           </div>
@@ -143,7 +143,7 @@ const Login = () => {
               Enter your registered email and we’ll send you reset instructions.
             </p>
             <form onSubmit={handleForgetPassword}>
-              <input type="email" className="form-control mb-3 bg-transparent text-white border-light" placeholder="Enter your email" value={forgetEmail} onChange={(e) => setForgetEmail(e.target.value)}/>
+              <input type="email" className="form-control mb-3 bg-transparent text-white border-white" placeholder="Enter your email" value={forgetEmail} onChange={(e) => setForgetEmail(e.target.value)}/>
               <button type="submit" className="btn btn-light w-100 fw-bold" style={{background: "linear-gradient(90deg, #ff4b2b, #72545bff)"}}>
                 Send Reset Link
               </button>

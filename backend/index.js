@@ -7,7 +7,7 @@ const cors = require('cors');
 const userRoute = require('./routes/UserRoute.js');
 const connectDB = require('./config/db.js');
 const cookieParser = require('cookie-parser');
-
+app.use(express.static('public'));
 /* Db connection */
 connectDB();
 

@@ -1,6 +1,7 @@
 const { User, transporter } = require('../model/User.js');
 const jwt = require('jsonwebtoken');
 const crypto = require("crypto");
+const bcrypt = require('bcryptjs')
 
 
 const generateToken = (userId) => {
@@ -167,33 +168,67 @@ const sendForgotPasswordEmail = async (req, res) => {
     }
 }
 const resetPassword = async (req, res) => {
-  try {
-    const  token  = req.params.token;
-    const { newPassword } = req.body;
+    try {
+        const token = req.params.token;
+        const { newPassword } = req.body;
 
-    if (!token || !newPassword){
-        return res.json({ success: false, message: "Token and new password required" });
+        if (!token || !newPassword) {
+            return res.json({ success: false, message: "Token and new password required" });
+        }
+
+        const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+        const user = await User.findOne({
+            resetPasswordTokenHash: tokenHash,
+            resetPasswordTokenExpire: { $gt: Date.now() },
+        });
+        if (!user) {
+            return res.json({ success: false, message: "Invalid or expired token" });
+        }
+
+        user.password = newPassword;
+        user.resetPasswordTokenHash = undefined;
+        user.resetPasswordTokenExpire = undefined;
+        await user.save();
+
+        res.json({ success: true, message: "Password reset successful! 🚀" });
+    } catch (error) {
+        console.error("Reset password error:", error);
+        res.json({ success: false, message: error.message });
     }
-
-    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-    const user = await User.findOne({
-      resetPasswordTokenHash: tokenHash,
-      resetPasswordTokenExpire: { $gt: Date.now() },
-    });
-    if (!user) {
-      return res.json({ success: false, message: "Invalid or expired token" });
-    }
-
-    user.password = newPassword;
-    user.resetPasswordTokenHash = undefined;
-    user.resetPasswordTokenExpire = undefined;
-    await user.save();
-
-    res.json({ success: true, message: "Password reset successful! 🚀" });
-  } catch (error) {
-    console.error("Reset password error:", error);
-    res.json({ success: false, message: error.message });
-  }
 };
+const getUserData = async (req, res) => {
+    try {
+        const user = req.user;
+        return res.json({ success: true, user });
+    } catch(error) {
+        console.error('Error in getting User Data:', error);
+        res.json({ success: false, message: error.message });
+    }
+}
+const changePassword = async (req,res) =>{
+    try{
+        const { currentPassword,newPassword,confirmPassword } = req.body;
+        if(!currentPassword || !newPassword || !confirmPassword){
+            return res.json({success:false,message:'All field are required'});
+        }
+        const user =await User.findById(req.user._id);
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.json({ success: false, message: "Current password is incorrect" });
+        }
+        if (newPassword !== confirmPassword) {
+            return res.json({ success: false, message: "Passwords do not match" });
+        }
+        user.password = newPassword;
+        await user.save();
+        res.json({ success: true, message: "Password reset successfully" });
+    } catch(error) {
+        console.error('Error in Reset password:', error);
+        res.json({ success: false, message: error.message });
+    }
+}
 
-module.exports = { registerUser, loginUser,sendForgotPasswordEmail,resetPassword};
+module.exports = { registerUser, loginUser, sendForgotPasswordEmail, resetPassword, getUserData,changePassword};

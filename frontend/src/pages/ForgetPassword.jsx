@@ -46,7 +46,6 @@ const ForgetPassword = () => {
                     <div className="mb-3" style={{ position: "relative" }}>
                         <input type={showRePassword ? "text" : "password"} className="form-control bg-transparent border-light text-white" placeholder="New Password" value={password} onChange={(e) => setPassword(e.target.value)} />
                         <i className={`bi ${showRePassword ? "bi-eye-slash" : "bi-eye"} text-light`} style={{position: "absolute",right: "15px",top: "50%", transform: "translateY(-50%)", cursor: "pointer"}} onClick={() => setShowRePassword(!showRePassword)} ></i>
-
                     </div>
                     <div className="mb-3" style={{ position: "relative" }}>
                         <input type={showPassword ? "text" : "password"} className="form-control bg-transparent border-light text-white" placeholder="Confirm Password" value={rePassword} onChange={(e) => setRePassword(e.target.value)} />

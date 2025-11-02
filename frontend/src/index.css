@@ -1,11 +1,10 @@
-/* Navbar container */
 .navbar-wrapper {
   padding: 5px 0;
   height: 105px;
-  position: relative;
+  position: sticky;
+  background-color: black;
 }
 
-/* Logo */
 .navbar-logo {
   height: 240px;
   object-fit: contain;
@@ -59,4 +58,30 @@
 .cool-link.active::after {
   width: 100%;
   background: #ffc107;
+}
+input::placeholder,
+textarea::placeholder {
+  color: white !important;
+  opacity: 1 !important;
+}
+input.bg-light::placeholder,
+textarea.bg-light::placeholder {
+  color: black !important;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #a63b18 !important;
+}
+/* hover pe dropdown show */
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+  margin-top: 0.5rem;
+}
+/* normal hover effect */
+.dropdown-menu .dropdown-item:hover {
+  background-color: #e3e9f0;
+  color: #3969bb;
+  border-radius: 0 !important;
 }

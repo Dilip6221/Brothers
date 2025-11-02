@@ -1,7 +1,6 @@
 // src/pages/NotFound.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../racing.css'; // We'll style it separately
 import carImage from "../assets/car-not-found.jpg";
 
 const NotFound = () => {
