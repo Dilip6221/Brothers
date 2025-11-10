@@ -27,15 +27,15 @@ const registerUser = async (req, res) => {
 
         try {
             await transporter.sendMail({
-                from: `"Brother's Garage 🚗" <${process.env.SMTP_USER}>`,
+                from: `"Brother's Garage" <${process.env.SMTP_USER}>`,
                 to: newUser.email,
                 subject: "🚀 Welcome to Brother's Garage!",
                 html: `
                     <div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px;">
                         <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
                         <div style="background: linear-gradient(90deg, #ff4b2b, #72545b); padding: 20px; text-align: center; color: #fff;">
-                            <h1 style="margin: 0;">🚗 Brother's Garage</h1>
-                            <p style="margin: 5px 0 0;">Please explore all service</p>
+                            <h1 style="margin: 0;"> BROTHER'S </h1>
+                            <p style="margin: 5px 0 0;">At BROTHER'S, We Don’t Just Fix Cars – We Build Trust</p>
                         </div>
                         <div style="padding: 20px; color: #333;">
                             <h2>Hello ${newUser.name}, 👋</h2>
@@ -47,8 +47,7 @@ const registerUser = async (req, res) => {
                             <p style="margin-top: 20px; font-size: 12px; color: #777;">If you didn’t register, please ignore this email.</p>
                         </div>
                         <div style="background: #eee; padding: 15px; text-align: center; font-size: 12px; color: #555;">
-                            © ${new Date().getFullYear()} Brother's Garage. All rights reserved.
-                        </div>
+                            Copyright © ${new Date().getFullYear()}  <span className="text-warning"> BROTHER'S </span>. All rights reserved.
                         </div>
                     </div>
                 `,

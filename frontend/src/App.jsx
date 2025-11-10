@@ -7,6 +7,7 @@ import ForgetPassword from './pages/ForgetPassword.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Navbar from './component/Navbar.jsx'
 import { UserContext } from "./context/UserContext.jsx";
+import Footer from './component/Footer.jsx'
 
 const App = () => {
   const location = useLocation();
@@ -17,6 +18,7 @@ const App = () => {
   );
 
   return (
+    <>  
     <div>
       {!shouldHideNavbar && <Navbar />}
       <Routes>
@@ -26,7 +28,9 @@ const App = () => {
         <Route path="/forget-password/:token" element={<ForgetPassword />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      {!shouldHideNavbar && <Footer />}
     </div>
+    </>
   )
 }
 
