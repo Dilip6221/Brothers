@@ -138,7 +138,7 @@ const Footer = () => {
                         </div>
                     </div>
                 </div>
-            <button class="btn-custom">PROCEED TO CHECKOUT</button>
+            {/* <button className="btn-custom">PROCEED TO CHECKOUT</button> */}
 
                 {/* ====== Contact Info ====== */}
                 <div className="border border-danger  mt-4 pt-3 pb-2 px-3 rounded-3" >

@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const crypto = require("crypto");
 const bcrypt = require('bcryptjs')
 
-
 const generateToken = (userId) => {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '15d' });
 };
@@ -23,8 +22,6 @@ const registerUser = async (req, res) => {
             return res.json({ success: false, message: 'User already exists' });
         }
         const newUser = await User.create({ name, email, password, phone });
-        const token = generateToken(newUser._id);
-
         try {
             await transporter.sendMail({
                 from: `"Brother's Garage" <${process.env.SMTP_USER}>`,
@@ -54,9 +51,8 @@ const registerUser = async (req, res) => {
             });
         } catch (mailErr) {
             res.json({ success: false, message: mailErr });
-
         }
-        res.json({ success: true, message: 'User Created Succesfully', token: token });
+        res.json({ success: true, message: 'User Created Succesfully' });
     } catch (error) {
         console.error('Error in registerUser:', error);
         res.json({ success: false, message: error.message });
@@ -71,19 +67,47 @@ const loginUser = async (req, res) => {
         }
         const user = await User.findOne({ email });
         if (!user) {
-            return res.json({ success: false, message: 'User does not exist' });
+            return res.json({ success: false, message: 'Register user could not be found'});
         }
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
-            return res.json({ success: false, message: 'Invalid credentials' });
+            return res.json({ success: false, message: 'Please enter correct password' });
         }
         const token = generateToken(user._id);
+            res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 15 * 24 * 60 * 60 * 1000,
+        });
         res.json({ success: true, message: 'Login Successful', token });
     } catch (error) {
         console.error('Error in loginUser:', error);
         res.json({ success: false, message: error.message });
     }
 }
+const getUserData = async (req, res) => {
+    try {
+        const user = req.user;
+        return res.json({ success: true, user });
+    } catch(error) {
+        console.error('Error in getting User Data:', error);
+        res.json({ success: false, message: error.message });
+    }
+}
+const logoutUser = (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    });
+    return res.json({ success: true, message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Logout Error:", error);
+    return res.status(500).json({ success: false, message: "Logout failed" });
+  }
+};
 
 
 const sendForgotPasswordEmail = async (req, res) => {
@@ -195,15 +219,6 @@ const resetPassword = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
-const getUserData = async (req, res) => {
-    try {
-        const user = req.user;
-        return res.json({ success: true, user });
-    } catch(error) {
-        console.error('Error in getting User Data:', error);
-        res.json({ success: false, message: error.message });
-    }
-}
 const changePassword = async (req,res) =>{
     try{
         const { currentPassword,newPassword,confirmPassword } = req.body;
@@ -230,4 +245,4 @@ const changePassword = async (req,res) =>{
     }
 }
 
-module.exports = { registerUser, loginUser, sendForgotPasswordEmail, resetPassword, getUserData,changePassword};
+module.exports = { registerUser, loginUser, sendForgotPasswordEmail, resetPassword, getUserData,changePassword,logoutUser};
