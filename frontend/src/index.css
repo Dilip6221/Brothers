@@ -1,3 +1,8 @@
+html, body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
 .navbar-wrapper {
   padding: 5px 0;
   height: 105px;
@@ -72,7 +77,6 @@ textarea.bg-light::placeholder {
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: #a63b18 !important;
 }
 /* hover pe dropdown show */
 .nav-item.dropdown:hover .dropdown-menu {
@@ -112,54 +116,34 @@ textarea:focus {
   transform: scale(1) translateY(0);
   opacity: 1;
 }
-.btn-custom {
+.user-profile {
   position: relative;
-  display: inline-block;
-  color: #c40000;
-  border: 3px solid #c40000;
-  background-color: transparent;
-  font-weight: 600;
-  letter-spacing: 1px;
-  padding: 10px 30px;
-  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: 8px;
+  background: linear-gradient(to bottom right, #1d7684 0%, rgba(46, 142, 255, 0) 30%);
+  background-color: rgba(91, 99, 108, 0.2);
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.btn-custom::before,
-.btn-custom::after {
-  content: "";
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border: 2px solid #c40000;
-  transition: all 0.3s ease;
+.user-profile:hover,
+.user-profile:focus {
+  background-color: rgba(238, 232, 232, 0.323);
+  box-shadow: 0 0 10px rgba(46, 142, 255, 0.5);
+  outline: none;
 }
-
-.btn-custom::before {
-  top: -4px;
-  left: -4px;
-  border-right: none;
-  border-bottom: none;
-}
-
-.btn-custom::after {
-  bottom: -4px;
-  right: -4px;
-  border-left: none;
-  border-top: none;
-}
-
-/* Hover effect */
-.btn-custom:hover {
-  background-color: #c40000;
+.user-profile-inner {
+  background-color: black;
   color: #fff;
-}
-
-.btn-custom:hover::before,
-.btn-custom:hover::after {
+  font-weight: 600;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 35px;
   width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  border: 2px solid #c40000;
 }

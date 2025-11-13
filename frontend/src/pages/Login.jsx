@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 const Login = () => {
-  const { login, register} = useContext(UserContext);
+  const { login, register } = useContext(UserContext);
   const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -34,7 +34,7 @@ const Login = () => {
       }
     } else {
       const res = await login(email, password);
-      if (!res.success){
+      if (!res.success) {
         toast.error(res.message)
       } else {
         toast.success(res.message)
@@ -56,6 +56,7 @@ const Login = () => {
         { email: forgetEmail }
       );
 
+      console.log(res.data);return false;
       if (res.data.success) {
         toast.success(res.data.message);
         setShowForgetModal(false);
@@ -155,9 +156,8 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
               <i
-                className={`bi ${
-                  showPassword ? "bi-eye-slash" : "bi-eye"
-                } text-light`}
+                className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"
+                  } text-light`}
                 style={{
                   position: "absolute",
                   right: "15px",
@@ -172,16 +172,13 @@ const Login = () => {
             <div className="d-grid mb-3">
               <button
                 type="submit"
-                className="btn w-100 fw-bold text-white"
-                style={{
-                  background: "linear-gradient(90deg, #ff4b2b, #72545bff)",
-                  border: "none",
-                }}
+                className="user-profile w-100 "
               >
-                {isRegister ? "Register" : "Login"}
+                <div className="user-profile-inner">
+                  {isRegister ? "Register" : "Login"}
+                </div>
               </button>
             </div>
-
             {!isRegister && (
               <span
                 onClick={() => setShowForgetModal(true)}
@@ -236,6 +233,20 @@ const Login = () => {
             }}
           >
             <h4 className="text-white mb-3">Forgot Password?</h4>
+            <button
+              type="button"
+              onClick={() => {
+                setShowForgetModal(false);
+                setForgetEmail("");
+                setEmail("");
+                setPassword("");
+              }}
+              className="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+              aria-label="Close"
+              style={{
+                filter: "invert(1)",
+              }}
+            ></button>
             <p className="text-light small mb-3">
               Enter your registered email and we’ll send you reset instructions.
             </p>
@@ -247,25 +258,12 @@ const Login = () => {
                 value={forgetEmail}
                 onChange={(e) => setForgetEmail(e.target.value)}
               />
-              <button
-                type="submit"
-                className="btn w-100 fw-bold text-white"
-                style={{
-                  background: "linear-gradient(90deg, #ff4b2b, #72545bff)",
-                }}
-              >
-                Send Reset Link
+              <button type="submit" className="user-profile w-100 ">
+                <div className="user-profile-inner">
+                  Send Reset Link
+                </div>
               </button>
-              <button
-                type="button"
-                className="btn btn-outline-light w-100 mt-2"
-                onClick={() => {
-                  setShowForgetModal(false);
-                  setForgetEmail("");
-                }}
-              >
-                Cancel
-              </button>
+
             </form>
           </div>
         </div>

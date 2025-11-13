@@ -105,25 +105,11 @@ const ForgetPassword = () => {
               onClick={() => setShowPassword(!showPassword)}
             ></i>
           </div>
-
-          <button
-            type="submit"
-            className="btn w-100 fw-bold text-white py-2"
-            style={{
-              background: "linear-gradient(90deg, #ff4b2b, #72545bff)",
-              border: "none",
-            }}
-          >
-            Reset Password
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigate("/login")}
-            className="btn btn-outline-light w-100 mt-3 py-2"
-          >
-            Back to Login
-          </button>
+           <button type="submit" className="user-profile w-100 ">
+              <div className="user-profile-inner">
+                Reset Password
+              </div>
+            </button>
         </form>
       </div>
     </section>

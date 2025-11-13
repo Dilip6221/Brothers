@@ -2,6 +2,7 @@ const { User, transporter } = require('../model/User.js');
 const jwt = require('jsonwebtoken');
 const crypto = require("crypto");
 const bcrypt = require('bcryptjs')
+const { sendWelcomeMail } = require('../mail/UserMail.js');
 
 const generateToken = (userId) => {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '15d' });
@@ -22,36 +23,7 @@ const registerUser = async (req, res) => {
             return res.json({ success: false, message: 'User already exists' });
         }
         const newUser = await User.create({ name, email, password, phone });
-        try {
-            await transporter.sendMail({
-                from: `"Brother's Garage" <${process.env.SMTP_USER}>`,
-                to: newUser.email,
-                subject: "🚀 Welcome to Brother's Garage!",
-                html: `
-                    <div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px;">
-                        <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                        <div style="background: linear-gradient(90deg, #ff4b2b, #72545b); padding: 20px; text-align: center; color: #fff;">
-                            <h1 style="margin: 0;"> BROTHER'S </h1>
-                            <p style="margin: 5px 0 0;">At BROTHER'S, We Don’t Just Fix Cars – We Build Trust</p>
-                        </div>
-                        <div style="padding: 20px; color: #333;">
-                            <h2>Hello ${newUser.name}, 👋</h2>
-                            <p>Welcome to <strong>Brother's Garage</strong>! 🎉</p>
-                            <p>We’re excited to have you on board. From classic restorations to the latest supercars, 
-                            we’ve got everything to fuel your passion for cars.</p>
-                            <p>🚀 Start exploring now and make your journey unforgettable!</p>
-                            <a href="${process.env.FRONTEND_URL}" style="display: inline-block; margin-top: 15px; padding: 12px 20px; background: #ff4b2b; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold;">Visit Garage</a>
-                            <p style="margin-top: 20px; font-size: 12px; color: #777;">If you didn’t register, please ignore this email.</p>
-                        </div>
-                        <div style="background: #eee; padding: 15px; text-align: center; font-size: 12px; color: #555;">
-                            Copyright © ${new Date().getFullYear()}  <span className="text-warning"> BROTHER'S </span>. All rights reserved.
-                        </div>
-                    </div>
-                `,
-            });
-        } catch (mailErr) {
-            res.json({ success: false, message: mailErr });
-        }
+        await sendWelcomeMail(newUser);
         res.json({ success: true, message: 'User Created Succesfully' });
     } catch (error) {
         console.error('Error in registerUser:', error);
@@ -80,6 +52,8 @@ const loginUser = async (req, res) => {
             sameSite: "strict",
             maxAge: 15 * 24 * 60 * 60 * 1000,
         });
+                await sendWelcomeMail(email);
+
         res.json({ success: true, message: 'Login Successful', token });
     } catch (error) {
         console.error('Error in loginUser:', error);
