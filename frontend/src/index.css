@@ -85,8 +85,8 @@ textarea:focus {
 }
 /* normal hover effect */
 .dropdown-menu .dropdown-item:hover {
-  background-color: #e3e9f0;
-  color: #3969bb;
+  background-color: rgb(245, 242, 242) !important;
+  color: black !important;
   border-radius: 0 !important;
 }
 .tooltip-inner {
