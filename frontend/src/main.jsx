@@ -17,7 +17,7 @@ createRoot(document.getElementById('root')).render(
       <UserProvider> 
         <App />
         <Toaster 
-          position="top-center"
+          position="bottom-center"
         />
       </UserProvider> 
     </BrowserRouter>

@@ -5,30 +5,46 @@ import { UserContext } from "../context/UserContext.jsx";
 import axios from "axios";
 import toast from "react-hot-toast";
 import * as bootstrap from "bootstrap";
+import Select from "react-select";
 
 const Navbar = () => {
   const modalRef = useRef(null);
   const bsModalRef = useRef(null);
+  const serviceModalRef = useRef(null);
+  const bsServiceModalRef = useRef(null);
+
   const { user, logout, token } = useContext(UserContext);
   const [resetPassword, setResetPassword] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
-  useEffect(() => {
+
+  const [serviceEnquery, setServiceEnquery] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    city: "",
+    address: "",
+    carBrand: "",
+    carModel: "",
+    services: [],
+    notes: ""
+  });
+  const serviceOptions = [
+    { value: "PPF", label: "PPF Installation" },
+    { value: "PAINT", label: "Full Body Paint" },
+    { value: "COTTING", label: "Ceramic Coating" },
+  ];
+useEffect(() => {
     if (modalRef.current) {
       bsModalRef.current = new bootstrap.Modal(modalRef.current, {
         backdrop: true,
         keyboard: true,
       });
     }
-    return () => {
-      if (bsModalRef.current) {
-        bsModalRef.current.dispose();
-        bsModalRef.current = null;
-      }
-    };
   }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setResetPassword((prev) => ({ ...prev, [name]: value }));
@@ -61,6 +77,56 @@ const Navbar = () => {
         toast.success(res.data.message);
         setResetPassword({ currentPassword: "", newPassword: "", confirmPassword: "" });
         closeModal();
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+  useEffect(() => {
+    if (serviceModalRef.current) {
+      bsServiceModalRef.current = new bootstrap.Modal(serviceModalRef.current, {
+        backdrop: true,
+        keyboard: true,
+      });
+    }
+  }, []);
+
+  const openServiceModal = () => {
+    if (bsServiceModalRef.current) {
+      setServiceEnquery({ name: "", phone: "", email: "", city: "", carBrand: "", carModel: "", services: [], address: "", notes: "" });
+      bsServiceModalRef.current.show();
+    }
+  };
+  const closeServiceModal = () => {
+    if (bsServiceModalRef.current) {
+      bsServiceModalRef.current.hide();
+    }
+  };
+
+  const handleEnquiryInputChange = (e) => {
+    const { name, value } = e.target;
+    setServiceEnquery((prev) => ({ ...prev, [name]: value }));
+  };
+  const handleEnquirySubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/service/service-inquiry`, {
+        name: serviceEnquery.name,
+        phone: serviceEnquery.phone,
+        email: serviceEnquery.email,
+        city: serviceEnquery.city,
+        address: serviceEnquery.address,
+        carBrand: serviceEnquery.carBrand,
+        carModel: serviceEnquery.carModel,
+        services: serviceEnquery.services,
+        notes: serviceEnquery.notes,
+      });
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setServiceEnquery({ name: "", phone: "", email: "", city: "", carBrand: "", carModel: "", services: [], address: "", notes: "" });
+        closeServiceModal();
       } else {
         toast.error(res.data.message);
       }
@@ -111,12 +177,12 @@ const Navbar = () => {
               </li>
               <li className="nav-item px-2">
                 <a className="btn btn-outline-warning btn-sm px-3" href="#contact_dummy">
-                  <i className="bi bi-people-fill me-1"></i> Partner
+                  <i className="bi bi-people-fill "></i> Partner
                 </a>
               </li>
               {!user ? (
                 <li className="nav-item px-2">
-                  <Link className="btn btn-warning btn-sm px-3 text-dark fw-semibold" to="/login">
+                  <Link className="btn btn-warning btn-sm text-dark fw-semibold" to="/login">
                     <i className="bi bi-box-arrow-in-right me-1"></i> Login
                   </Link>
                 </li>
@@ -224,6 +290,14 @@ const Navbar = () => {
                   <li className="nav-item">
                     <NavLink to="/stores" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Our Stores</NavLink>
                   </li>
+                  <li className="nav-item px-5 mt-2">
+                    <button
+                      className="btn btn-warning btn-sm px-3 text-dark fw-semibold"
+                      onClick={openServiceModal}
+                    >
+                      <i className="bi-tools me-1"></i> Service Enquiry
+                    </button>
+                  </li>
                 </ul>
               </div>
             </nav>
@@ -270,7 +344,6 @@ const Navbar = () => {
                     style={{
                       background: "rgba(255,255,255,0.08)",
                       border: "1px solid rgba(255,255,255,0.2)",
-                      borderRadius: "10px",
                     }}
                     placeholder="Current Password"
                     value={resetPassword.currentPassword}
@@ -286,7 +359,6 @@ const Navbar = () => {
                     style={{
                       background: "rgba(255,255,255,0.08)",
                       border: "1px solid rgba(255,255,255,0.2)",
-                      borderRadius: "10px",
                     }}
                     placeholder="New Password"
                     value={resetPassword.newPassword}
@@ -302,7 +374,6 @@ const Navbar = () => {
                     style={{
                       background: "rgba(255,255,255,0.08)",
                       border: "1px solid rgba(255,255,255,0.2)",
-                      borderRadius: "10px",
                     }}
                     placeholder="Confirm Password"
                     value={resetPassword.confirmPassword}
@@ -312,19 +383,201 @@ const Navbar = () => {
               </div>
 
               <div className="p-3 pt-0">
+                <button type="submit" className="py-2 w-100 btn btn-outline-secondary text-white" data-mdb-ripple-init data-mdb-ripple-color="dark">Change Password</button>
+
+              </div>
+            </form>
+            {/* FORM END */}
+
+          </div>
+        </div>
+      </div>
+      {/* SERVICE ENQUIRY MODAL */}
+      <div className="modal fade" id="serviceEnquiryModal" tabIndex="-1" aria-hidden="true" ref={serviceModalRef}>
+        <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: "35%" }}>
+          <div
+            className="modal-content border-0 p-0"
+            style={{
+              backdropFilter: "blur(20px)",
+              background: "rgba(79, 62, 62, 0.15)",
+              borderRadius: "8px",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              boxShadow: "0 0 25px rgba(0,0,0,0.25)",
+            }}
+          >
+            {/* FORM START */}
+            <form onSubmit={handleEnquirySubmit}>
+              <div
+                className="p-3 pb-1 border-0"
+                style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}
+              >
+                <h5 className="text-white fw-bold d-flex align-items-center m-0">
+                  <i className="bi-tools me-2 fs-4"></i>
+                  Service Enquiry
+                </h5>
+
                 <button
-                  type="submit"   // VERY IMPORTANT
-                  className="w-100 fw-bold py-2 border-0"
-                  style={{
-                    background: "rgba(53, 31, 31, 0.08)",
-                    borderRadius: "12px",
-                    color: "#e6e0e0ff",
-                    marginTop: "4px",
-                    boxShadow: "0 0 10px rgba(6, 0, 2, 1)",
-                  }}
-                >
-                  Change Password
-                </button>
+                  type="button"
+                  className="btn-close position-absolute"
+                  data-bs-dismiss="modal"
+                  style={{ right: "12px", top: "12px", filter: "invert(1)" }}
+                ></button>
+              </div>
+
+              <div className="modal-body p-3">
+                <div className="row g-3">
+                  {!user && (
+                    <>
+                      <div className="col-md-6">
+                        <input type="text" name="name" className="form-control shadow-none text-white"
+                          style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                          placeholder="Full Name*"
+                          autoComplete="off"
+                          value={serviceEnquery.name}
+                          onChange={handleEnquiryInputChange}
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <input type="number" name="phone" className="form-control shadow-none text-white"
+                          style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                          placeholder="Phone Number*"
+                          autoComplete="off"
+                          value={serviceEnquery.phone}
+                          onChange={handleEnquiryInputChange}
+                        />
+                      </div>
+                      <div className="col-12">
+                        <input type="email" name="email" className="form-control shadow-none text-white"
+                          style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                          placeholder="Email*"
+                          autoComplete="off"
+                          value={serviceEnquery.email}
+                          onChange={handleEnquiryInputChange}
+                        />
+                      </div>
+                    </>
+                  )}
+                  <div className="col-md-4">
+                    <input type="text" name="city" className="form-control shadow-none text-white"
+                      style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                      placeholder="City*"
+                      autoComplete="off"
+                      value={serviceEnquery.city}
+                      onChange={handleEnquiryInputChange}
+                    />
+                  </div>
+
+                  <div className="col-md-8">
+                    <input type="text" name="address" className="form-control shadow-none text-white"
+                      style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                      placeholder="Address*"
+                      autoComplete="off"
+                      value={serviceEnquery.address}
+                      onChange={handleEnquiryInputChange}
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <select
+                      name="carBrand"
+                      className="form-control shadow-none text-white"
+                      style={{
+                        background: "rgba(255,255,255,0.08)",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                      }}
+                      value={serviceEnquery.carBrand || ""}
+                      onChange={handleEnquiryInputChange}
+                    >
+                      <option value="" disabled>Car Manufacturer*</option>
+                      <option value="Hyundai">Hyundai</option>
+                      <option value="BMW">BMW</option>
+                      <option value="Suzuki">Suzuki</option>
+                    </select>
+                  </div>
+
+
+                  <div className="col-md-6">
+                    <select
+                      name="carModel"
+                      className="form-control shadow-none text-white"
+                      style={{
+                        background: "rgba(255,255,255,0.08)",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                      }}
+                      value={serviceEnquery.carModel || ""}
+                      onChange={handleEnquiryInputChange}
+                    >
+                      <option value="" disabled>Model Name*</option>
+                      <option value="Creta">Creta</option>
+                      <option value="i20">i20</option>
+                    </select>
+                  </div>
+                  <div className="col-md-12">
+                    <Select
+                      isMulti
+                      name="services"
+                      options={serviceOptions}
+                      placeholder="Required Service*"
+                      className="text-white"
+                      classNamePrefix="react-select"
+                      value={serviceOptions.filter(option =>
+                        serviceEnquery.services.includes(option.value)
+                      )}
+                      onChange={(selected) => {
+                        setServiceEnquery((prev) => ({
+                          ...prev,
+                          services: selected ? selected.map((s) => s.value) : [],
+                        }));
+                      }}
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          background: "rgba(255,255,255,0.08)",
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          boxShadow: "none",
+
+                        }),
+                        multiValueRemove: (base) => ({
+                          ...base,
+                          color: "black",
+                        }),
+                        menu: (base) => ({
+                          ...base,
+                          background: "#222",
+                          color: "white",
+                        }),
+                        option: (base, state) => ({
+                          ...base,
+                          background: state.isFocused ? "#444444ff" : "#222",
+                          color: "white",
+                          cursor: "pointer",
+                        }),
+                        placeholder: (base) => ({
+                          ...base,
+                          color: "white",
+                        }),
+                      }}
+                    />
+                  </div>
+                  <div className="col-12">
+                    <textarea
+                      name="notes"
+                      className="form-control shadow-none text-white"
+                      style={{
+                        background: "rgba(255,255,255,0.08)",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                      }}
+                      rows="2"
+                      placeholder="Comments or Special Requirements"
+                      value={serviceEnquery.notes}
+                      onChange={handleEnquiryInputChange}
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3 pt-0 justify-content-end d-flex">
+                <button type="submit" className="py-2 btn btn-outline-secondary text-white" data-mdb-ripple-init data-mdb-ripple-color="dark">Submit Enquiry</button>
               </div>
             </form>
             {/* FORM END */}

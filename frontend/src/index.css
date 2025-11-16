@@ -147,3 +147,10 @@ textarea:focus {
   min-height: 35px;
   width: 100%;
 }
+select option {
+  color: white !important;
+  background-color: #444444ff !important;
+}
+body.modal-open {
+  padding-right: 0 !important;
+}

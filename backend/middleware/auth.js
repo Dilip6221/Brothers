@@ -4,27 +4,40 @@ const jwt = require("jsonwebtoken");
 const authUser = async (req, res, next) => {
   try {
     const token = req.cookies.token;
-    if (!token) {
-      return res.json({ success: false, message: "User not authenticated" });
-    }
+    if (!token) return res.json({ success: false, message: "User not authenticated" });
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (!decoded.id) {
-      return res.json({ success: false, message: "Invalid token" });
-    }
     const user = await User.findById(decoded.id).select("-password");
-    if (!user) {
-      return res.json({ success: false, message: "User not found" });
-    }
+
+    if (!user) return res.json({ success: false, message: "User not found" });
+
     req.user = user;
     next();
-  } catch (error) {
-    console.error("Auth Middleware Error:", error);
+  } catch (err) {
     return res.json({
       success: false,
       message: "Unauthorized - Invalid or expired token",
-      error: error.message,
     });
   }
 };
 
-module.exports = authUser;
+// ✅ OPTIONAL AUTH (no token required)
+const authOptional = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = await User.findById(decoded.id).select("-password");
+      } catch (err) {
+        req.user = null;
+      }
+    }
+    next();
+  } catch (error) {
+    req.user = null;
+    next();
+  }
+};
+
+module.exports = {authUser,authOptional};
