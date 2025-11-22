@@ -14,25 +14,20 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const fetchUser = async (authToken = token) => {
+  const fetchUser = async () => {
     try {
-      const res = await axios.get("/user/get-user-data", {
-        headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
-      });
-
+      const res = await axios.get("/user/get-user-data");
       if (res.data.success) {
         setUser(res.data.user);
       } else {
         setUser(null);
       }
-    } catch (err) {
-      console.error("Failed to fetch user:", err.response?.data || err.message);
+    } catch (error) {
       setUser(null);
     } finally {
       setLoading(false);
     }
   };
-
   // 🔹 On initial load, check if a cookie session is valid
   useEffect(() => {
     fetchUser();
@@ -45,7 +40,7 @@ export const UserProvider = ({ children }) => {
       const res = await axios.post("/user/login", { email, password });
       if (res.data.success) {
         if (res.data.token) setToken(res.data.token);
-        await fetchUser(res.data.token);
+        await fetchUser();
         return { success: true, message: res.data.message };
       } else {
         return { success: false, message: res.data.message };
@@ -83,7 +78,7 @@ export const UserProvider = ({ children }) => {
         success: false,
         message: err.response?.data?.message || "Registration failed",
       };
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -101,6 +96,27 @@ export const UserProvider = ({ children }) => {
       navigate("/login");
     }
   };
+  /* For export csv data  */
+  const downloadCSV = async (endpoint, fileName, body = {}) => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}${endpoint}`,
+        body,
+        { responseType: "blob" }
+      );
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${fileName}.csv`);
+      document.body.appendChild(link);
+
+      link.click();
+      link.remove();
+    } catch (error) {
+      toast.error("Export Failed!");
+    }
+  };
+
 
   const value = {
     user,
@@ -112,6 +128,7 @@ export const UserProvider = ({ children }) => {
     login,
     register,
     logout,
+    downloadCSV,
   };
 
   return (

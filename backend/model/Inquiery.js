@@ -11,8 +11,9 @@ const InquirySchema = new mongoose.Schema({
     services: [String],
     address: String,
     notes: String,
+    status: {type:String,enum:['PENDING','COMPLETE'],default:'PENDING'},
     createdAt: { type: Date, default: Date.now }
 });
 
-const Inquery = mongoose.model('Inquiry', InquirySchema);
-module.exports = Inquery;
+const Inquiry = mongoose.model('Inquiry', InquirySchema);
+module.exports = {Inquiry};

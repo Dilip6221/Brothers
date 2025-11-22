@@ -1,16 +1,19 @@
 const { User, transporter } = require('../model/User.js');
+const { Inquiry } = require('../model/Inquiery.js');
 const jwt = require('jsonwebtoken');
 const crypto = require("crypto");
 const bcrypt = require('bcryptjs')
 const { sendWelcomeMail } = require('../mail/UserMail.js');
+const exportToCSV = require("../config/csv.js");
 
+/* For Generate token */
 const generateToken = (userId) => {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '15d' });
 };
-
+/* Register user use */
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password, phone } = req.body;
+        const { name, email, password, phone, role } = req.body;
         if (!name || !email || !password || !phone) {
             return res.json({ success: false, message: 'All fields are required' });
         }
@@ -22,15 +25,19 @@ const registerUser = async (req, res) => {
         if (exitUser) {
             return res.json({ success: false, message: 'User already exists' });
         }
-        const newUser = await User.create({ name, email, password, phone });
-        await sendWelcomeMail(newUser);
+        const newUserData = { name, email, password, phone };
+        if (role) {
+            newUserData.role = role;
+        }
+        const newUser = await User.create(newUserData);
+        await sendWelcomeMail(newUser);  // For New User send welcome mail
         res.json({ success: true, message: 'User Created Succesfully' });
     } catch (error) {
         console.error('Error in registerUser:', error);
         res.json({ success: false, message: error.message });
     }
 }
-
+/* For Login a user using email and password */
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -39,20 +46,20 @@ const loginUser = async (req, res) => {
         }
         const user = await User.findOne({ email });
         if (!user) {
-            return res.json({ success: false, message: 'Register user could not be found'});
+            return res.json({ success: false, message: 'Register user could not be found' });
         }
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
             return res.json({ success: false, message: 'Please enter correct password' });
         }
         const token = generateToken(user._id);
-            res.cookie("token", token, {
+        res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: "lax",
             maxAge: 15 * 24 * 60 * 60 * 1000,
         });
-                await sendWelcomeMail(email);
+        // await sendWelcomeMail(email);
 
         res.json({ success: true, message: 'Login Successful', token });
     } catch (error) {
@@ -60,30 +67,31 @@ const loginUser = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
+/* Get a token wise single user */
 const getUserData = async (req, res) => {
     try {
         const user = req.user;
         return res.json({ success: true, user });
-    } catch(error) {
+    } catch (error) {
         console.error('Error in getting User Data:', error);
         res.json({ success: false, message: error.message });
     }
 }
+/* Logout user */
 const logoutUser = (req, res) => {
-  try {
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", 
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    });
-    return res.json({ success: true, message: "Logged out successfully" });
-  } catch (error) {
-    console.error("Logout Error:", error);
-    return res.status(500).json({ success: false, message: "Logout failed" });
-  }
+    try {
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        });
+        return res.json({ success: true, message: "Logged out successfully" });
+    } catch (error) {
+        console.error("Logout Error:", error);
+        return res.status(500).json({ success: false, message: "Logout failed" });
+    }
 };
-
-
+/* Send Forget password mail using email */
 const sendForgotPasswordEmail = async (req, res) => {
     try {
         const { email } = req.body;
@@ -164,6 +172,7 @@ const sendForgotPasswordEmail = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
+/* Save a reset forget password in db using token */
 const resetPassword = async (req, res) => {
     try {
         const token = req.params.token;
@@ -193,13 +202,14 @@ const resetPassword = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
-const changePassword = async (req,res) =>{
-    try{
-        const { currentPassword,newPassword,confirmPassword } = req.body;
-        if(!currentPassword || !newPassword || !confirmPassword){
-            return res.json({success:false,message:'All field are required'});
+/* When user is login that time change the password using their old password */
+const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword, confirmPassword } = req.body;
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            return res.json({ success: false, message: 'All field are required' });
         }
-        const user =await User.findById(req.user._id);
+        const user = await User.findById(req.user._id);
         if (!user) {
             return res.json({ success: false, message: "User not found" });
         }
@@ -213,10 +223,70 @@ const changePassword = async (req,res) =>{
         user.password = newPassword;
         await user.save();
         res.json({ success: true, message: "Password reset successfully" });
-    } catch(error) {
+    } catch (error) {
         console.error('Error in Reset password:', error);
         res.json({ success: false, message: error.message });
     }
 }
+/* All useer data */
+const allUsers = async (req, res) => {
+    try {
+        const users = await User.find().sort({ createdAt: -1 });
+        res.json({ success: true, data: users });
+    } catch (error) {
+        console.error('Error in fetching all users:', error);
+        res.json({ success: false, message: error.message });
+    }
+}
 
-module.exports = { registerUser, loginUser, sendForgotPasswordEmail, resetPassword, getUserData,changePassword,logoutUser};
+// For admin side Dashboard Data count
+const getDashboardDataCount = async (req, res) => {
+    try {
+        const totalEmployees = await User.countDocuments();
+        const totalStaff = await User.countDocuments({ role: { $in: ["STAFF", "ADMIN"] } });
+        const totalCustomers = await User.countDocuments({ role: "USER" });
+        const totalInquiries = await Inquiry.countDocuments();
+        const pendingInquiries = await Inquiry.countDocuments({ status: "PENDING" });
+        const completedInquiries = await Inquiry.countDocuments({ status: "COMPLETED" });
+        const cancelledInquiries = await Inquiry.countDocuments({ status: "COMPLETED" });
+
+        res.json({
+            success: true,
+            data: {
+                totalEmployees,
+                totalCustomers,
+                totalStaff,
+                totalInquiries,
+                pendingInquiries,
+                completedInquiries,
+                cancelledInquiries,
+            }
+        });
+    } catch (error) {
+        res.json({ success: false, message: "Error For Counting dashboard", error: error.message });
+    }
+};
+
+/* For Admin side export user information */
+const exportUsersData = async (req, res) => {
+    try {
+        const { filter } = req.body;
+
+        let query = {};
+
+        if (filter === "USER") query.role = "USER";
+        if (filter === "STAFF") query.role = { $in: ["STAFF", "ADMIN"] };
+        if (filter === "ALL") query = {};
+        const users = await User.find(query);
+        let csv = "Name,Email,Phone,Role\n";
+        users.forEach(u => {
+            csv += `${u.name},${u.email},${u.phone},${u.role}\n`;
+        });
+        res.setHeader("Content-Type", "text/csv");
+        res.setHeader("Content-Disposition", "attachment; filename=users.csv");
+        res.send(csv);
+    } catch (error) {
+        res.status(500).json({ success: false, message: "CSV export failed" });
+    }
+};
+module.exports = { registerUser, loginUser, sendForgotPasswordEmail, resetPassword, getUserData, changePassword, logoutUser, allUsers, getDashboardDataCount, exportUsersData };

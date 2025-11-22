@@ -180,6 +180,13 @@ useEffect(() => {
                   <i className="bi bi-people-fill "></i> Partner
                 </a>
               </li>
+              {user?.role === 'ADMIN' && (
+                <li className="nav-item px-2">
+                  <Link className="btn btn-outline-danger btn-sm px-3" to="/admin/dashboard"> 
+                    <i className="bi bi-speedometer2 me-1"></i> Admin Dashboard
+                  </Link>
+                </li>
+              )}
               {!user ? (
                 <li className="nav-item px-2">
                   <Link className="btn btn-warning btn-sm text-dark fw-semibold" to="/login">

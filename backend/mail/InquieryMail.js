@@ -69,8 +69,6 @@ const sendInqueryMail = async (user) => {
       </div>
       `,
     });
-
-    console.log("Inquiry email sent!");
   } catch (error) {
     console.error("Error sending inquiry email:", error);
   }
