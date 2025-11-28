@@ -5,7 +5,7 @@ const sendWelcomeMail = async (user) => {
   try {
     await transporter.sendMail({
       from: `"BROTHER'S" <${process.env.SMTP_USER}>`,
-      to: user,
+      to: user.email,
       subject: "🚀 Welcome to Brother's Garage!",
       html: `
         <div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px;">

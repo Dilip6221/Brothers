@@ -16,56 +16,54 @@ import UserList from './pages/Admin/UserList.jsx'
 
 const App = () => {
   const location = useLocation();
-  const hideNavbarRoutes = ["/login", "/forget-password", "/admin"];
   const { user, loading } = useContext(UserContext);
+
+  const hideNavbarRoutes = ["/login", "/forget-password", "/admin"];
   const shouldHideNavbar = hideNavbarRoutes.some((route) =>
     location.pathname.startsWith(route)
   );
 
-  // if (loading) {
-  //   return (
-  //     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-  //       <div className="spinner-border text-warning" role="status" style={{ width: "3rem", height: "3rem" }}>
-  //         <span className="visually-hidden">Loading...</span>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  //  Simple Admin Route Guard
+  const isAdminRoute = location.pathname.toLowerCase().startsWith("/admin");
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+        <div className="spinner-border text-warning"></div>
+      </div>
+    );
+  }
+
+  //  Admin route but user not logged in
+  if (isAdminRoute && !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  //  Admin route but user is not ADMIN
+  if (isAdminRoute && user?.role !== "ADMIN") {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <>
-      <div>
-        {!shouldHideNavbar && <ServiceIcon />}
-        {!shouldHideNavbar && <Navbar />}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route
-            path="/login"
-            element={user ? <Navigate to="/" /> : <Login />}
-          />
-          <Route path="/forget-password/:token" element={<ForgetPassword />} />
-          <Route path="*" element={<NotFound />} />
-          <Route
-            path="/admin/*"
-            element={
-              loading ? (
-                <div className="d-flex justify-content-center align-items-center vh-100">
-                  <div className="spinner-border text-warning"></div>
-                </div>
-              ) : user?.role === "ADMIN" ? (
-                <AdminLayout />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          <Route path="admin/inquery" element={<AdminInquery />} />
-          <Route path="admin/dashboard" element={<Dashboard />} />
-          <Route path="admin/users" element={<UserList />} />
+      {!shouldHideNavbar && <ServiceIcon />}
+      {!shouldHideNavbar && <Navbar />}
 
-        </Routes>
-        {!shouldHideNavbar && <Footer />}
-      </div>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+        <Route path="/forget-password/:token" element={<ForgetPassword />} />
+        <Route path="*" element={<NotFound />} />
+
+        {/*  ALL ADMIN ROUTES ARE NOW PROTECTED AUTOMATICALLY */}
+        <Route path="/admin/*" element={<AdminLayout />} />
+        <Route path="/admin/inquery" element={<AdminInquery />} />
+        <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin/users" element={<UserList />} />
+      </Routes>
+      {!shouldHideNavbar && <Footer />}
     </>
   );
 };

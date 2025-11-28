@@ -37,6 +37,39 @@ const registerUser = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
+/* Update User Data in admin panel */
+const updateUserData = async(req,res) => {
+    try{
+       const {_id,name, email, phone, role } =  req.body;
+        if (!_id,!name || !email || !phone || !role) {
+            return res.json({ success: false, message: 'All fields are required' });
+        }
+        const user = await User.findById(_id);
+        if(!user){
+            return res.json({success: false,message:'User Not Found'});
+        }
+        const phoneRegex = /^[6-9]\d{9}$/;
+        if (!phoneRegex.test(phone)) {
+            return res.json({ success: false, message: 'Please enter a valid phone number' });
+        }
+        if (email !== user.email) {
+            const emailExists = await User.findOne({ email });
+            if (emailExists) {
+                return res.json({success: false,message: "Email already in use by another user"});
+            }
+        }
+        user.name = name;
+        user.email = email;
+        user.phone = phone;
+        user.role = role;
+        await user.save();
+        return res.json({ success: true, message: 'User updated successfully'});
+    }catch(error){
+        console.error('Error in Update User Data:', error);
+        res.json({ success: false, message: error.message });
+
+    }
+}
 /* For Login a user using email and password */
 const loginUser = async (req, res) => {
     try {
@@ -289,4 +322,21 @@ const exportUsersData = async (req, res) => {
         res.status(500).json({ success: false, message: "CSV export failed" });
     }
 };
-module.exports = { registerUser, loginUser, sendForgotPasswordEmail, resetPassword, getUserData, changePassword, logoutUser, allUsers, getDashboardDataCount, exportUsersData };
+/* Admin side user list change status active or not */
+const changeUserStatus = async (req,res) =>  {
+    try {
+        const { userId, status } = req.body;
+        if (!userId || !status) {          
+            return res.json({success: false,message: "All fields are required",});
+        }
+        const updatedUser = await User.findByIdAndUpdate(userId,{ status },{ new: true });
+        if (!updatedUser) {
+            return res.json({success: false,message: "User not found"});
+        }
+        return res.json({success: true,message: `User status changed to ${status}`,});
+    } catch (error) {
+        console.log(error);
+        return res.json({success: false,message: "Something went wrong"});
+    }
+}
+module.exports = { registerUser, loginUser, sendForgotPasswordEmail, resetPassword, getUserData, changePassword, logoutUser, allUsers, getDashboardDataCount, exportUsersData,changeUserStatus,updateUserData };

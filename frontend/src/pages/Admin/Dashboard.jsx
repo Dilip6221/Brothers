@@ -89,7 +89,7 @@ const Dashboard = () => {
                 <div className="d-flex align-items-center justify-content-between">
                   <i className="fa-solid fa-calendar-check fa-2x text-success"></i>
                   <div className="text-white text-end">
-                    <p className="mb-1">Total Inquiries</p>
+                    <p className="mb-1">Total Inquirys</p>
                     <div className="d-flex align-items-center justify-content-end">
                       <h5 className="mb-0 me-2">{stats.totalInquiries || 0}</h5>
                       <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery")}>
@@ -108,7 +108,7 @@ const Dashboard = () => {
               <div className="bg-dark rounded d-flex align-items-center justify-content-between p-4 shadow-sm border border-secondary">
                 <i className="fa fa-hourglass-half fa-2x text-warning"></i>
                 <div className="ms-3 text-white">
-                  <p className="mb-2">Pending Inquiries</p>
+                  <p className="mb-2">Pending Inquirys</p>
                   <div className="d-flex align-items-center justify-content-end">
                       <h5 className="mb-0 me-2">{stats.pendingInquiries || 0}</h5>
                       <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery", { state: { openTab: "PENDING" } })}>
@@ -123,7 +123,7 @@ const Dashboard = () => {
               <div className="bg-dark rounded d-flex align-items-center justify-content-between p-4 shadow-sm border border-secondary">
                 <i className="fa fa-check-circle fa-2x text-success"></i>
                 <div className="ms-3 text-white">
-                  <p className="mb-2">Completed Inquiries</p>
+                  <p className="mb-2">Completed Inquirys</p>
                   <div className="d-flex align-items-center justify-content-end">
                       <h5 className="mb-0 me-2">{stats.completedInquiries || 0}</h5>
                       <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery", { state: { openTab: "COMPLETED" } })}>
@@ -139,7 +139,7 @@ const Dashboard = () => {
               <div className="bg-dark rounded d-flex align-items-center justify-content-between p-4 shadow-sm border border-secondary">
                 <i className="fa fa-times-circle fa-2x text-danger"></i>
                 <div className="ms-3 text-white">
-                  <p className="mb-2">Cancelled Inquiries</p>
+                  <p className="mb-2">Cancelled Inquirys</p>
                   <div className="d-flex align-items-center justify-content-end">
                       <h5 className="mb-0 me-2">{stats.cancelledInquiries || 0}</h5>
                       <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery", { state: { openTab: "COMPLETED" } })}>

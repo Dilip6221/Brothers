@@ -48,18 +48,17 @@ const Login = () => {
         setNumber('');
         navigate("/login");
       }
+    } else {
+      const res = await login(email, password);
+      if (!res.success) {
+        toast.error(res.message)
+      } else {
+        toast.success(res.message)
+        setEmail('');
+        setPassword('');
+        navigate("/");
+      }
     }
-    // else {
-    //   const res = await login(email, password);
-    //   if (!res.success) {
-    //     toast.error(res.message)
-    //   } else {
-    //     toast.success(res.message)
-    //     setEmail('');
-    //     setPassword('');
-    //     navigate("/");
-    //   }
-    // }
   };
   const handleForgetPassword = async (e) => {
     e.preventDefault();

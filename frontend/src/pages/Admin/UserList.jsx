@@ -13,10 +13,10 @@ const UserList = () => {
     const [filter, setFilter] = useState("ALL");
     const [search, setSearch] = useState(""); //For search functionality
 
+    const [showCreateModal, setShowCreateModal] = useState(false);// For display user create model
+    const [modalMode, setModalMode] = useState("CREATE"); /* Open model for create or edit scenario */
 
-    const [showCreateModal, setShowCreateModal] = useState(false);
-
-    const [newUser, setNewUser] = useState({
+    const [newUser, setNewUser] = useState({//Create new user
         name: "",
         email: "",
         phone: "",
@@ -24,32 +24,39 @@ const UserList = () => {
         role: "USER"
     });
 
+    /* For create new user aur staff */
     const handleCreateUser = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/user/register`,
-                newUser
-            );
-            if (res.data.success) {
-                toast.success(res.data.message);
-                setShowCreateModal(false);
-                fetchData();
-                setNewUser({
-                    name: "",
-                    email: "",
-                    phone: "",
-                    password: "",
-                    role: "USER"
-                });
-            } else {
-                toast.error(res.data.message);
+            if(modalMode == 'CREATE'){
+                const res = await axios.post(
+                    `${import.meta.env.VITE_BACKEND_URL}/user/register`,
+                    newUser
+                );
+                if (res.data.success) {
+                    toast.success(res.data.message);
+                    setShowCreateModal(false);
+                    fetchData();
+                    setNewUser({name: "",email: "",phone: "",password: "",role: "USER"});
+                } else {
+                    toast.error(res.data.message);
+                }
+            }else{
+                const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/admin/update-user-data`,newUser)
+                if(res.data.success){
+                    toast.success(res.data.message)
+                    setShowCreateModal(false);
+                    fetchData();
+                }else{
+                    toast.error(res.data.message);
+                }
             }
         } catch (error) {
             toast.error("Creation failed.");
         }
     };
 
+    /* For Fetch all user and staff data */
     const fetchData = async () => {
         try {
             const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/admin/user-data`);
@@ -58,37 +65,57 @@ const UserList = () => {
             toast.error("Error fetching Customer data");
         }
     };
+    /* When sidebar click that time refresh data */
     useEffect(() => {
         fetchData();
         const handler = () => fetchData();
         window.addEventListener("ourTeamClick", handler);
         return () => window.removeEventListener("ourTeamClick", handler);
     }, []);
+    /* Dashboard data view that time rediraction */
     useEffect(() => {
         if (location.state?.openTab) {
             setFilter(location.state.openTab);
         }
     }, [location.state]);
 
+    /* For search and tabbing */
     const filteredData = user
-    .filter((item) => {
-        if (filter === "ALL") return true;
-        if (filter === "STAFF") {
-            return item.role === "STAFF" || item.role === "ADMIN";
+        .filter((item) => {
+            if (filter === "ALL") return true;
+            if (filter === "STAFF") {
+                return item.role === "STAFF" || item.role === "ADMIN";
+            }
+            return item.role === "USER";
+        })
+        .filter((item) => {
+            if (!search.trim()) return true;
+            const text = search.toLowerCase();
+            return (
+                item.name?.toLowerCase().includes(text) ||
+                item.email?.toLowerCase().includes(text) ||
+                item.phone?.toLowerCase().includes(text) ||
+                item.role?.toLowerCase().includes(text) ||
+                item.status?.toLowerCase().includes(text)
+            );
+        });
+    /* For update user and staff upadte status */
+    const handleUserStatus = async (id, currentStatus) => {
+        try {
+            const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+            const res = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/user/admin/update-status`,
+                { userId: id, status: newStatus }
+            );
+            if (res.data.success) {
+                fetchData();
+            } else {
+                toast.error(res.data.message);
+            }
+        } catch (error) {
+            toast.error("Status update failed");
         }
-        return item.role === "USER";
-    })
-    .filter((item) => {
-        if (!search.trim()) return true;
-        const text = search.toLowerCase();
-        return (
-            item.name?.toLowerCase().includes(text) ||
-            item.email?.toLowerCase().includes(text) ||
-            item.phone?.toLowerCase().includes(text) ||
-            item.role?.toLowerCase().includes(text) ||
-            item.status?.toLowerCase().includes(text) 
-        );
-    });
+    }
 
     return (
         <AdminLayout>
@@ -136,7 +163,7 @@ const UserList = () => {
                         </ul>
 
                         {/* RIGHT BUTTON */}
-                        <button className="btn btn-outline-danger d-flex align-items-center gap-2 px-3" onClick={() => setShowCreateModal(true)}>
+                        <button className="btn btn-outline-danger d-flex align-items-center gap-2 px-3" onClick={() => {setShowCreateModal(true); setModalMode('CREATE');setNewUser({name: "",email: "",phone: "",password: "",role: "USER"});}}>
                             <i className="bi bi-plus-circle"></i>
                             Create
                         </button>
@@ -155,7 +182,7 @@ const UserList = () => {
                                 onClick={() => downloadCSV("/user/admin/user-export", `${filter.toLowerCase()}-Team`, { filter })}
                             >
                                 <i className="fa fa-download"></i>
-                            </button>               
+                            </button>
                             <div className="input-group" style={{ width: "200px" }}>
                                 <input
                                     type="search"
@@ -176,8 +203,8 @@ const UserList = () => {
                                     <th>Full Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
-                                    <th>Status</th>
                                     <th>Role</th>
+                                    <th>Status</th>
                                     <th className="text-center">Action</th>
                                 </tr>
                             </thead>
@@ -189,7 +216,6 @@ const UserList = () => {
                                             <td>{item.name}</td>
                                             <td><a href={`mailto:${item.email}`} className="text-info text-decoration-none" style={{ cursor: "pointer" }}>{item.email}</a></td>
                                             <td>{item.phone}</td>
-                                            <td>ACTIVE</td>
                                             <td>
                                                 {item.role === "STAFF" && (
                                                     <span className="badge bg-warning text-dark">
@@ -209,7 +235,17 @@ const UserList = () => {
                                                     </span>
                                                 )}
                                             </td>
-
+                                            <td>
+                                               <div className="form-check form-switch d-flex justify-content-center">
+                                                    <input
+                                                        className="form-check-input bg-dark border-light"
+                                                        type="checkbox"
+                                                        checked={item.status === "ACTIVE"}
+                                                        onChange={() => handleUserStatus(item._id, item.status)}
+                                                        
+                                                    />
+                                                </div>
+                                            </td>
                                             <td className="text-center">
                                                 <i
                                                     className="fa-solid fa-eye text-info me-3"
@@ -224,6 +260,8 @@ const UserList = () => {
                                                         cursor: "pointer",
                                                         fontSize: "18px",
                                                     }}
+                                                    onClick={() => {setShowCreateModal(true); setModalMode('EDIT');setNewUser({name: item.name,email: item.email,phone:item.phone,role: item.role, _id: item._id});}}
+
                                                 ></i>
                                             </td>
                                         </tr>
@@ -284,17 +322,19 @@ const UserList = () => {
                                         }
                                     />
                                 </div>
-                                <div className="mb-3">
-                                    <label>Password</label>
-                                    <input
-                                        type="password"
-                                        className="form-control"
-                                        value={newUser.password}
-                                        onChange={(e) =>
-                                            setNewUser({ ...newUser, password: e.target.value })
-                                        }
-                                    />
-                                </div>
+                                {modalMode == 'CREATE' &&
+                                    <div className="mb-3">
+                                        <label>Password</label>
+                                        <input
+                                            type="password"
+                                            className="form-control"
+                                            value={newUser.password}
+                                            onChange={(e) =>
+                                                setNewUser({ ...newUser, password: e.target.value })
+                                            }
+                                        />
+                                    </div>
+                                }
                                 <div className="mb-3">
                                     <label>Phone Number</label>
                                     <input
@@ -324,7 +364,7 @@ const UserList = () => {
 
                             {/* Footer */}
                             <div className="modal-footer border-secondary">
-                                <button className="btn btn-danger" onClick={handleCreateUser}>Save</button>
+                                <button className="btn btn-danger" onClick={handleCreateUser}> {modalMode === "CREATE" ? "Save" : "Update"}</button>
                             </div>
                         </div>
                     </div>

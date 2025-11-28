@@ -12,6 +12,7 @@ const UserSchema = new mongoose.Schema({
     isVerified: {type:Boolean,default:false},
     resetPasswordTokenHash : {type: String},
     resetPasswordTokenExpire : {type: Date},
+    status : {type:String,enum:['ACTIVE','INACTIVE'],default:'ACTIVE'}
 },{timestamps:true,versionKey: false});
 
 UserSchema.pre('save', async function(next) {
