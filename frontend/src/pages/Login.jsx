@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
-import videoFile from "../assets/animation.mp4";
-import loginLogo from "../assets/brand.png";
+import videoFile from "../assets/vidoes/animation.mp4";
+import loginLogo from "../assets/images/brand.png";
 import { UserContext } from "../context/UserContext.jsx";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";

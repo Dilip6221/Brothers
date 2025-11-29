@@ -46,7 +46,14 @@ const AdminLayout = ({ children }) => {
               >
                 <i className="bi bi-clipboard-check-fill me-2"></i>Inquery
               </NavLink>
-
+              <NavLink
+                to="/admin/subscribe"
+                className={({ isActive }) =>
+                  `nav-item nav-link ${isActive ? "active" : ""}`
+                }
+              >
+                <i className="bi bi-envelope-arrow-up-fill me-2"></i>Subscribe
+              </NavLink>
               <NavLink
                 to="/admin/services"
                 className={({ isActive }) =>

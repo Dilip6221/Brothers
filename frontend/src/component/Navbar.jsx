@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import loginLogo from "../assets/brand.png";
+import loginLogo from "../assets/images/brand.png";
 import { UserContext } from "../context/UserContext.jsx";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -175,15 +175,10 @@ useEffect(() => {
                   <i className="bi bi-youtube"></i>
                 </a>
               </li>
-              <li className="nav-item px-2">
-                <a className="btn btn-outline-warning btn-sm px-3" href="#contact_dummy">
-                  <i className="bi bi-people-fill "></i> Partner
-                </a>
-              </li>
               {user?.role === 'ADMIN' && (
                 <li className="nav-item px-2">
-                  <Link className="btn btn-outline-danger btn-sm px-3" to="/admin/dashboard"> 
-                    <i className="bi bi-speedometer2 me-1"></i> Admin Dashboard
+                  <Link className="btn btn-outline-warning btn-sm px-3" to="/admin/dashboard"> 
+                    <i className="bi bi-speedometer2 me-1"></i> Admin
                   </Link>
                 </li>
               )}
@@ -201,6 +196,7 @@ useEffect(() => {
                     id="userDropdown"
                     role="button"
                     data-bs-toggle="dropdown"
+                    data-bs-display="static"
                   >
                     <i className="bi bi-person-circle me-1"></i> {user.name}
                   </a>

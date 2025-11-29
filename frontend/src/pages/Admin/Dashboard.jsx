@@ -1,4 +1,4 @@
-import {React,useState,useEffect} from 'react'
+import { React, useState, useEffect } from 'react'
 import AdminLayout from './AdminLayout.jsx'
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
@@ -6,9 +6,9 @@ import toast from 'react-hot-toast';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-    const [stats, setStats] = useState({});
-    
-    const fetchStats = async () => {
+  const [stats, setStats] = useState({});
+
+  const fetchStats = async () => {
     try {
       const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/admin/dashboard-stats`);
       setStats(res.data.data);
@@ -110,11 +110,11 @@ const Dashboard = () => {
                 <div className="ms-3 text-white">
                   <p className="mb-2">Pending Inquirys</p>
                   <div className="d-flex align-items-center justify-content-end">
-                      <h5 className="mb-0 me-2">{stats.pendingInquiries || 0}</h5>
-                      <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery", { state: { openTab: "PENDING" } })}>
-                        View
-                      </span>
-                    </div>
+                    <h5 className="mb-0 me-2">{stats.pendingInquiries || 0}</h5>
+                    <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery", { state: { openTab: "PENDING" } })}>
+                      View
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -125,11 +125,11 @@ const Dashboard = () => {
                 <div className="ms-3 text-white">
                   <p className="mb-2">Completed Inquirys</p>
                   <div className="d-flex align-items-center justify-content-end">
-                      <h5 className="mb-0 me-2">{stats.completedInquiries || 0}</h5>
-                      <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery", { state: { openTab: "COMPLETED" } })}>
-                        View
-                      </span>
-                    </div>
+                    <h5 className="mb-0 me-2">{stats.completedInquiries || 0}</h5>
+                    <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery", { state: { openTab: "COMPLETED" } })}>
+                      View
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -141,15 +141,47 @@ const Dashboard = () => {
                 <div className="ms-3 text-white">
                   <p className="mb-2">Cancelled Inquirys</p>
                   <div className="d-flex align-items-center justify-content-end">
-                      <h5 className="mb-0 me-2">{stats.cancelledInquiries || 0}</h5>
-                      <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery", { state: { openTab: "COMPLETED" } })}>
-                        View
-                      </span>
-                    </div>
+                    <h5 className="mb-0 me-2">{stats.cancelledInquiries || 0}</h5>
+                    <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery", { state: { openTab: "COMPLETED" } })}>
+                      View
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
+
+            {/* Subscribe User Newslatter*/}
+            <div className="col-sm-6 col-xl-3">
+              <div className="bg-dark rounded d-flex align-items-center justify-content-between p-4 shadow-sm border border-secondary">
+                <i className="fa-solid fa-envelope-open-text fa-2x text-success"></i>
+                <div className="ms-3 text-white">
+                  <p className="mb-2">Subscribe User</p>
+                  <div className="d-flex align-items-center justify-content-end">
+                    <h5 className="mb-0 me-2">{stats.subscribeUser || 0}</h5>
+                    <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/subscribe", { state: { openTab: "SUBSCRIBE" } })}>
+                      View
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Unsubscribe User Newslatter*/}
+            <div className="col-sm-6 col-xl-3">
+              <div className="bg-dark rounded d-flex align-items-center justify-content-between p-4 shadow-sm border border-secondary">
+                <i className="fa-solid fa-user-slash fa-2x text-danger"></i>
+                <div className="ms-3 text-white">
+                  <p className="mb-2">Unubscribe User</p>
+                  <div className="d-flex align-items-center justify-content-end">
+                    <h5 className="mb-0 me-2">{stats.unsubscribeUser || 0}</h5>
+                    <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/subscribe", { state: { openTab: "UNSUBSCRIBE" } })}>
+                      View
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
             {/* Total Revenue */}
             <div className="col-sm-6 col-xl-3">
               <div className="bg-dark rounded d-flex align-items-center justify-content-between p-4 shadow-sm border border-secondary">

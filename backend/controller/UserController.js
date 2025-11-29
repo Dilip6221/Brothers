@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const bcrypt = require('bcryptjs')
 const { sendWelcomeMail } = require('../mail/UserMail.js');
 const exportToCSV = require("../config/csv.js");
+const { Subscription } = require('../model/Subscribe.js');
 
 /* For Generate token */
 const generateToken = (userId) => {
@@ -282,6 +283,8 @@ const getDashboardDataCount = async (req, res) => {
         const pendingInquiries = await Inquiry.countDocuments({ status: "PENDING" });
         const completedInquiries = await Inquiry.countDocuments({ status: "COMPLETED" });
         const cancelledInquiries = await Inquiry.countDocuments({ status: "COMPLETED" });
+        const subscribeUser = await Subscription.countDocuments({ status: "SUBSCRIBE" });
+        const unsubscribeUser = await Subscription.countDocuments({ status: "UNSUBSCRIBE" });
 
         res.json({
             success: true,
@@ -293,6 +296,8 @@ const getDashboardDataCount = async (req, res) => {
                 pendingInquiries,
                 completedInquiries,
                 cancelledInquiries,
+                subscribeUser,
+                unsubscribeUser
             }
         });
     } catch (error) {

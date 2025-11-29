@@ -1,7 +1,7 @@
 // src/pages/NotFound.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import carImage from "../assets/car-not-found.jpg";
+import carImage from "../assets/images/car-not-found.jpg";
 
 const NotFound = () => {
   return (

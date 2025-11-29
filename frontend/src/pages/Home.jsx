@@ -1,11 +1,11 @@
 import React from 'react';
-import Navbar from '../component/Navbar';
-import ppf from '../assets/defender.png';
+import ppf from '../assets/images/defender.png';
+import ServiceCard from './ServiceCard';
 
 const Home = () => {
   return (
     <>
-      <section
+      {/* <section
         className="d-flex justify-content-center align-items-center bg-black"
         style={{
           height: '100vh',
@@ -23,7 +23,8 @@ const Home = () => {
             objectPosition: 'center',
           }}
         />
-      </section>
+      </section> */}
+      <ServiceCard />
 
       {/* <section className="container py-5">
         <h2 className="text-center mb-4">Premium Car Protection</h2>

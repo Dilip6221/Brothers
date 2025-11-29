@@ -118,20 +118,19 @@ const Footer = () => {
 
                         <ul className="list-unstyled small">
                             <li><a href="/ppf" className="nav-link social-icon mb-2">PPF Installation</a></li>
-                            <li><a href="/ceramic" className="nav-link social-icon mb-2">Ceramic & Graphene Coating</a></li>
                             <li><a href="/paint" className="nav-link social-icon mb-2">Full Body Painting</a></li>
                             <li><a href="/panel-paint" className="nav-link social-icon mb-2">Panel Painting</a></li>
+                            <li><a href="/ceramic" className="nav-link social-icon mb-2">Ceramic & Graphene Coating</a></li>
                             <li><a href="/sound-damping" className="nav-link social-icon mb-2">Sound Damping</a></li>
                             <li><a href="/vinyl-wrap" className="nav-link social-icon mb-2">Vinyl Wrap</a></li>
                             <li><a href="/film" className="nav-link social-icon mb-2">Safety Glazing Film</a></li>
                             <li><a href="/sunroof-ppf" className="nav-link social-icon mb-2">Sunroof Protection Film</a></li>
-                            <li><a href="/Miscellaneous" className="nav-link social-icon mb-2">Car Wrap</a></li>
                             <li><a href="/Miscellaneous" className="nav-link social-icon mb-2">Alloy & Caliper Paint</a></li>
                             <li><a href="/Miscellaneous" className="nav-link social-icon mb-2">Detailing (Interior/Exterior)</a></li>
                             <li><a href="/car-wash" className="nav-link social-icon mb-2">Premium Car Wash</a></li>
                             <li><a href="/car-wash" className="nav-link social-icon mb-2">Tyre polish</a></li>
                             <li><a href="/car-wash" className="nav-link social-icon mb-2">Accessories</a></li>
-                            <li><a href="/car-wash" className="nav-link social-icon mb-2">Interior Customization</a></li>
+                            <li><a href="/interior-custmization" className="nav-link social-icon mb-2">Interior Customization</a></li>
                         </ul>
                     </div>
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import loginLogo from "../assets/brand.png";
+import loginLogo from "../assets/images/brand.png";
 
 const ForgetPassword = () => {
   const [password, setPassword] = useState("");

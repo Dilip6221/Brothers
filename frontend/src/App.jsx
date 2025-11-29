@@ -13,6 +13,7 @@ import AdminLayout from './pages/Admin/AdminLayout.jsx'
 import AdminInquery from './pages/Admin/AdminInquery.jsx'
 import Dashboard from './pages/Admin/Dashboard.jsx'
 import UserList from './pages/Admin/UserList.jsx'
+import AdminSubscribe from './pages/Admin/AdminSubscribe.jsx'
 
 const App = () => {
   const location = useLocation();
@@ -59,9 +60,10 @@ const App = () => {
 
         {/*  ALL ADMIN ROUTES ARE NOW PROTECTED AUTOMATICALLY */}
         <Route path="/admin/*" element={<AdminLayout />} />
-        <Route path="/admin/inquery" element={<AdminInquery />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/users" element={<UserList />} />
+        <Route path="/admin/inquery" element={<AdminInquery />} />
+        <Route path="/admin/subscribe" element={<AdminSubscribe />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>
