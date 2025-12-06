@@ -36,7 +36,7 @@ const Navbar = () => {
     { value: "PAINT", label: "Full Body Paint" },
     { value: "COTTING", label: "Ceramic Coating" },
   ];
-useEffect(() => {
+  useEffect(() => {
     if (modalRef.current) {
       bsModalRef.current = new bootstrap.Modal(modalRef.current, {
         backdrop: true,
@@ -177,7 +177,7 @@ useEffect(() => {
               </li>
               {user?.role === 'ADMIN' && (
                 <li className="nav-item px-2">
-                  <Link className="btn btn-outline-warning btn-sm px-3" to="/admin/dashboard"> 
+                  <Link className="btn btn-outline-warning btn-sm px-3" to="/admin/dashboard">
                     <i className="bi bi-speedometer2 me-1"></i> Admin
                   </Link>
                 </li>
@@ -288,7 +288,7 @@ useEffect(() => {
                     <NavLink to="/services" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Services</NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/franchise" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Franchise</NavLink>
+                    <NavLink to="/blog" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Blog</NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/stores" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Our Stores</NavLink>
@@ -386,7 +386,7 @@ useEffect(() => {
               </div>
 
               <div className="p-3 pt-0">
-                <button type="submit" className="py-2 w-100 btn btn-outline-secondary text-white" data-mdb-ripple-init data-mdb-ripple-color="dark">Change Password</button>
+                <button type="submit" className="py-2 w-100 btn btn-outline-danger text-white" data-mdb-ripple-init data-mdb-ripple-color="dark">Change Password</button>
 
               </div>
             </form>
@@ -414,11 +414,9 @@ useEffect(() => {
                 className="p-3 pb-1 border-0"
                 style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}
               >
-                <h5 className="text-white fw-bold d-flex align-items-center m-0">
-                  <i className="bi-tools me-2 fs-4"></i>
-                  Service Enquiry
-                </h5>
-
+                <h4 className="text-white  d-flex align-items-center m-0" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "28px", fontWeight: "700" }}><i className="bi-tools me-2 fs-4"></i>
+                  <span style={{ color: "red" }}>S</span>ervice Enquiry
+                </h4>
                 <button
                   type="button"
                   className="btn-close position-absolute"
@@ -580,7 +578,7 @@ useEffect(() => {
               </div>
 
               <div className="p-3 pt-0 justify-content-end d-flex">
-                <button type="submit" className="py-2 btn btn-outline-secondary text-white" data-mdb-ripple-init data-mdb-ripple-color="dark">Submit Enquiry</button>
+                <button type="submit" className="py-2 btn btn-outline-danger text-white" data-mdb-ripple-init data-mdb-ripple-color="dark">Submit Enquiry</button>
               </div>
             </form>
             {/* FORM END */}

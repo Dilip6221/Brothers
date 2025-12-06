@@ -14,6 +14,10 @@ import AdminInquery from './pages/Admin/AdminInquery.jsx'
 import Dashboard from './pages/Admin/Dashboard.jsx'
 import UserList from './pages/Admin/UserList.jsx'
 import AdminSubscribe from './pages/Admin/AdminSubscribe.jsx'
+import AdminBlogs from './pages/Admin/AdminBlogs.jsx'
+import AdminCreateBlog from './pages/Admin/AdminCreateBlog.jsx'
+import Blog from './pages/Blog.jsx'
+import BlogView from './pages/BlogView.jsx'
 
 const App = () => {
   const location = useLocation();
@@ -54,6 +58,8 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogView />} />
         <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
         <Route path="/forget-password/:token" element={<ForgetPassword />} />
         <Route path="*" element={<NotFound />} />
@@ -64,6 +70,8 @@ const App = () => {
         <Route path="/admin/users" element={<UserList />} />
         <Route path="/admin/inquery" element={<AdminInquery />} />
         <Route path="/admin/subscribe" element={<AdminSubscribe />} />
+        <Route path="/admin/blogs" element={<AdminBlogs />} />
+        <Route path="/admin/blogs/create" element={<AdminCreateBlog />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>

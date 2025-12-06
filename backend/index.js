@@ -7,6 +7,7 @@ const cors = require('cors');
 const userRoute = require('./routes/UserRoute.js');
 const serviceInquiryRoute = require('./routes/InquiryRoute.js');
 const SubscribeRoute = require('./routes/SubscribeRoute.js')
+const BlogRoute = require('./routes/BlogRoute.js')
 const connectDB = require('./config/db.js');
 const cookieParser = require('cookie-parser');
 app.use(express.static('public'));
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use('/api/user', userRoute);
 app.use('/api/service', serviceInquiryRoute);
 app.use('/api/subscribe', SubscribeRoute);
+app.use('/api/blog', BlogRoute);
 
 app.get('/', (req, res) => {
     res.send('hello wordle');
