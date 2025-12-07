@@ -356,3 +356,23 @@ body.modal-open {
         text-shadow: 0 0 16px red;
     }
 }
+/* For heading first red and white combination text */
+.section-title {
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  margin: 0;
+}
+
+.section-title-large {
+  font-size: 40px;
+}
+
+.section-title-small {
+  font-size: 28px;
+}
+
+.first-letter {
+  color: red;
+}
+/* For heading first red and white combination text */

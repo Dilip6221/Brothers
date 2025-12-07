@@ -31,16 +31,11 @@ const BlogView = () => {
           <Link to="/blog" className="back-arrow">
             <i className="bi bi-arrow-right-circle"></i>
           </Link>
-
           <div className="text-center">
-            <h1 className="fw-bold" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "46px", fontWeight: "700", color: "white" }}>
-              <span style={{ color: "red" }}>
-                {blog.title.charAt(0)}
-              </span>
+            <h1 className="section-title section-title-large">
+              <span className="first-letter">{blog.title.charAt(0)}</span>
               {blog.title.slice(1)}
             </h1>
-
-
             {/* Meta */}
             <div className="d-flex justify-content-center gap-3 mt-3 meta-box">
               <div className="d-flex align-items-center gap-2">

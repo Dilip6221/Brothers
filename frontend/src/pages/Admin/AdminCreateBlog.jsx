@@ -42,12 +42,8 @@ const AdminCreateBlog = () => {
         <AdminLayout>
             <div className="container py-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-
-                    {/* Title */}
-                    <h3 className="text-white mb-0">Create New Blog</h3>
-
-                    {/* Back Button */}
-                    <button type="button" className="btn btn-outline-light d-flex align-items-center gap-2" onClick={() => navigate("/admin/blogs")}>
+                    <h4 className="section-title"><span className="first-letter">C</span>reate Blog</h4>
+                    <button type="button" className="btn btn-outline-danger d-flex align-items-center gap-2" onClick={() => navigate("/admin/blogs")}>
                         <i className="bi bi-arrow-left"></i> Back
                     </button>
                 </div>
@@ -86,7 +82,19 @@ const AdminCreateBlog = () => {
                         <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter thumbnail" onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} />
                     </div>
 
-                    <TextEditor onChange={(value) => setForm({ ...form, content: value })} />
+                    <div className="col-12 mt-4">
+                        <h5 className="mb-2 border-bottom pb-2">✍️ Blog Content</h5>
+                        <div
+                            style={{
+                                border: "1px solid #444",
+                                borderRadius: "8px",
+                                padding: "10px",
+                                background: "#0f0f0f",
+                            }}
+                        >
+                            <TextEditor onChange={(value) => setForm({ ...form, content: value })} />
+                        </div>
+                    </div>
                     <div className="col-12">
                         <button type="submit" className="btn btn-primary">Preview</button>
                     </div>

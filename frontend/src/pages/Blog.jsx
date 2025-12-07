@@ -25,9 +25,9 @@ const Blog = () => {
         <div className="bg-black text-white">
             <div className="carbon-fiber py-5 mb-5">
                 <div className="container text-center">
-                    <h1 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "46px", fontWeight: "700" }}>
-                        <span style={{ color: "red" }}>L</span>atest Blog Updates
-                    </h1>
+                    <h3 className="section-title section-title-large">
+                        <span className="first-letter">L</span>atest Blog Updates
+                    </h3>
                     <p className="text-secondary fs-5 mt-2">
                         Automotive • Technology • Future Insights
                     </p>
