@@ -46,11 +46,8 @@ export const UserProvider = ({ children }) => {
         return { success: false, message: res.data.message };
       }
     } catch (err) {
-      console.error("Login error:", err.response?.data || err.message);
-      return {
-        success: false,
-        message: err.response?.data?.message || "Login failed",
-      };
+      console.error("Login error:",  err.message);
+      return {success: false, message: err.message || "Login failed"};
     } finally {
       setLoading(false);
     }

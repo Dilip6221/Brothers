@@ -2,27 +2,57 @@ import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AdminLayout from "./AdminLayout";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import TextEditor from "../../component/Admin/TextEditor";
+import { useEffect } from "react";
 
 const AdminCreateBlog = () => {
     const navigate = useNavigate();
 
+    const { id } = useParams(); // ID => update mode
     const [form, setForm] = useState({
         title: "",
         slug: "",
         category: "",
         tags: "",
-        status: "DRAFT",
+        metaTitle: "",
+        metaDescription: "",
+        // status: "DRAFT",
         thumbnail: "",
-        content: ""   // Editor data store hoga
+        content: ""
     });
+    const isEdit = Boolean(id);
+    const fetchBlog = async () => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/blog/blogs/${id}`);
+            if (res.data.success) {
+                const b = res.data.data;
+                setForm({
+                    title: b.title,
+                    slug: b.slug,
+                    category: b.category,
+                    tags: b.tags?.join(", "),
+                    metaTitle: b.metaTitle,
+                    metaDescription: b.metaDescription,
+                    // status: b.status,
+                    thumbnail: b.thumbnail,
+                    content: b.contentHTML
+                });
+            }
+        } catch {
+            toast.error("Failed to load blog");
+        }
+    };
+    useEffect(() => {
+        if (isEdit) fetchBlog();
+    }, [id]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const payload = {
                 ...form,
+                id: isEdit ? id : undefined,
                 tags: form.tags.split(",").map(tag => tag.trim())
             };
             const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/blog/admin/create-blog`, payload);
@@ -42,44 +72,47 @@ const AdminCreateBlog = () => {
         <AdminLayout>
             <div className="container py-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h4 className="section-title"><span className="first-letter">C</span>reate Blog</h4>
+                    <h4 className="section-title">
+                        <span className="first-letter">{isEdit ? "U" : "C"}</span>
+                        {isEdit ? "pdate Blog" : "reate Blog"}
+                    </h4>
                     <button type="button" className="btn btn-outline-danger d-flex align-items-center gap-2" onClick={() => navigate("/admin/blogs")}>
                         <i className="bi bi-arrow-left"></i> Back
                     </button>
                 </div>
-
                 <form className="row g-3 bg-dark rounded text-white p-3" onSubmit={handleSubmit}>
                     <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Blog title" onChange={(e) => setForm({ ...form, title: e.target.value })} />
+                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Blog title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+                    </div>
+                    
+                    <div className="col-md-4">
+                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
                     </div>
                     <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Slug" onChange={(e) => setForm({ ...form, slug: e.target.value })} />
-                    </div>
-                    <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter category" onChange={(e) => setForm({ ...form, category: e.target.value })} />
-                    </div>
-
-                    <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Metatitle" onChange={(e) => setForm({ ...form, metaTitle: e.target.value })} />
-                    </div>
-                    <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter MetaDescription" onChange={(e) => setForm({ ...form, metaDescription: e.target.value })} />
-                    </div>
-                    <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Tags" onChange={(e) => setForm({ ...form, tags: e.target.value })} />
+                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
                     </div>
 
                     <div className="col-md-4">
-                        <select className="form-control bg-dark text-white border-secondary shadow-none"
+                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Metatitle" value={form.metaTitle} onChange={(e) => setForm({ ...form, metaTitle: e.target.value })} />
+                    </div>
+                    <div className="col-md-4">
+                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter MetaDescription" value={form.metaDescription} onChange={(e) => setForm({ ...form, metaDescription: e.target.value })} />
+                    </div>
+                    <div className="col-md-4">
+                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Tags" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} />
+                    </div>
+
+                    {/* <div className="col-md-4">
+                        <select className="form-control bg-dark text-white border-secondary shadow-none" value={form.status}
                             onChange={(e) => setForm({ ...form, status: e.target.value })}>
                             <option value="DRAFT">Draft</option>
                             <option value="PUBLISHED">Published</option>
                             <option value="ARCHIVED">Archived</option>
                         </select>
-                    </div>
+                    </div> */}
 
                     <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter thumbnail" onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} />
+                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter thumbnail" value={form.thumbnail} onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} />
                     </div>
 
                     <div className="col-12 mt-4">
@@ -92,11 +125,11 @@ const AdminCreateBlog = () => {
                                 background: "#0f0f0f",
                             }}
                         >
-                            <TextEditor onChange={(value) => setForm({ ...form, content: value })} />
+                            <TextEditor value={form.content} onChange={(value) => setForm({ ...form, content: value })} />
                         </div>
                     </div>
                     <div className="col-12">
-                        <button type="submit" className="btn btn-primary">Preview</button>
+                        <button type="submit" className="btn btn-primary">Save </button>
                     </div>
                 </form>
             </div>

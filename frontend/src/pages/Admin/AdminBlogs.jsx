@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import AdminLayout from './AdminLayout';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 
 const AdminBlogs = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const [blogs, setBlogs] = useState([]);
     const [search, setSearch] = useState("");
@@ -23,9 +24,23 @@ const AdminBlogs = () => {
         window.addEventListener("ourBlogClick", handler);
         return () => window.removeEventListener("ourBlogClick", handler);
     }, []);
+    /* On change status */
+    const handleStatusChange = async (blogId, newStatus) => {
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/blog/admin/update-status`,{ id: blogId,newStatus });
+            if (res.data.success) {
+                toast.success(res.data.message);
+                fetchData();
+            } else {
+                toast.error(res.data.message);
+            }
+        } catch (err) {
+            toast.error("Failed to update status");
+        }
+    };
 
     // Filter blogs based on search input
-const filteredBlogs = (blogs || []).filter(item => {
+    const filteredBlogs = (blogs || []).filter(item => {
         if (!search.trim()) return true;
         const text = search.toLowerCase();
         return (
@@ -72,6 +87,7 @@ const filteredBlogs = (blogs || []).filter(item => {
                                     <th>Tags</th>
                                     <th>Status</th>
                                     <th>Created At</th>
+                                    <th className="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -84,17 +100,66 @@ const filteredBlogs = (blogs || []).filter(item => {
                                             <td>{item.category}</td>
                                             <td>{item.tags?.join(", ")}</td>
                                             <td>
-                                                {item.status === "DRAFT" && (
-                                                    <span className="badge bg-warning">Draft</span>
-                                                )}
-                                                {item.status === "PUBLISHED" && (
-                                                    <span className="badge bg-success text-dark">Published</span>
-                                                )}
-                                                {item.status === "ARCHIVED" && (
-                                                    <span className="badge bg-danger text-dark">Archived</span>
-                                                )}
+                                                <div className="d-flex align-items-center gap-1">
+                                                    <div className="dropdown">
+                                                        <button
+                                                            className={`btn btn-sm dropdown-toggle d-flex align-items-center justify-content-between`}
+                                                            type="button"
+                                                            id={`statusDropdown${item._id}`}
+                                                            data-bs-toggle="dropdown"
+                                                            aria-expanded="false"
+                                                            style={{
+                                                                backgroundColor:item.status === "DRAFT" ? "#ffc107": item.status === "PUBLISHED"? "#198754": "black",
+                                                                color: 'white',
+                                                                minWidth: "90px",
+                                                            }}
+                                                        >
+                                                            {item.status}
+                                                        </button>
+
+                                                        <ul className="dropdown-menu" aria-labelledby={`statusDropdown${item._id}`}>
+                                                            {item.status !== "DRAFT" && (
+                                                                <li>
+                                                                    <button
+                                                                        className="dropdown-item"
+                                                                        onClick={() => handleStatusChange(item._id, "DRAFT")}
+                                                                    >
+                                                                        DRAFT
+                                                                    </button>
+                                                                </li>
+                                                            )}
+                                                            {item.status !== "PUBLISHED" && (
+                                                                <li>
+                                                                    <button
+                                                                        className="dropdown-item"
+                                                                        onClick={() => handleStatusChange(item._id, "PUBLISHED")}
+                                                                    >
+                                                                        PUBLISHED
+                                                                    </button>
+                                                                </li>
+                                                            )}
+                                                            {item.status !== "ARCHIVED" && (
+                                                                <li>
+                                                                    <button
+                                                                        className="dropdown-item"
+                                                                        onClick={() => handleStatusChange(item._id, "ARCHIVED")}
+                                                                    >
+                                                                        ARCHIVED
+                                                                    </button>
+                                                                </li>
+                                                            )}
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td>{new Date(item.createdAt).toLocaleString()}</td>
+                                            <td className="text-center">
+                                                <i
+                                                    className="fa-solid fa-pen-to-square text-warning"
+                                                    style={{ cursor: "pointer", fontSize: "18px" }}
+                                                    onClick={() => navigate(`/admin/blogs/edit/${item._id}`)}
+                                                ></i>
+                                            </td>
                                         </tr>
                                     ))
                                 ) : (

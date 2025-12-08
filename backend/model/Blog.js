@@ -10,7 +10,8 @@ const blogSchema = new mongoose.Schema({
     tags: [{type: String}],// Search keywords (car paint, wrap, ppf)
     metaTitle: {type: String,default: ""},
     metaDescription: {type: String, default: ""},
-    status: {type: String,enum: ["DRAFT", "PUBLISHED", "ARCHIVED"],default: "PUBLISHED"},
+    status: {type: String,enum: ["DRAFT", "PUBLISHED", "ARCHIVED"],default: "DRAFT"},
+    isMailSent: { type: Boolean, default: false },
     createdAt: {type: Date,default: Date.now},
     updatedAt: {type: Date,default: null},
 });

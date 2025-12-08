@@ -44,7 +44,7 @@ const AdminLayout = ({ children }) => {
                   `nav-item nav-link ${isActive ? "active" : ""}`
                 }
               >
-                <i className="bi bi-clipboard-check-fill me-2"></i>Inquery
+                <i className="bi bi-clipboard-check-fill me-2"></i>Inquiry
               </NavLink>
               <NavLink
                 to="/admin/subscribe"
@@ -52,7 +52,7 @@ const AdminLayout = ({ children }) => {
                   `nav-item nav-link ${isActive ? "active" : ""}`
                 }
               >
-                <i className="bi bi-envelope-arrow-up-fill me-2"></i>Subscribe
+                <i className="bi bi-envelope-arrow-up-fill me-2"></i>Newsletters
               </NavLink>
               <NavLink to="/admin/blogs" onClick={() => window.dispatchEvent(new Event("ourBlogClick"))} className={({ isActive }) =>`nav-item nav-link ${isActive ? "active" : ""}`}>
                 <i className="fa fa-keyboard me-2"></i>Our Blogs

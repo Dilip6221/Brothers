@@ -4,20 +4,30 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const Dashboard = () => {
+const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [stats, setStats] = useState({});
+  const [stats, setStats] = useState({});// For storing dashboard stats
+  const [loading, setLoading] = useState(true);//For loading state
 
+  // Fetch dashboard stats from backend
   const fetchStats = async () => {
-    try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/admin/dashboard-stats`);
-      setStats(res.data.data);
-    } catch (e) {
-      toast.error("Dashboard fetch error:", e);
-    }
-  };
+  try {
+    setLoading(true);
+    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/admin/dashboard-stats`);
+    setStats(res.data.data);
+  } catch (e) {
+    toast.error("Dashboard fetch error:", e);
+  } finally {
+    setLoading(false);
+  }
+};
+const SmallLoader = () => (
+  <div className="spinner-border text-danger spinner-border-sm " role="status">
+  </div>
+);
 
-  useEffect(() => {
+
+  useEffect(() => {// Initial fetch
     fetchStats();
     const handler = () => fetchStats();
     window.addEventListener("dashboardClick", handler);
@@ -37,7 +47,7 @@ const Dashboard = () => {
                   <div className="text-white text-end position-relative">
                     <p className="mb-1">Total Employees</p>
                     <div className="d-flex align-items-center justify-content-end">
-                      <h5 className="mb-0 me-2">{stats.totalEmployees || 0}</h5>
+                      <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.totalEmployees}</h5>
                       <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/users")}>
                         View
                       </span>
@@ -55,7 +65,7 @@ const Dashboard = () => {
                   <div className="text-white text-end">
                     <p className="mb-1">Total Customers</p>
                     <div className="d-flex align-items-center justify-content-end">
-                      <h5 className="mb-0 me-2">{stats.totalCustomers || 0}</h5>
+                      <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.totalCustomers}</h5>
                       <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/users", { state: { openTab: "USER" } })}>
                         View
                       </span>
@@ -73,7 +83,7 @@ const Dashboard = () => {
                   <div className="text-white text-end">
                     <p className="mb-1">Total Staff</p>
                     <div className="d-flex align-items-center justify-content-end">
-                      <h5 className="mb-0 me-2">{stats.totalStaff || 0}</h5>
+                      <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.totalStaff}</h5>
                       <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/users", { state: { openTab: "STAFF" } })}>
                         View
                       </span>
@@ -91,7 +101,7 @@ const Dashboard = () => {
                   <div className="text-white text-end">
                     <p className="mb-1">Total Inquirys</p>
                     <div className="d-flex align-items-center justify-content-end">
-                      <h5 className="mb-0 me-2">{stats.totalInquiries || 0}</h5>
+                      <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.totalInquiries}</h5>
                       <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery")}>
                         View
                       </span>
@@ -110,7 +120,7 @@ const Dashboard = () => {
                 <div className="ms-3 text-white">
                   <p className="mb-2">Pending Inquirys</p>
                   <div className="d-flex align-items-center justify-content-end">
-                    <h5 className="mb-0 me-2">{stats.pendingInquiries || 0}</h5>
+                    <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.pendingInquiries}</h5>
                     <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery", { state: { openTab: "PENDING" } })}>
                       View
                     </span>
@@ -125,7 +135,7 @@ const Dashboard = () => {
                 <div className="ms-3 text-white">
                   <p className="mb-2">Completed Inquirys</p>
                   <div className="d-flex align-items-center justify-content-end">
-                    <h5 className="mb-0 me-2">{stats.completedInquiries || 0}</h5>
+                    <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.completedInquiries}</h5>
                     <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery", { state: { openTab: "COMPLETED" } })}>
                       View
                     </span>
@@ -141,7 +151,7 @@ const Dashboard = () => {
                 <div className="ms-3 text-white">
                   <p className="mb-2">Cancelled Inquirys</p>
                   <div className="d-flex align-items-center justify-content-end">
-                    <h5 className="mb-0 me-2">{stats.cancelledInquiries || 0}</h5>
+                    <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.cancelledInquiries}</h5>
                     <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/inquery", { state: { openTab: "COMPLETED" } })}>
                       View
                     </span>
@@ -156,9 +166,9 @@ const Dashboard = () => {
               <div className="bg-dark rounded d-flex align-items-center justify-content-between p-4 shadow-sm border border-secondary">
                 <i className="fa-solid fa-envelope-open-text fa-2x text-success"></i>
                 <div className="ms-3 text-white">
-                  <p className="mb-2">Subscribe User</p>
+                  <p className="mb-2">Subscribed User</p>
                   <div className="d-flex align-items-center justify-content-end">
-                    <h5 className="mb-0 me-2">{stats.subscribeUser || 0}</h5>
+                      <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.subscribeUser}</h5>
                     <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/subscribe", { state: { openTab: "SUBSCRIBE" } })}>
                       View
                     </span>
@@ -172,9 +182,9 @@ const Dashboard = () => {
               <div className="bg-dark rounded d-flex align-items-center justify-content-between p-4 shadow-sm border border-secondary">
                 <i className="fa-solid fa-user-slash fa-2x text-danger"></i>
                 <div className="ms-3 text-white">
-                  <p className="mb-2">Unubscribe User</p>
+                  <p className="mb-2">Unubscribed User</p>
                   <div className="d-flex align-items-center justify-content-end">
-                    <h5 className="mb-0 me-2">{stats.unsubscribeUser || 0}</h5>
+                    <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.unsubscribeUser}</h5>
                     <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/subscribe", { state: { openTab: "UNSUBSCRIBE" } })}>
                       View
                     </span>
@@ -211,4 +221,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default AdminDashboard

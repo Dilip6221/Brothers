@@ -1,26 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 
-const TextEditor = ({ onChange }) => {
+const TextEditor = ({ value, onChange }) => {
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-        },
-      }),
+      StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
       Link,
       Image
     ],
-    content: "<p>Write your blog content here...</p>",
+    content: value || "<p>Write your blog content here...</p>",
     onUpdate({ editor }) {
-      onChange(editor.getHTML()); 
+      onChange(editor.getHTML());
     }
   });
+
+  useEffect(() => {
+    if (editor && value) {
+      const currentHTML = editor.getHTML();
+      if (currentHTML !== value) {
+        editor.commands.setContent(value);
+      }
+    }
+  }, [value, editor]);
 
   if (!editor) return null;
 
@@ -31,50 +36,18 @@ const TextEditor = ({ onChange }) => {
 
   return (
     <div className="bg-dark text-white p-3 rounded mb-3">
-
       {/* Toolbar */}
       <div className="mb-2 d-flex flex-wrap gap-2">
-
-        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()}>
-          <b>B</b>
-        </button>
-
-        <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()}>
-          <i>I</i>
-        </button>
-
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
-          H1
-        </button>
-
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
-          H2
-        </button>
-
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
-          H3
-        </button>
-
-        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()}>
-          • List
-        </button>
-
-        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()}>
-          1. List
-        </button>
-
-        <button type="button" onClick={addImage}>
-          Image
-        </button>
-
-        <button type="button" onClick={() => editor.chain().focus().toggleCodeBlock().run()}>
-          Code
-        </button>
-
-        <button type="button" onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}>
-          Clear
-        </button>
-
+        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()}><b>B</b></button>
+        <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()}><i>I</i></button>
+        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>H1</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>H3</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()}>• List</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()}>1. List</button>
+        <button type="button" onClick={addImage}>Image</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleCodeBlock().run()}>Code</button>
+        <button type="button" onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}>Clear</button>
       </div>
 
       {/* Editor */}
@@ -88,7 +61,6 @@ const TextEditor = ({ onChange }) => {
           border: "1px solid #333"
         }} 
       />
-
     </div>
   );
 };
