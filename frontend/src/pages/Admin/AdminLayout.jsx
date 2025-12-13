@@ -1,4 +1,4 @@
-import {React, useContext } from "react";
+import { React, useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 
@@ -12,8 +12,10 @@ const AdminLayout = ({ children }) => {
         <div className="sidebar pe-4 pb-3 bg-dark">
           <nav className="navbar navbar-dark">
             <NavLink to="/admin/dashboard" className="navbar-brand mx-4 mb-3">
-              <h3 className="text-danger">
-                <i className="fa fa-user-edit me-2"></i>BROTHER'S
+
+              <h3 className="section-title mb-1 mt-1">
+                <span className="first-letter">B</span>
+                ROTHER'S
               </h3>
             </NavLink>
             <div className="navbar-nav w-100">

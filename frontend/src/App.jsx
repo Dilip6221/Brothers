@@ -18,6 +18,7 @@ import AdminCreateBlog from './pages/Admin/AdminCreateBlog.jsx'
 import Blog from './pages/Blog.jsx'
 import BlogView from './pages/BlogView.jsx'
 import AdminDashboard from './pages/Admin/AdminDashboard.jsx'
+import Contact from './pages/Contact.jsx'
 
 const App = () => {
   const location = useLocation();
@@ -58,6 +59,7 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/contact-us" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<BlogView />} />
         <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />

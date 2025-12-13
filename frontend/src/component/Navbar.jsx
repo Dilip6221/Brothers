@@ -291,6 +291,9 @@ const Navbar = () => {
                     <NavLink to="/blog" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Blog</NavLink>
                   </li>
                   <li className="nav-item">
+                    <NavLink to="/contact-us" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Contact</NavLink>
+                  </li>
+                  <li className="nav-item">
                     <NavLink to="/stores" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Our Stores</NavLink>
                   </li>
                   <li className="nav-item px-5 mt-2">
@@ -489,7 +492,7 @@ const Navbar = () => {
                       value={serviceEnquery.carBrand || ""}
                       onChange={handleEnquiryInputChange}
                     >
-                      <option value="" disabled>Car Manufacturer*</option>
+                      <option value="" >Car Manufacturer*</option>
                       <option value="Hyundai">Hyundai</option>
                       <option value="BMW">BMW</option>
                       <option value="Suzuki">Suzuki</option>
@@ -508,7 +511,7 @@ const Navbar = () => {
                       value={serviceEnquery.carModel || ""}
                       onChange={handleEnquiryInputChange}
                     >
-                      <option value="" disabled>Model Name*</option>
+                      <option value="" >Model Name*</option>
                       <option value="Creta">Creta</option>
                       <option value="i20">i20</option>
                     </select>

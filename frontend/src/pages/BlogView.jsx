@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 const BlogView = () => {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
+  const [loading, setLoading] = useState(true);//For loading state
 
   useEffect(() => {
     fetchBlog();
@@ -13,16 +14,28 @@ const BlogView = () => {
 
   const fetchBlog = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/blog/blogs/${slug}`
-      );
+      setLoading(true);
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/blog/blogs/${slug}`);
       setBlog(res.data.data);
     } catch (err) {
       toast.error("Error fetching Blog data");
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (!blog) return <h2 className="text-white text-center py-5">Loading...</h2>;
+ const SmallLoader = () => (
+  <div 
+    className="d-flex justify-content-center bg-black align-items-center" 
+    style={{ height: "50vh" }}
+  >
+    <div className="spinner-border text-danger" role="status" style={{ width: "3rem", height: "3rem" }}>
+      <span className="visually-hidden">Loading...</span>
+    </div>
+  </div>
+);
+
+if (loading) return <SmallLoader />;
 
   return (
     <div className="bg-black text-white pb-5">
