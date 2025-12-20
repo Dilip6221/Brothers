@@ -32,13 +32,13 @@ const App = () => {
   //  Simple Admin Route Guard
   const isAdminRoute = location.pathname.toLowerCase().startsWith("/admin");
 
-  if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-        <div className="spinner-border text-warning"></div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+  //       <div className="spinner-border text-warning"></div>
+  //     </div>
+  //   );
+  // }
 
   //  Admin route but user not logged in
   if (isAdminRoute && !user) {

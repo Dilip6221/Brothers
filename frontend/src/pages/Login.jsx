@@ -17,6 +17,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [number, setNumber] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const autoLogin = async () => {
@@ -35,29 +36,37 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isRegister) {
-      const res = await register(name, email, password, number);
-      if (!res.success) {
-        toast.error(res.message);
+    setLoading(true);
+
+    try {
+      if (isRegister) {
+        const res = await register(name, email, password, number);
+        if (!res.success) {
+          toast.error(res.message);
+        } else {
+          toast.success(res.message);
+          setIsRegister(false);
+          setName('');
+          setEmail('');
+          setPassword('');
+          setNumber('');
+          navigate("/login");
+        }
       } else {
-        toast.success(res.message);
-        setIsRegister(false);
-        setName('');
-        setEmail('');
-        setPassword('');
-        setNumber('');
-        navigate("/login");
+        const res = await login(email, password);
+        if (!res.success) {
+          toast.error(res.message);
+        } else {
+          toast.success(res.message);
+          setEmail('');
+          setPassword('');
+          navigate("/");
+        }
       }
-    } else {
-      const res = await login(email, password);
-      if (!res.success) {
-        toast.error(res.message)
-      } else {
-        toast.success(res.message)
-        setEmail('');
-        setPassword('');
-        navigate("/");
-      }
+    } catch (err) {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
   const handleForgetPassword = async (e) => {
@@ -183,16 +192,17 @@ const Login = () => {
               ></i>
             </div>
 
-            <div className="d-grid mb-3">
-              <button
-                type="submit"
-                className="user-profile w-100 "
-              >
-                <div className="user-profile-inner">
-                  {isRegister ? "Register" : "Login"}
-                </div>
-              </button>
-            </div>
+            <button type="submit" className="user-profile w-100" disabled={loading}>
+              <div className="user-profile-inner d-flex align-items-center justify-content-center gap-2">
+                {loading && (
+                  <span className="spinner-border spinner-border-sm text-light" role="status" aria-hidden="true"></span>
+                )}
+                {loading
+                  ? (isRegister ? "Registering..." : "Logging In...")
+                  : (isRegister ? "Register" : "Login")}
+              </div>
+            </button>
+
             {!isRegister && (
               <span
                 onClick={() => setShowForgetModal(true)}

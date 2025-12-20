@@ -29,7 +29,7 @@ app.use('/api/subscribe', SubscribeRoute);
 app.use('/api/blog', BlogRoute);
 
 app.get('/', (req, res) => {
-    res.send('hello wordle');
+    res.send('Welcome To Brothers');
 });
 
 /* Port running */

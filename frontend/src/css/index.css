@@ -37,18 +37,22 @@ html, body {
   transition: width 0.3s ease;
 }
 .cool-link:hover {
-  color: #d6a71b;
+  color: #d6a71b !important;
 }
 .cool-link:hover::after {
   width: 100%;
   background: #e25205;
+}
+.cool-link:visited,
+.cool-link:active,
+.cool-link:focus {
+  color: white !important;
 }
 .cool-link.active {
   color: #ffc107 !important;
 }
 .cool-link.active::after {
   width: 100%;
-  background: #ffc107;
 }
 
 .social-icon {

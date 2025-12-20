@@ -324,14 +324,10 @@ const Navbar = () => {
           >
             {/* FORM START */}
             <form onSubmit={handleResetSubmit}>
-              <div
-                className="p-3 pb-1 border-0"
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}
-              >
-                <h5 className="text-white fw-bold d-flex align-items-center m-0">
-                  <i className="bi bi-shield-check me-2 text-warning fs-4"></i>
-                  Reset Password
-                </h5>
+              <div className="p-3 pb-1 border-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                <h4 className="text-white d-flex  m-0" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "23px", fontWeight: "700" }}><i className="bi bi-shield-check me-2"></i>
+                  <span style={{ color: "red" }}>R</span>eset Password
+                </h4>
 
                 <button
                   type="button"
@@ -389,8 +385,7 @@ const Navbar = () => {
               </div>
 
               <div className="p-3 pt-0">
-                <button type="submit" className="py-2 w-100 btn btn-outline-danger text-white" data-mdb-ripple-init data-mdb-ripple-color="dark">Change Password</button>
-
+                <button type="submit" className="py-2 w-100 btn btn-outline-danger " data-mdb-ripple-init data-mdb-ripple-color="dark">Change Password</button>
               </div>
             </form>
             {/* FORM END */}
@@ -417,7 +412,7 @@ const Navbar = () => {
                 className="p-3 pb-1 border-0"
                 style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}
               >
-                <h4 className="text-white  d-flex align-items-center m-0" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "28px", fontWeight: "700" }}><i className="bi-tools me-2 fs-4"></i>
+                <h4 className="text-white  d-flex align-items-center mb-2 m-0" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "25px", fontWeight: "700" }}><i className="bi-tools me-2 fs-4"></i>
                   <span style={{ color: "red" }}>S</span>ervice Enquiry
                 </h4>
                 <button
@@ -581,7 +576,7 @@ const Navbar = () => {
               </div>
 
               <div className="p-3 pt-0 justify-content-end d-flex">
-                <button type="submit" className="py-2 btn btn-outline-danger text-white" data-mdb-ripple-init data-mdb-ripple-color="dark">Submit Enquiry</button>
+                <button type="submit" className="btn btn-outline-danger d-flex align-items-center gap-2 px-3" data-mdb-ripple-init data-mdb-ripple-color="dark">Submit Enquiry</button>
               </div>
             </form>
             {/* FORM END */}
