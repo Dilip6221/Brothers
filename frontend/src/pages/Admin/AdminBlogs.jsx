@@ -64,7 +64,7 @@ const AdminBlogs = () => {
                             <div className="input-group" style={{ width: "200px" }}>
                                 <input
                                     type="search"
-                                    className="form-control bg-dark text-white border-danger"
+                                    className="form-control bg-dark text-white border-white"
                                     name="text"
                                     placeholder="Search..."
                                     value={search}
