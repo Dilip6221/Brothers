@@ -16,7 +16,7 @@ const AdminInquery = () => {
 
     const fetchData = async () => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/service/admin/admin-inquery-data`);
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/inquery/admin/admin-inquery-data`);
             setInqueries(res.data.data);
         } catch (error) {
             toast.error("Error fetching inquiry data");
@@ -56,7 +56,7 @@ const AdminInquery = () => {
     });;
     const viewInquiry = async (id) => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/service/admin/inquiry-details`, { id });
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/inquery/admin/inquiry-details`, { id });
             if (res.data.success) {
                 setSelectedInquiry(res.data.data);
                 setShowModal(true);
@@ -101,7 +101,7 @@ const AdminInquery = () => {
                         <div className="d-flex align-items-center gap-3">
                             <button
                                 className="btn btn-outline-danger d-flex align-items-center p-2"
-                                onClick={() => downloadCSV("/service/admin/inquiry-export", `${filter.toLowerCase()}-inquiry`, { filter })}
+                                onClick={() => downloadCSV("/inquery/admin/inquiry-export", `${filter.toLowerCase()}-inquiry`, { filter })}
                             >
                                 <i className="fa fa-download"></i>
                             </button>

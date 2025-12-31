@@ -112,7 +112,7 @@ const Navbar = () => {
   const handleEnquirySubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/service/service-inquiry`, {
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/inquery/service-inquiry`, {
         name: serviceEnquery.name,
         phone: serviceEnquery.phone,
         email: serviceEnquery.email,

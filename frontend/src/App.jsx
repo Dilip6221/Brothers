@@ -19,10 +19,11 @@ import Blog from './pages/Blog.jsx'
 import BlogView from './pages/BlogView.jsx'
 import AdminDashboard from './pages/Admin/AdminDashboard.jsx'
 import Contact from './pages/Contact.jsx'
+import AdminServiceList from './pages/Admin/AdminServiceList.jsx'
 
 const App = () => {
   const location = useLocation();
-  const { user, loading } = useContext(UserContext);
+  const { user, authLoading } = useContext(UserContext);
 
   const hideNavbarRoutes = ["/login", "/forget-password", "/admin"];
   const shouldHideNavbar = hideNavbarRoutes.some((route) =>
@@ -32,13 +33,13 @@ const App = () => {
   //  Simple Admin Route Guard
   const isAdminRoute = location.pathname.toLowerCase().startsWith("/admin");
 
-  // if (loading) {
-  //   return (
-  //     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-  //       <div className="spinner-border text-warning"></div>
-  //     </div>
-  //   );
-  // }
+  if (authLoading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+        <div className="spinner-border text-warning"></div>
+      </div>
+    );
+  }
 
   //  Admin route but user not logged in
   if (isAdminRoute && !user) {
@@ -69,6 +70,7 @@ const App = () => {
         {/*  ALL ADMIN ROUTES ARE NOW PROTECTED AUTOMATICALLY */}
         <Route path="/admin/*" element={<AdminLayout />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/services" element={<AdminServiceList />} />
         <Route path="/admin/users" element={<UserList />} />
         <Route path="/admin/inquery" element={<AdminInquery />} />
         <Route path="/admin/subscribe" element={<AdminSubscribe />} />

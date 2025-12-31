@@ -106,22 +106,7 @@ const AdminLayout = ({ children }) => {
                   <span className="d-none d-lg-inline-flex">Message</span>
                 </a>
 
-                <div className="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
-                  <a href="#" className="dropdown-item">
-                    <div className="d-flex align-items-center">
-                      <img
-                        className="rounded-circle"
-                        src="img/user.jpg"
-                        alt=""
-                        style={{ width: "40px", height: "40px" }}
-                      />
-                      <div className="ms-2">
-                        <h6 className="fw-normal mb-0">Jhon sent you a message</h6>
-                        <small>15 minutes ago</small>
-                      </div>
-                    </div>
-                  </a>
-                </div>
+                
               </div>
               <div className="nav-item dropdown">
                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
@@ -139,7 +124,6 @@ const AdminLayout = ({ children }) => {
 
           </nav>
 
-          {/* RENDER CHILD COMPONENTS */}
           <div className="p-4">
             {children}
           </div>

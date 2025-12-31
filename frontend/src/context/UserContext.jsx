@@ -11,7 +11,7 @@ export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchUser = async () => {
@@ -25,7 +25,7 @@ export const UserProvider = ({ children }) => {
     } catch (error) {
       setUser(null);
     } finally {
-      setLoading(false);
+      setAuthLoading(false);
     }
   };
   // 🔹 On initial load, check if a cookie session is valid
@@ -35,7 +35,6 @@ export const UserProvider = ({ children }) => {
 
   // 🔹 Login handler
   const login = async (email, password) => {
-    setLoading(true);
     try {
       const res = await axios.post("/user/login", { email, password });
       if (res.data.success) {
@@ -48,14 +47,11 @@ export const UserProvider = ({ children }) => {
     } catch (err) {
       console.error("Login error:",  err.message);
       return {success: false, message: err.message || "Login failed"};
-    } finally {
-      setLoading(false);
     }
   };
 
   // 🔹 Register handler
   const register = async (name, email, password, phone) => {
-    setLoading(true);
     try {
       const res = await axios.post("/user/register", {
         name,
@@ -75,9 +71,7 @@ export const UserProvider = ({ children }) => {
         success: false,
         message: err.response?.data?.message || "Registration failed",
       };
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   const logout = async () => {
@@ -120,8 +114,8 @@ export const UserProvider = ({ children }) => {
     setUser,
     token,
     setToken,
-    loading,
-    setLoading,
+    authLoading,
+    setAuthLoading,
     login,
     register,
     logout,
