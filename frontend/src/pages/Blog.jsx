@@ -1,10 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext.jsx";
+import toast from "react-hot-toast";
 
 const Blog = () => {
-    const [blogs, setBlogs] = useState([]);
-    useEffect(() => {//Refresh blog list on component mount
+    const { user } = useContext(UserContext);//find login user
+
+    const [blogs, setBlogs] = useState([]); // Store published blogs
+    const [animatingId, setAnimatingId] = useState(null); // For like animation
+    const navigate = useNavigate();
+
+    useEffect(() => {
         fetchBlogs();
     }, []);
 
@@ -16,35 +23,88 @@ const Blog = () => {
             );
             setBlogs(publishedBlogs);
         } catch (err) {
-            console.log(err);
-            (err);
+            console.error(err);
+            toast.error("Error fetching blogs");
         }
     };
+
+    /* ================= SHARE ================= */
     const shareMyBlog = async (blog) => {
         const url = `${window.location.origin}/blog/${blog.slug}`;
-        if (navigator.canShare && navigator.canShare({ files: [] })) {
-            const response = await fetch(blog.thumbnail);
-            const blob = await response.blob();
-            const file = new File([blob], "thumbnail.jpg", { type: blob.type });
+        try {
+            if (navigator.canShare && navigator.canShare({ files: [] })) {
+                const response = await fetch(blog.thumbnail);
+                const blob = await response.blob();
+                const file = new File([blob], "thumbnail.jpg", {
+                    type: blob.type,
+                });
 
-            navigator.share({
-                title: blog.title,
-                text: blog.metaDescription,
-                url: url,
-                files: [file],
-            }).catch((err) => console.log(err));
-
-        } else if (navigator.share) {
-            navigator.share({
-                title: blog.title,
-                text: blog.metaDescription,
-                url: url,
-            }).catch((err) => console.log(err));
-        } else {
-            alert("Sharing not supported in your browser.");
+                await navigator.share({
+                    title: blog.title,
+                    text: blog.metaDescription,
+                    url,
+                    files: [file],
+                });
+            } else if (navigator.share) {
+                await navigator.share({
+                    title: blog.title,
+                    text: blog.metaDescription,
+                    url,
+                });
+            } else {
+                console.log("Web Share API not supported in this browser.");
+                await navigator.clipboard.writeText(url);
+                toast.success("Blog URL copied to clipboard!");
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Error sharing the blog");
         }
     };
 
+    /* ================= LIKE TOGGLE ================= */
+    const handleLikeToggle = async (blogId) => {
+        if (!user) {
+            toast.error("Login required to like");
+            navigate("/login");
+            return;
+        }
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/blog/like-toggle/${blogId}`, { userId: user._id });
+            if (!res.data.success) {
+                toast.error(res.data.message);
+                return;
+            }
+            setBlogs((prev) =>
+                prev.map((blog) => {
+                    if (blog._id !== blogId) return blog;
+                    const likedBy = blog.likedBy || [];
+                    const alreadyLiked = likedBy.includes(user._id);
+                    return {
+                        ...blog,
+                        likes: res.data.likes,
+                        likedBy: alreadyLiked
+                            ? likedBy.filter((id) => id !== user._id)
+                            : [...likedBy, user._id],
+                    };
+                })
+            );
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Error toggling like");
+        }
+    };
+
+    /* ================= ANIMATION ================= */
+    const triggerLikeAnimation = useCallback((blogId) => {
+        setAnimatingId(blogId);
+        setTimeout(() => setAnimatingId(null), 700);
+    }, []);
+
+    /* ================= LIKE + ANIMATE ================= */
+    const likeAndAnimate = (blogId) => {
+        handleLikeToggle(blogId);
+        triggerLikeAnimation(blogId);
+    };
 
     return (
         <div className="bg-black text-white">
@@ -59,8 +119,6 @@ const Blog = () => {
                 </div>
             </div>
 
-
-            {/* ================= BLOG CARDS ================= */}
             <div className="container pb-5">
                 <div className="row">
                     {blogs.length === 0 ? (
@@ -69,84 +127,79 @@ const Blog = () => {
                                 <div className="empty-icon">
                                     <i className="bi bi-journal-x"></i>
                                 </div>
-
                                 <h3 className="mt-3 empty-title">No Blogs Available</h3>
-
                                 <p className="empty-text">
-                                    We're preparing something exciting for you.<br />
+                                    We're preparing something exciting for you.
+                                    <br />
                                     Check back soon for fresh automotive insights!
                                 </p>
-                                <Link
-                                    to="/"
-                                    className="btn mt-2"
-                                    style={{
-                                        background: "#ff6600",
-                                        border: "none",
-                                        fontWeight: "500",
-                                    }}
-                                >
+                                <Link to="/" className="btn mt-2" style={{background: "#ff6600",fontWeight: 500,}}>
                                     Go to Homepage →
                                 </Link>
                             </div>
                         </div>
                     ) : (
-                        blogs.map((blog) => (
-                            <div
-                                className="col-md-3 mb-4 d-flex"
-                                key={blog._id}
-                                onClick={(e) => {
-                                        window.location.href = `/blog/${blog.slug}`;
-                                }}
-                                style={{ cursor: "pointer" }}
-                            >
-                                <div className="blog-card">
-                                    <img src={blog.thumbnail} alt={blog.title} />
-                                    <div className="p-3">
-                                        <span className="blog-category">{blog.category}</span>
-                                        <h5 className="blog-title mt-3">{blog.title}</h5>
-                                        <p
-                                            className="text-secondary small"
-                                            style={{ height: "60px", overflow: "hidden" }}
-                                        >
-                                            {blog.metaDescription}
-                                        </p>
-                                        <div className="d-flex mt-2 gap-2">
-                                            <Link
-                                                to={`/blog/${blog.slug}`}
-                                                className="btn btn-sm"
-                                                style={{background: "#ff6600", fontWeight: "600", flex: "1"}}
-                                            >
-                                                Read More →
-                                            </Link>
+                        blogs.map((blog) => {
+                            const isLiked = blog.likedBy?.includes(user?._id);
+                            return (
+                                <div className="col-md-3 mb-4 d-flex" key={blog._id}>
+                                    <div className="blog-card">
+                                        <div className="blog-image-wrapper" onDoubleClick={() => likeAndAnimate(blog._id)}>
+                                            <img src={blog.thumbnail} alt={blog.title} />
+                                            {animatingId === blog._id && (<i className="bi bi-heart-fill double-like-heart"></i>)}
 
-                                            <button
-                                                className="btn btn-sm share-btn"
-                                                style={{
-                                                    background: "#ff6600",
-                                                    fontWeight: "600",
-                                                    width: "40px",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation(); // card click ko rokta hai
-                                                    shareMyBlog(blog);
-                                                }}
-                                            >
-                                                <i className="bi bi-share-fill"></i>
-                                            </button>
+                                            <span className="blog-category badge-on-image">
+                                                {blog.category}
+                                            </span>
+                                        </div>
+
+                                        {/* CONTENT */}
+                                        <div className="blog-content-wrapper">
+                                            <div className="blog-meta-inline">
+                                                <span>
+                                                    <i className="bi bi-clock"></i>{" "}
+                                                    {blog.readTime} min
+                                                </span>
+                                                <span>
+                                                    <i className="bi bi-person"></i>{" "}
+                                                    BROTHER'S
+                                                </span>
+                                            </div>
+
+                                            <h5 className="blog-title">
+                                                {blog.title}
+                                            </h5>
+
+                                            <div className="blog-actions">
+                                                <Link to={`/blog/${blog.slug}`} className="btn btn-sm" style={{ background: "#ff6600", fontWeight: 600 }}>
+                                                    Read More →
+                                                </Link>
+                                                <button className="btn btn-sm share-btn" style={{background: "#ff6600"}} onClick={(e) => {e.stopPropagation();shareMyBlog(blog);}}>
+                                                    <i className="bi bi-share-fill"></i>
+                                                </button>
+                                                <button className={`like-btn ${isLiked ? "liked" : ""}`}
+                                                    onClick={(e) => {e.stopPropagation();likeAndAnimate(blog._id);}}>   
+                                                    <i className={` bi ${isLiked ? " bi-heart-fill" : "bi-heart"}`}></i>
+                                                    <span>{blog.likes}</span>
+                                                </button>
+                                                 {/* <Link
+                                                    to={`/blog/${blog.slug}`}
+                                                    className="comment-btn"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    <i className="bi bi-chat-dots "></i>
+                                                    <span>{blog.commentCount || 0}</span>
+                                                </Link> */}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
             </div>
-
         </div>
-
     );
 };
 

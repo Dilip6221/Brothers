@@ -12,8 +12,23 @@ const blogSchema = new mongoose.Schema({
     metaDescription: {type: String, default: ""},
     status: {type: String,enum: ["DRAFT", "PUBLISHED", "ARCHIVED"],default: "DRAFT"},
     isMailSent: { type: Boolean, default: false },
-    createdAt: {type: Date,default: Date.now},
-    updatedAt: {type: Date,default: null},
+    readTime: {type: Number,default: 0}, // in minutes
+    likes: { type: Number, default: 0 },
+    likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    // commentCount: { type: Number, default: 0 }
+}, {
+    timestamps: true
+});
+
+blogSchema.pre("save", function (next) {
+    if (!this.isModified("contentHTML")) return next();
+    const text = this.contentHTML
+        .replace(/<[^>]*>/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    const words = text.split(" ").length;
+    this.readTime = Math.max(1, Math.ceil(words / 200));
+    next();
 });
 
 const Blog = mongoose.model('Blog', blogSchema);

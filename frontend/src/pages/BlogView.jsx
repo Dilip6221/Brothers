@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link,useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -7,6 +7,7 @@ const BlogView = () => {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);//For loading state
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchBlog();
@@ -16,6 +17,12 @@ const BlogView = () => {
     try {
       setLoading(true);
       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/blog/blogs/${slug}`);
+      if (!res.data.success) {
+        toast.error(res.data.message);
+        setLoading(false);
+        navigate("/blog");
+        return;
+      }
       setBlog(res.data.data);
     } catch (err) {
       toast.error("Error fetching Blog data");
@@ -45,7 +52,7 @@ if (loading) return <SmallLoader />;
             <i className="bi bi-arrow-right-circle"></i>
           </Link>
           <div className="text-center">
-            <h1 className="section-title section-title-large">
+            <h1 className="section-title section-title-small">
               <span className="first-letter">{blog.title.charAt(0)}</span>
               {blog.title.slice(1)}
             </h1>

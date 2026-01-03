@@ -91,7 +91,7 @@ const loginUser = async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: 15 * 24 * 60 * 60 * 1000,
+            maxAge: 1000 * 60 * 60 * 24 * 365,// set cookie for 1 year
         });
         // await sendWelcomeMail(email);
 

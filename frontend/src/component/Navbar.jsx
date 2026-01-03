@@ -184,7 +184,7 @@ const Navbar = () => {
               )}
               {!user ? (
                 <li className="nav-item px-2">
-                  <Link className="btn btn-warning btn-sm text-dark fw-semibold" to="/login">
+                  <Link className="btn btn-outline-warning btn-sm px-3 d-flex align-items-center" target="_blank" rel="noopener noreferrer" to="/login">
                     <i className="bi bi-box-arrow-in-right me-1"></i> Login
                   </Link>
                 </li>

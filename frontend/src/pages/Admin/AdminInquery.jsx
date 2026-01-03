@@ -93,7 +93,7 @@ const AdminInquery = () => {
 
 
                 <div className="bg-dark rounded p-4">
-                    <h4 className="text-white border-bottom pb-2 mb-5 d-flex justify-content-between align-items-center">
+                    <h4 className="text-white border-bottom pb-2 mb-3 d-flex justify-content-between align-items-center">
                         <span>
                             <i className="bi bi-clipboard me-2"></i>
                             Customer Inquiry
@@ -119,7 +119,7 @@ const AdminInquery = () => {
                     </h4>
                     <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
                         <table className="table table-dark table-hover table-bordered align-middle">
-                            <thead className="table-secondary text-dark">
+                            <thead className="table-secondary text-dark sticky-top" >
                                 <tr>
                                     <th>#</th>
                                     <th>Full Name</th>

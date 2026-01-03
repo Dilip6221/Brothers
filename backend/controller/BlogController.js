@@ -60,7 +60,7 @@ const creteAdminBlog = async (req, res) => {
 /* router.post("/admin/blogs", displayBlog); */
 const displayBlog = async (req, res) => {
     try {
-        const blogs = await Blog.find().select('title slug category thumbnail tags status createdAt').sort({ createdAt: -1 });
+        const blogs = await Blog.find().select('id title slug category metaDescription views likedBy likes readTime thumbnail tags status createdAt').sort({ createdAt: -1 });
         res.json({ success: true, data: blogs });
     } catch (error) {
         console.log(error);
@@ -135,4 +135,31 @@ const changeBlogStatus = async (req, res) => {
     }
 };
 
-module.exports = { creteAdminBlog, displayBlog, showSlugWiseBlog, changeBlogStatus };
+// Like and unlike blog for platform users
+// POST /api/blog/like-toggle/:id
+const likeBlogToggle = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { userId } = req.body;
+        const blog = await Blog.findOne({ _id: id });
+        if (!blog) return res.json({ success: false, message: "Blog not found" });
+        let liked = false;
+        if (blog.likedBy.includes(userId)) {
+            blog.likes -= 1;
+            blog.likedBy = blog.likedBy.filter(id => id.toString() !== userId);
+            liked = false;
+        } else {
+            blog.likes += 1;
+            blog.likedBy.push(userId);
+            liked = true;
+        }
+        await blog.save();
+        res.json({ success: true, likes: blog.likes, liked });
+    } catch (err) {
+        console.log(err);
+        res.json({ success: false, message: "Something went wrong when toggling like" });
+    }
+};
+
+
+module.exports = { creteAdminBlog, displayBlog, showSlugWiseBlog, changeBlogStatus, likeBlogToggle };

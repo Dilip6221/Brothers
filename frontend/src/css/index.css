@@ -236,6 +236,8 @@ body.modal-open {
     border: 1px solid rgba(255,255,255,0.06);
     overflow: hidden;
     position: relative;
+    display: flex;
+    flex-direction: column;
     height: 100%;
     transition: 0.35s ease;
 }
@@ -246,55 +248,167 @@ body.modal-open {
     border-radius: 18px;
     padding: 1px;
     background: linear-gradient(135deg, #ff6600, #ff2200);
-    -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box, 
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
-            mask-composite: exclude;
+    mask-composite: exclude;
     opacity: 0.35;
     pointer-events: none;
-}
-.blog-card .btn {
-    margin-top: auto;
 }
 
 .blog-card:hover {
     transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 0 22px rgba(255, 90, 0, 0.25);
+    box-shadow: 0 0 22px rgba(255, 89, 0, 0.305);
 }
 
-.blog-card img {
+/* IMAGE + BADGE */
+.blog-image-wrapper {
+    position: relative;
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+}
+.blog-image-wrapper img {
     width: 100%;
-    height: 180px;
+    height: 190px;
     object-fit: cover;
+    display: block;
 }
 
-.blog-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 22px;
-    font-weight: 700;
+.double-like-heart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  font-size: 80px;
+  color: #ff2d55;
+  opacity: 0;
+  pointer-events: none;
+  animation: heartZoom 0.8s ease-in-out forwards;
+  text-shadow: 0 0 25px rgba(255, 45, 85, 0.8);
 }
-.blog-category {
+
+@keyframes heartZoom {
+  0% {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+  }
+  30% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0;
+  }
+}
+.like-btn {
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: white;
+}
+
+.like-btn i {
+  font-size: 20px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.like-btn.liked i {
+  color: #ff2d55;
+  animation: heartPop 0.35s ease-in-out;
+  text-shadow: 0 0 10px rgba(255, 45, 85, 0.6);
+}
+
+/* animation */
+@keyframes heartPop {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.4); }
+  60%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+/* hover luxury feel */
+.like-btn:hover i {
+  transform: scale(1.1);
+}
+/* .comment-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.comment-btn:hover {
+    background: rgba(255,102,0,0.15);
+    color: #ff6600;
+}
+
+.comment-btn i {
+    font-size: 16px;
+} */
+
+.badge-on-image {
+    position: absolute;
+    top: 7px;
+    left: 7px;
     background: #ff6600;
     color: #000;
-    padding: 4px 12px;
-    border-radius: 20px;
+    padding: 1px 8px;
+    border-radius: 11px;
     font-size: 12px;
     font-weight: 700;
+    z-index: 5;
 }
-/*END: For a all blog view */
 
-/* For a view particular blog */
-.blog-content p {
-  margin-bottom: 18px;
-  color: #cccccc;
+/* CONTENT WRAPPER */
+.blog-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto; /* allows content to grow and push buttons down */
+    padding: 1rem;
 }
-.blog-content h2, 
-.blog-content h3 {
-  margin-top: 30px;
-  font-weight: 700;
-  color: #fff;
-  font-family: 'Orbitron', sans-serif;
+
+/* META ABOVE TITLE */
+.blog-meta-inline {
+    display: flex;
+    gap: 12px;
+     opacity: 0.6;
+    font-size: 13px;
+    color: #ccc;
+    margin-bottom: 5px;
+}
+
+/* TITLE */
+.blog-title {
+    font: 600 22px 'Barlow Condensed', sans-serif;
+    /* margin: 10px ; */
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.blog-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: auto;
+}
+.blog-actions .btn:first-child {
+    /* flex: 0.5 0.5 auto; */
+    flex: 1 auto;
+}
+.blog-actions .share-btn {
+    flex: 0 0 40px;
 }
 /*END: For a view particular blog */
 .back-arrow {
@@ -308,7 +422,7 @@ body.modal-open {
 }
 
 .back-arrow:hover {
-    transform: translateX(-5px);
+    transform: translateX(-11px);
     opacity: 0.8;
 }
 .empty-blog-box {

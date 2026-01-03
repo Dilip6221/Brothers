@@ -11,8 +11,7 @@ import Footer from "./component/Footer.jsx";
 import ServiceIcon from "./component/ServiceIcon.jsx";
 import AdminLayout from './pages/Admin/AdminLayout.jsx'
 import AdminInquery from './pages/Admin/AdminInquery.jsx'
-import UserList from './pages/Admin/UserList.jsx'
-import AdminSubscribe from './pages/Admin/AdminSubscribe.jsx'
+import AdminUserList from './pages/Admin/AdminUserList.jsx'
 import AdminBlogs from './pages/Admin/AdminBlogs.jsx'
 import AdminCreateBlog from './pages/Admin/AdminCreateBlog.jsx'
 import Blog from './pages/Blog.jsx'
@@ -20,6 +19,7 @@ import BlogView from './pages/BlogView.jsx'
 import AdminDashboard from './pages/Admin/AdminDashboard.jsx'
 import Contact from './pages/Contact.jsx'
 import AdminServiceList from './pages/Admin/AdminServiceList.jsx'
+import AdminNewsLatters from './pages/Admin/AdminNewsLatters.jsx'
 
 const App = () => {
   const location = useLocation();
@@ -71,9 +71,9 @@ const App = () => {
         <Route path="/admin/*" element={<AdminLayout />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/services" element={<AdminServiceList />} />
-        <Route path="/admin/users" element={<UserList />} />
+        <Route path="/admin/users" element={<AdminUserList />} />
         <Route path="/admin/inquery" element={<AdminInquery />} />
-        <Route path="/admin/subscribe" element={<AdminSubscribe />} />
+        <Route path="/admin/subscribe" element={<AdminNewsLatters />} />
         <Route path="/admin/blogs" element={<AdminBlogs />} />
         <Route path="/admin/blogs/create" element={<AdminCreateBlog />} />
         <Route path="/admin/blogs/edit/:id" element={<AdminCreateBlog />} />
