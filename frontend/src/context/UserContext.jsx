@@ -63,7 +63,7 @@ export const UserProvider = ({ children }) => {
       if (res.data.success) {
         return { success: true, message: res.data.message };
       } else {
-        return { success: false, message: res.data.message };
+        return { success: false, isregistered: res.data.isregistered, message: res.data.message };
       }
     } catch (err) {
       console.error("Register error:", err.response?.data || err.message);

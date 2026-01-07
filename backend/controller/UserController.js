@@ -11,20 +11,21 @@ const { Subscription } = require('../model/Subscribe.js');
 const generateToken = (userId) => {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '15d' });
 };
-/* Register user use */
+/* Register user action */
+// userRoute.post('/register', registerUser);
 const registerUser = async (req, res) => {
     try {
         const { name, email, password, phone, role } = req.body;
         if (!name || !email || !password || !phone) {
-            return res.json({ success: false, message: 'All fields are required' });
+            return res.json({ success: false, isregistered: false, message: 'All fields are required' });
         }
         const phoneRegex = /^[6-9]\d{9}$/;
         if (!phoneRegex.test(phone)) {
-            return res.json({ success: false, message: 'Please enter a valid phone number' });
+            return res.json({ success: false, isregistered: false, message: 'Please enter a valid phone number' });
         }
         const exitUser = await User.findOne({ email });
         if (exitUser) {
-            return res.json({ success: false, message: 'User Already Exists' });
+            return res.json({ success: false, isregistered: true, message: 'You are already registered' });
         }
         const newUserData = { name, email, password, phone };
         if (role) {
@@ -37,10 +38,11 @@ const registerUser = async (req, res) => {
         await sendWelcomeMail(newUser);
     } catch (error) {
         console.error('Error in registerUser:', error);
-        res.json({ success: false, message: error.message });
+        res.json({ success: false,isregistered: false, message: error.message });
     }
 }
 /* Update User Data in admin panel */
+// userRoute.post("/admin/update-user-data", updateUserData);
 const updateUserData = async(req,res) => {
     try{
        const {_id,name, email, phone, role } =  req.body;
@@ -74,6 +76,7 @@ const updateUserData = async(req,res) => {
     }
 }
 /* For Login a user using email and password */
+// userRoute.post('/login', loginUser);
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -104,6 +107,7 @@ const loginUser = async (req, res) => {
     }
 }
 /* Get a token wise single user */
+// userRoute.post("/admin/user-data", allUsers);
 const getUserData = async (req, res) => {
     try {
         const user = req.user;
@@ -114,6 +118,7 @@ const getUserData = async (req, res) => {
     }
 }
 /* Logout user */
+// userRoute.post("/logout/",authUser, logoutUser);
 const logoutUser = (req, res) => {
     try {
         res.clearCookie("token", {
@@ -128,14 +133,11 @@ const logoutUser = (req, res) => {
     }
 };
 /* Send Forget password mail using email */
+// userRoute.post('/forget-pass', sendForgotPasswordEmail);
 const sendForgotPasswordEmail = async (req, res) => {
     try {
         const { email } = req.body;
-        if (!email) {
-            return res.json({ success: false, message: 'Email is required' });
-        }
         const exitUser = await User.findOne({ email: email });
-
         if (!exitUser) {
             return res.json({ success: false, message: 'User does not exist' });
         }
@@ -209,6 +211,7 @@ const sendForgotPasswordEmail = async (req, res) => {
     }
 }
 /* Save a reset forget password in db using token */
+// userRoute.post("/forget-password/:token", resetPassword);  
 const resetPassword = async (req, res) => {
     try {
         const token = req.params.token;
@@ -239,6 +242,7 @@ const resetPassword = async (req, res) => {
     }
 };
 /* When user is login that time change the password using their old password */
+// userRoute.post("/reset-password/",authUser, changePassword);
 const changePassword = async (req, res) => {
     try {
         const { currentPassword, newPassword, confirmPassword } = req.body;
@@ -265,6 +269,7 @@ const changePassword = async (req, res) => {
     }
 }
 /* All useer data */
+// userRoute.post("/admin/user-data", allUsers);
 const allUsers = async (req, res) => {
     try {
         const users = await User.find().sort({ createdAt: -1 });
@@ -276,6 +281,7 @@ const allUsers = async (req, res) => {
 }
 
 // For admin side Dashboard Data count
+// userRoute.post("/admin/dashboard-stats", getDashboardDataCount);
 const getDashboardDataCount = async (req, res) => {
     try {
         const totalEmployees = await User.countDocuments();
@@ -308,6 +314,7 @@ const getDashboardDataCount = async (req, res) => {
 };
 
 /* For Admin side export user information */
+// userRoute.post("/admin/user-export", exportUsersData);
 const exportUsersData = async (req, res) => {
     try {
         const { filter } = req.body;
@@ -330,6 +337,7 @@ const exportUsersData = async (req, res) => {
     }
 };
 /* Admin side user list change status active or not */
+// userRoute.post("/admin/update-status", changeUserStatus);
 const changeUserStatus = async (req,res) =>  {
     try {
         const { userId, status } = req.body;

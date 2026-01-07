@@ -42,7 +42,16 @@ const Login = () => {
       if (isRegister) {
         const res = await register(name, email, password, number);
         if (!res.success) {
-          toast.error(res.message);
+            if (res.isregistered) {
+              toast.error(res.message);
+              setIsRegister(false);
+              setEmail(email);
+              setPassword("");
+              setName("");
+              setNumber("");
+              return;
+            }
+            toast.error(res.message);
         } else {
           toast.success(res.message);
           setIsRegister(false);
@@ -76,10 +85,7 @@ const Login = () => {
       return;
     }
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/user/forget-pass`,
-        { email: forgetEmail }
-      );
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/forget-pass`, { email: forgetEmail });
       if (res.data.success) {
         toast.success(res.data.message);
         setShowForgetModal(false);
@@ -138,60 +144,28 @@ const Login = () => {
           <form onSubmit={handleSubmit}>
             {isRegister && (
               <div className="mb-3">
-                <input
-                  type="text"
-                  className="form-control bg-transparent text-white border-white"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Full Name"
-                />
+                <input type="text" className="form-control bg-transparent text-white border-white" value={name} onChange={(e) => setName(e.target.value)} placeholder="Full Name"/>
               </div>
             )}
 
             <div className="mb-3">
-              <input
-                type="email"
-                className="form-control bg-transparent text-white border-light"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <input type="email" className="form-control bg-transparent text-white border-light" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
             </div>
 
             {isRegister && (
               <div className="mb-3">
-                <input
-                  type="number"
-                  className="form-control bg-transparent text-white border-white"
-                  placeholder="Phone Number"
-                  value={number}
-                  onChange={(e) => setNumber(e.target.value)}
-                />
+                <input type="number" className="form-control bg-transparent text-white border-white" placeholder="Phone Number" value={number} onChange={(e) => setNumber(e.target.value)} />
               </div>
             )}
 
             <div className="mb-3 position-relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                className="form-control bg-transparent text-white border-white"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <input type={showPassword ? "text" : "password"} className="form-control bg-transparent text-white border-white" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
               <i
-                className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"
-                  } text-light`}
-                style={{
-                  position: "absolute",
-                  right: "15px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  cursor: "pointer",
-                }}
+                className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"} text-light`}
+                style={{position: "absolute",right: "15px",top: "50%",transform: "translateY(-50%)",cursor: "pointer"}}
                 onClick={() => setShowPassword(!showPassword)}
               ></i>
             </div>
-
             <button type="submit" className="user-profile w-100" disabled={loading}>
               <div className="user-profile-inner d-flex align-items-center justify-content-center gap-2">
                 {loading && (
@@ -204,11 +178,7 @@ const Login = () => {
             </button>
 
             {!isRegister && (
-              <span
-                onClick={() => setShowForgetModal(true)}
-                className="text-white-50 small d-block mb-2"
-                style={{ cursor: "pointer" }}
-              >
+              <span onClick={() => setShowForgetModal(true)} className="text-white-50 small d-block mb-2" style={{ cursor: "pointer" }}>
                 Forgot password?
               </span>
             )}
@@ -267,15 +237,7 @@ const Login = () => {
           {/* RESPONSIVE MODAL BOX */}
           <div
             className="rounded shadow-lg position-relative text-center"
-            style={{
-              zIndex: 3,
-              width: "100%",
-              maxWidth: "420px",
-              background: "rgba(0,0,0,0.5)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid rgba(255,255,255,0.2)",
-              padding: "25px",
-            }}
+            style={{ zIndex: 3, width: "100%", maxWidth: "420px", background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.2)", padding: "25px"}}
           >
             {/* CLOSE BUTTON */}
             <button
