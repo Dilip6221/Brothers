@@ -60,6 +60,14 @@ const AdminLayout = ({ children }) => {
               <NavLink to="/admin/blogs" onClick={() => window.dispatchEvent(new Event("ourBlogClick"))} className={({ isActive }) =>`nav-item nav-link ${isActive ? "active" : ""}`}>
                 <i className="fa fa-keyboard me-2"></i>Our Blogs
               </NavLink>
+               <NavLink
+                to="/admin/gallery"
+                className={({ isActive }) =>
+                  `nav-item nav-link ${isActive ? "active" : ""}`
+                }
+              >
+                <i className="bi bi-images me-2"></i>Gallery
+              </NavLink>
               <NavLink
                 to="/admin/services"
                 className={({ isActive }) =>

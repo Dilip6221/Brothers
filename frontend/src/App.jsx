@@ -20,6 +20,8 @@ import AdminDashboard from './pages/Admin/AdminDashboard.jsx'
 import Contact from './pages/Contact.jsx'
 import AdminServiceList from './pages/Admin/AdminServiceList.jsx'
 import AdminNewsLatters from './pages/Admin/AdminNewsLatters.jsx'
+import Gallery from './pages/Gallery.jsx'
+import AdminGallery from './pages/Admin/AdminGallery.jsx'
 
 const App = () => {
   const location = useLocation();
@@ -62,6 +64,7 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact-us" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/gallery" element={<Gallery />} />
         <Route path="/blog/:slug" element={<BlogView />} />
         <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
         <Route path="/forget-password/:token" element={<ForgetPassword />} />
@@ -77,6 +80,8 @@ const App = () => {
         <Route path="/admin/blogs" element={<AdminBlogs />} />
         <Route path="/admin/blogs/create" element={<AdminCreateBlog />} />
         <Route path="/admin/blogs/edit/:id" element={<AdminCreateBlog />} />
+        <Route path="/admin/gallery" element={<AdminGallery />} />
+        <Route path="/admin/gallery/create" element={<AdminGallery />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>

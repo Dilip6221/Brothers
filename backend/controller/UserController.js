@@ -24,15 +24,17 @@ const registerUser = async (req, res) => {
         }
         const exitUser = await User.findOne({ email });
         if (exitUser) {
-            return res.json({ success: false, message: 'User already exists' });
+            return res.json({ success: false, message: 'User Already Exists' });
         }
         const newUserData = { name, email, password, phone };
         if (role) {
             newUserData.role = role;
         }
         const newUser = await User.create(newUserData);
-        await sendWelcomeMail(newUser);  // For New User send welcome mail
         res.json({ success: true, message: 'User Created Succesfully' });
+        // sendWelcomeMail(newUser)
+        //     .then(() => console.log('Welcome mail sent'))
+        await sendWelcomeMail(newUser);
     } catch (error) {
         console.error('Error in registerUser:', error);
         res.json({ success: false, message: error.message });

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import loginLogo from "../assets/images/brand.png";
 import { UserContext } from "../context/UserContext.jsx";
 import axios from "axios";
@@ -12,6 +12,12 @@ const Navbar = () => {
   const bsModalRef = useRef(null);
   const serviceModalRef = useRef(null);
   const bsServiceModalRef = useRef(null);
+  const location = useLocation();
+
+  const isMoreActive = // For active more button when click blog aur other option
+  location.pathname === "/blog" ||
+  location.pathname === "/contact-us" ||
+  location.pathname === "/gallery";
 
   const { user, logout, token } = useContext(UserContext);
   const [resetPassword, setResetPassword] = useState({
@@ -190,14 +196,7 @@ const Navbar = () => {
                 </li>
               ) : (
                 <li className="nav-item dropdown px-2">
-                  <a
-                    href="#"
-                    className="btn btn-outline-warning btn-sm px-3 d-flex align-items-center"
-                    id="userDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    data-bs-display="static"
-                  >
+                  <a href="#" className="btn btn-outline-warning btn-sm px-3 d-flex align-items-center" id="userDropdown" role="button" data-bs-display="static">
                     <i className="bi bi-person-circle me-1"></i> {user.name}
                   </a>
                   <ul
@@ -287,14 +286,15 @@ const Navbar = () => {
                   <li className="nav-item">
                     <NavLink to="/services" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Services</NavLink>
                   </li>
-                  <li className="nav-item">
-                    <NavLink to="/blog" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Blog</NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink to="/contact-us" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Contact</NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink to="/stores" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Our Stores</NavLink>
+                  <li className="nav-item dropdown">
+                    <span className={`nav-link cool-link ${isMoreActive ? "active" : ""}`}>
+                      More
+                    </span>
+                    <ul className="dropdown-menu">
+                      <li><NavLink className="dropdown-item" to="/blog">Blog</NavLink></li>
+                      <li><NavLink className="dropdown-item" to="/contact-us">Contact</NavLink></li>
+                      <li><NavLink className="dropdown-item" to="/gallery">Gallery</NavLink></li>
+                    </ul>
                   </li>
                   <li className="nav-item px-5 mt-2">
                     <button

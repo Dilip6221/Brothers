@@ -1,4 +1,16 @@
-
+:root {
+  --primary-black: #0a0a0a;
+  --carbon-dark: #121212;
+  --carbon-medium: #1a1a1a;
+  --carbon-light: #2a2a2a;
+  --metal-dark: #3a3a3a;
+  --metal-light: #4a4a4a;
+  --accent-purple: #9945ff;
+  --accent-blue: #00a8ff;
+  --accent-cyan: #00ffff;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+}
 .contact-section {
   background: linear-gradient(180deg, var(--carbon-dark), var(--primary-black));
   color: var(--text-primary);

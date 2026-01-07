@@ -9,6 +9,7 @@ const serviceInquiryRoute = require('./routes/InquiryRoute.js');
 const SubscribeRoute = require('./routes/SubscribeRoute.js')
 const BlogRoute = require('./routes/BlogRoute.js')
 const serviceRoute = require('./routes/ServiceRoute.js')
+const galleryRoute = require('./routes/GalleryRoute.js');
 const connectDB = require('./config/db.js');
 const cookieParser = require('cookie-parser');
 app.use(express.static('public'));
@@ -29,6 +30,7 @@ app.use('/api/inquery', serviceInquiryRoute);
 app.use('/api/subscribe', SubscribeRoute);
 app.use('/api/blog', BlogRoute);
 app.use('/api/service', serviceRoute);
+app.use('/api/gallery', galleryRoute);
 
 app.get('/', (req, res) => {
     res.send('Welcome To Brothers');
