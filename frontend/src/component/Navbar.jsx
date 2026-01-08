@@ -14,10 +14,48 @@ const Navbar = () => {
   const bsServiceModalRef = useRef(null);
   const location = useLocation();
 
-  const isMoreActive = // For active more button when click blog aur other option
-  location.pathname === "/blog" ||
-  location.pathname === "/contact-us" ||
-  location.pathname === "/gallery";
+  /* For Service and More Dropdowns */
+  const ROUTE_GROUPS = {
+    services: ["/ceramic","/ppf","/paint","/detailing","/premium-car-wash",],
+    more: ["/blog","/gallery","/contact-us"],
+  };
+  const isRouteActive = (routes) => routes.some(route => location.pathname.startsWith(route));
+  const isServiceActive = isRouteActive(ROUTE_GROUPS.services);
+  const isMoreActive = isRouteActive(ROUTE_GROUPS.more);
+  const SERVICE_MENU = [
+    { to: "/ceramic", label: "Ceramic Coating" },
+    { to: "/ppf", label: "Paint Protection Film" },
+    { to: "/paint", label: "Full Body Painting" },
+    { to: "/detailing", label: "Detailing (Interior / Exterior)" },
+    { to: "/premium-car-wash", label: "Premium Car Wash" },
+  ];
+  const MORE_MENU = [
+    { to: "/blog", label: "Blog" },
+    { to: "/gallery", label: "Gallery" },
+    { to: "/contact-us", label: "Contact" },
+  ];
+
+  const MegaDropdown = ({ title, isActive, items }) => (
+    <li className="nav-item mega-dropdown">
+      <span className={`nav-link cool-link ${isActive ? "active" : ""}`}>
+        {title}
+      </span>
+      <div className="mega-menu">
+        <ul className="mega-list">
+          {items.map((item) => (
+            <li key={item.to}>
+              <NavLink to={item.to} className={({ isActive }) =>`mega-item text-decoration-none ${isActive ? "active" : ""}`}>
+                <span className="arrow">›</span>
+                {item.label}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </li>
+  );
+
+  /* For Service and More Dropdowns */
 
   const { user, logout, token } = useContext(UserContext);
   const [resetPassword, setResetPassword] = useState({
@@ -283,19 +321,16 @@ const Navbar = () => {
                   <li className="nav-item">
                     <NavLink to="/about" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>About Us</NavLink>
                   </li>
-                  <li className="nav-item">
-                    <NavLink to="/services" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Services</NavLink>
-                  </li>
-                  <li className="nav-item dropdown">
-                    <span className={`nav-link cool-link ${isMoreActive ? "active" : ""}`}>
-                      More
-                    </span>
-                    <ul className="dropdown-menu">
-                      <li><NavLink className="dropdown-item" to="/blog">Blog</NavLink></li>
-                      <li><NavLink className="dropdown-item" to="/contact-us">Contact</NavLink></li>
-                      <li><NavLink className="dropdown-item" to="/gallery">Gallery</NavLink></li>
-                    </ul>
-                  </li>
+                  <MegaDropdown
+                    title="Services"
+                    isActive={isServiceActive}
+                    items={SERVICE_MENU}
+                  />
+                  <MegaDropdown
+                    title="More"
+                    isActive={isMoreActive}
+                    items={MORE_MENU}
+                  />
                   <li className="nav-item px-5 mt-2">
                     <button
                       className="btn btn-warning btn-sm px-3 text-dark fw-semibold"

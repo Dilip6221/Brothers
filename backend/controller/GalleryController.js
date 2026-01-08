@@ -2,7 +2,7 @@ const cloudinary = require("../config/cloudinary");
 const { Gallery } = require("../model/Gallery.js");
 
 
-// ✅ Upload Image Controller via admin panel
+// Upload Image Controller via admin panel
 // router.post("/admin/upload", upload.single("image"), uploadGalleryImage);
 const uploadGalleryImage = async (req, res) => {
   const { service, title } = req.body;
@@ -33,24 +33,18 @@ const uploadGalleryImage = async (req, res) => {
     res.json({success: false,message: "Image upload failed" });
   }
 };
-
+// Get Gallery Images with Pagination
+// router.get("/gallery", getGalleryImages);
 const getGalleryImages = async (req, res) => {
   try {
-    const { page = 1, limit = 10, service } = req.query;
+    const { service } = req.query;
     const filter = { isActive: true };
     if (service) filter.service = service;
 
-    const skip = (page - 1) * limit;
-    const images = await Gallery.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(Number(skip))
-      .limit(Number(limit));
-    const total = await Gallery.countDocuments(filter);
-    console.log("Fetched gallery images:", total);
+    const images = await Gallery.find(filter).sort({ createdAt: -1 });
     res.json({
       success: true,
       data: images,
-      hasMore: skip + images.length < total,
     });
   } catch (error) {
     console.error("Gallery fetch error:", error);

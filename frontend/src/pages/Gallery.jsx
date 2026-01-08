@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -14,51 +14,49 @@ const CATEGORY_LIST = [
 
 const Gallery = () => {
   const [images, setImages] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
   const [activeIndex, setActiveIndex] = useState(null);
   const [activeCategory, setActiveCategory] = useState("ALL");
 
-  const fetchImages = async () => {
-    if (loading || !hasMore) return;
-    setLoading(true);
+  // 🔐 race-condition killer
+  const requestIdRef = useRef(0);
+
+  /* ================= FETCH ALL IMAGES ================= */
+  const fetchImages = async (category) => {
+    const requestId = ++requestIdRef.current;
+
     try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/gallery/gallery`, {
-        params: {
-          page, limit: 10, service: activeCategory !== "ALL" ? activeCategory : "",
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/gallery/gallery`,
+        {
+          params: {
+            service: category !== "ALL" ? category : undefined,
+          },
         }
-      });
+      );
+
+      // ignore outdated response
+      if (requestId !== requestIdRef.current) return;
+
       if (res.data.success) {
-        setImages((prev) => [...prev, ...res.data.data]);
-        setHasMore(res.data.hasMore);
-        setPage((prev) => prev + 1);
+        setImages(res.data.data);
       } else {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error("Error loading images");
-    } finally {
-      setLoading(false);
+      if (requestId === requestIdRef.current) {
+        toast.error("Error loading images");
+      }
     }
   };
-  useEffect(() => {
-    fetchImages(true);
-  }, [activeCategory]);
- 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + window.scrollY >=
-        document.body.offsetHeight - 300
-      ) {
-        fetchImages();
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [loading, hasMore]);
 
+  /* ================= CATEGORY CHANGE ================= */
+  useEffect(() => {
+    setImages([]);
+    setActiveIndex(null);
+    fetchImages(activeCategory);
+  }, [activeCategory]);
+
+  /* ================= KEYBOARD CONTROLS ================= */
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (activeIndex === null) return;
@@ -98,7 +96,7 @@ const Gallery = () => {
         </div>
       </div>
 
-       <div className="container mb-3">
+      <div className="container mb-3">
         <div className="category-bar">
           {CATEGORY_LIST.map((cat) => (
             <button
@@ -106,12 +104,7 @@ const Gallery = () => {
               className={`category-btn ${
                 activeCategory === cat ? "active" : ""
               }`}
-              onClick={() => {
-                setImages([]);
-                setHasMore(true);
-                setPage(1);
-                setActiveCategory(cat);
-              }}
+              onClick={() => setActiveCategory(cat)}
             >
               {cat}
             </button>
@@ -122,8 +115,15 @@ const Gallery = () => {
         <div className="row g-4">
           {images.map((item, index) => (
             <div key={item._id} className="col-12 col-sm-6 col-md-4 col-lg-3">
-              <div className="premium-card fade-up" onClick={() => setActiveIndex(index)}>
-                <img src={item.imageUrl} alt={item.title || "BROTHER'S"} loading="lazy" />
+              <div
+                className="premium-card fade-up"
+                onClick={() => setActiveIndex(index)}
+              >
+                <img
+                  src={item.imageUrl}
+                  alt={item.title || "BROTHER'S"}
+                  loading="lazy"
+                />
                 <div className="premium-overlay">
                   <h5>{item.title || "BROTHER'S"}</h5>
                   <p>{item.service}</p>
@@ -132,18 +132,12 @@ const Gallery = () => {
             </div>
           ))}
         </div>
-        {loading && (
-          <div className="loader-wrapper">
-            <div className="premium-loader"></div>
-          </div>
-        )}
       </div>
 
-      {activeIndex !== null && (
+      {activeIndex !== null && images[activeIndex] && (
         <div className="premium-modal" onClick={() => setActiveIndex(null)}>
-          <span className="premium-close" onClick={() => setActiveIndex(null)}>
-            ✕
-          </span>
+          <span className="premium-close">✕</span>
+
           {activeIndex > 0 && (
             <span className="nav-arrow left" onClick={handlePrev}>
               ❮
