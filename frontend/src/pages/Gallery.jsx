@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import '../css/gallery.css';
 
 const CATEGORY_LIST = [
   "ALL",
@@ -85,10 +86,13 @@ const Gallery = () => {
   return (
 
     <div className="bg-black text-white">
-      <div className="carbon-fiber py-5 mb-3">
+      <div className="py-5 text-center">
+        <span className="about-badge">
+          Our Work
+        </span>
         <div className="container text-center">
           <h3 className="section-title section-title-large">
-            <span className="first-letter">G</span>allery
+            <span className="first-letter">T</span>he Drive Gallery
           </h3>
           <p className="text-secondary fs-5 mt-2">
             Technology • Community Moments
@@ -101,9 +105,8 @@ const Gallery = () => {
           {CATEGORY_LIST.map((cat) => (
             <button
               key={cat}
-              className={`category-btn ${
-                activeCategory === cat ? "active" : ""
-              }`}
+              className={`category-btn ${activeCategory === cat ? "active" : ""
+                }`}
               onClick={() => setActiveCategory(cat)}
             >
               {cat}

@@ -1,0 +1,278 @@
+/* ================= CORE VALUES ================= */
+
+.core-values-section {
+  background: #000;
+}
+
+.core-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Core Card */
+.core-card {
+  height: 100%;
+  background: radial-gradient(circle at top, rgba(40,40,40,0.6), #000);
+  border-radius: 18px;
+  padding: 35px 25px;
+  text-align: center;
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.8),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.core-card:hover {
+  transform: translateY(-10px);
+  box-shadow:
+    0 35px 70px rgba(0,0,0,0.9),
+    inset 0 0 0 1px rgba(207,161,68,0.4);
+}
+
+/* Icon */
+.core-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: rgba(207,161,68,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.core-icon i {
+  font-size: 26px;
+  color: #cfa144;
+}
+
+/* Text */
+.core-card h4 {
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.core-card p {
+  font-size: 14px;
+  color: #bdbdbd;
+  line-height: 1.6;
+}
+
+/* ================= STORY TITLE ================= */
+
+.story-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ================= TIMELINE ================= */
+
+.timeline {
+  position: relative;
+  max-width: 900px;
+  margin: 60px auto 0;
+}
+
+/* Center vertical line */
+.timeline::after {
+  content: "";
+  position: absolute;
+  width: 4px;
+  background: rgba(255,255,255,0.15);
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Timeline Item */
+.timeline-item {
+  position: relative;
+  width: 50%;
+  padding: 20px 30px;
+}
+
+/* Left & Right */
+.timeline-item.left {
+  left: 0;
+  text-align: right;
+}
+
+.timeline-item.right {
+  left: 50%;
+  text-align: left;
+}
+
+/* Dot */
+.timeline-item::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #cfa144;
+  border-radius: 50%;
+  top: 35px;
+  right: -7px;
+  z-index: 2;
+}
+
+.timeline-item.right::after {
+  left: -7px;
+  right: auto;
+}
+
+/* Content Card */
+.timeline-content {
+  background: radial-gradient(circle at top, #1b1b1b, #000);
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.9);
+  transition: transform 0.3s ease;
+}
+
+.timeline-content:hover {
+  transform: translateY(-6px);
+}
+
+/* Text */
+.timeline-content .year {
+  display: inline-block;
+  font-size: 14px;
+  color: #cfa144;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.timeline-content h4 {
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.timeline-content p {
+  color: #bdbdbd;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ================= MOBILE FIX (FINAL) ================= */
+
+@media (max-width: 768px) {
+
+  /* Line moves to left */
+  .timeline::after {
+    left: 32px;
+    transform: none;
+  }
+
+  /* Items full width */
+  .timeline-item {
+    width: 100%;
+    padding: 0 15px 40px 70px;
+    left: 0 !important;
+    text-align: left;
+  }
+
+  /* Disable left-right split */
+  .timeline-item.left,
+  .timeline-item.right {
+    left: 0;
+  }
+
+  /* Dot aligned */
+  .timeline-item::after {
+    left: 25px;
+    right: auto;
+    top: 32px;
+  }
+
+  .timeline-content {
+    padding: 18px;
+  }
+
+  .timeline-content h4 {
+    font-size: 1.05rem;
+  }
+
+  .timeline-content p {
+    font-size: 13px;
+  }
+
+  .core-title,
+  .story-title {
+    font-size: 1.8rem;
+  }
+}
+
+
+/* ================= OUR VISION ================= */
+
+.vision-section {
+  background: #000;
+}
+
+.vision-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: #cfa144;
+  border: 1px solid #cfa144;
+  border-radius: 6px;
+  background: rgba(207,161,68,0.1);
+}
+
+.vision-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 12px;
+}
+
+.vision-text {
+  max-width: 720px;
+  font-size: 15px;
+  color: #bdbdbd;
+  line-height: 1.7;
+}
+
+.vision-card {
+  height: 100%;
+  background: radial-gradient(circle at top, #1b1b1b, #000);
+  border-radius: 18px;
+  padding: 28px 22px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.9);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.vision-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+}
+
+.vision-card i {
+  font-size: 32px;
+  color: #cfa144;
+  margin-bottom: 14px;
+}
+
+.vision-card h5 {
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.vision-card p {
+  font-size: 14px;
+  color: #bdbdbd;
+  line-height: 1.6;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .vision-title {
+    font-size: 1.8rem;
+  }
+}

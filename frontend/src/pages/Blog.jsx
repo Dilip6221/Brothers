@@ -108,7 +108,10 @@ const Blog = () => {
 
     return (
         <div className="bg-black text-white">
-            <div className="carbon-fiber py-5 mb-5">
+            <div className="py-5 text-center">
+                <span className="about-badge">
+                    Our Blogs
+                </span>
                 <div className="container text-center">
                     <h3 className="section-title section-title-large">
                         <span className="first-letter">L</span>atest Blog Updates

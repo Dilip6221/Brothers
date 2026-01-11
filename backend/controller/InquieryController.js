@@ -2,19 +2,15 @@ const {Inquiry} = require("../model/Inquiery.js");
 const { sendInqueryMail } = require("../mail/InquieryMail.js");
 
 /* For Create Portal side service Inquiery request data */
+// router.post("/service-inquiry", authOptional, createServiceInquiry);
 const createServiceInquiry = async (req, res) => {
     try {
-        let {
-            name, phone, email, city,
-            carBrand, carModel,
-            services, address, notes
-        } = req.body;
+        let {name, phone, email, city,carBrand, carModel,services, address, notes } = req.body;
         if (req.user) {
             name = req.user.name;
             phone = req.user.phone;
             email = req.user.email;
         }
-
         if (!name || !phone || !email || !city || !carBrand || !carModel || !services || services.length === 0) {
             return res.json({ success: false, message: 'All fields are required' });
         }
@@ -44,6 +40,7 @@ const createServiceInquiry = async (req, res) => {
 };
 
 /* For admin side display service inquery data  */
+// router.post("/admin/admin-inquery-data", adminInquiryData);
 const adminInquiryData = async (req, res) => {
     try {
         const inquiries = await Inquiry.find().sort({ createdAt: -1 }); 
@@ -54,6 +51,7 @@ const adminInquiryData = async (req, res) => {
     }  
 };
 // Get single inquiry data for view
+// router.post("/admin/inquiry-details", getInquiryDetails);
 const getInquiryDetails = async (req, res) => {
     try {
         const { id } = req.body;
@@ -66,7 +64,8 @@ const getInquiryDetails = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
-/* For admin side Customer Inquery export funtionaloioty */
+/* For admin side Customer Inquery export funtionaloioty 
+router.post("/admin/inquiry-export", exportCustomerInqueryData); */
 const exportCustomerInqueryData = async (req, res) => {
     try {
         const { filter } = req.body;

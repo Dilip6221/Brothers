@@ -70,11 +70,12 @@ const Footer = () => {
                                     style={{ marginLeft: "-85px", marginTop: "-30px" }}
                                 >
                                     <span
-                                        className="d-inline-flex align-items-center border border-danger rounded-pill px-3 py-2 text-light fw-bold"
+                                        className="d-inline-flex align-items-center rounded-pill px-3 py-2 text-light fw-bold"
                                         style={{
                                             fontSize: "16px",
                                             letterSpacing: "0.5px",
                                             cursor: "pointer",
+                                            border: "1px solid rgba(255, 0, 0, 0.3)"
                                         }}
                                         data-bs-toggle="tooltip"
                                         data-bs-placement="top"
@@ -159,7 +160,7 @@ const Footer = () => {
 
                         {/* === Animated slogan === */}
                         <div className="text-center mt-4">
-                            <div className="slogan-box d-inline-block px-4 py-2 fw-semibold text-uppercase position-relative" style={{ color: "#f5f5f5", letterSpacing: "1px", fontSize: "13px", border: "1px solid #e10600", borderRadius: "8px", boxShadow: "0 4px 10px rgba(225,6,0,0.3)", fontFamily: "'Poppins', sans-serif" }}>
+                            <div className="slogan-box d-inline-block px-4 py-2 fw-semibold text-uppercase position-relative" style={{ color: "#f5f5f5", letterSpacing: "1px", fontSize: "13px", border: "1px solid rgba(255, 0, 0, 0.3)", borderRadius: "8px", boxShadow: "0 4px 10px rgba(225,6,0,0.3)", fontFamily: "'Poppins', sans-serif" }}>
                                 <i className="bi bi-wrench-adjustable me-2 text-danger"></i>
                                 At{" "}
                                 <span style={{ color: "#e10600", fontSize: "17px" }} className="brand-zoom">
@@ -177,7 +178,6 @@ const Footer = () => {
                 <div className="mt-4 w-100 border-top border-danger pt-3 pb-2">
                     <div className="container">
                         <div className="d-flex flex-column flex-md-row justify-content-between align-items-center small text-center text-md-start">
-
                             <div>
                                 <ul className="nav justify-content-center justify-content-md-start align-items-center">
                                     <li className="nav-item">

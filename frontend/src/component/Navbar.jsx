@@ -16,8 +16,8 @@ const Navbar = () => {
 
   /* For Service and More Dropdowns */
   const ROUTE_GROUPS = {
-    services: ["/ceramic","/ppf","/paint","/detailing","/premium-car-wash",],
-    more: ["/blog","/gallery","/contact-us"],
+    services: ["/ceramic", "/ppf", "/paint", "/detailing", "/premium-car-wash",],
+    more: ["/blog", "/gallery", "/contact-us"],
   };
   const isRouteActive = (routes) => routes.some(route => location.pathname.startsWith(route));
   const isServiceActive = isRouteActive(ROUTE_GROUPS.services);
@@ -44,7 +44,7 @@ const Navbar = () => {
         <ul className="mega-list">
           {items.map((item) => (
             <li key={item.to}>
-              <NavLink to={item.to} className={({ isActive }) =>`mega-item text-decoration-none ${isActive ? "active" : ""}`}>
+              <NavLink to={item.to} className={({ isActive }) => `mega-item text-decoration-none ${isActive ? "active" : ""}`}>
                 <span className="arrow">›</span>
                 {item.label}
               </NavLink>
@@ -65,9 +65,9 @@ const Navbar = () => {
   });
 
   const [serviceEnquery, setServiceEnquery] = useState({
-    name: "",
-    phone: "",
-    email: "",
+    name: user ? user.name : "",
+    phone: user ? user.phone : "",
+    email:  user ? user.email : "",
     city: "",
     address: "",
     carBrand: "",
@@ -75,6 +75,16 @@ const Navbar = () => {
     services: [],
     notes: ""
   });
+  useEffect(() => {
+    if (user) {
+      setServiceEnquery((prev) => ({
+        ...prev,
+        name: user.name || "",
+        phone: user.phone || "",
+        email: user.email || "",
+      }));
+    }
+  }, [user]);
   const serviceOptions = [
     { value: "PPF", label: "PPF Installation" },
     { value: "PAINT", label: "Full Body Paint" },
@@ -139,9 +149,9 @@ const Navbar = () => {
 
   const openServiceModal = () => {
     if (bsServiceModalRef.current) {
-      setServiceEnquery({ name: "", phone: "", email: "", city: "", carBrand: "", carModel: "", services: [], address: "", notes: "" });
-      bsServiceModalRef.current.show();
+      setServiceEnquery({ name: user?.name || "", phone: user?.phone || "", email: user?.email || "", city: "", carBrand: "", carModel: "", services: [], address: "", notes: "" });
     }
+    bsServiceModalRef.current.show();
   };
   const closeServiceModal = () => {
     if (bsServiceModalRef.current) {
@@ -319,7 +329,7 @@ const Navbar = () => {
                     <NavLink to="/" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Home</NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/about" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>About Us</NavLink>
+                    <NavLink to="/about" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>About</NavLink>
                   </li>
                   <MegaDropdown
                     title="Services"
@@ -460,37 +470,33 @@ const Navbar = () => {
 
               <div className="modal-body p-3">
                 <div className="row g-3">
-                  {!user && (
-                    <>
-                      <div className="col-md-6">
-                        <input type="text" name="name" className="form-control shadow-none text-white"
-                          style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
-                          placeholder="Full Name*"
-                          autoComplete="off"
-                          value={serviceEnquery.name}
-                          onChange={handleEnquiryInputChange}
-                        />
-                      </div>
-                      <div className="col-md-6">
-                        <input type="number" name="phone" className="form-control shadow-none text-white"
-                          style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
-                          placeholder="Phone Number*"
-                          autoComplete="off"
-                          value={serviceEnquery.phone}
-                          onChange={handleEnquiryInputChange}
-                        />
-                      </div>
-                      <div className="col-12">
-                        <input type="email" name="email" className="form-control shadow-none text-white"
-                          style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
-                          placeholder="Email*"
-                          autoComplete="off"
-                          value={serviceEnquery.email}
-                          onChange={handleEnquiryInputChange}
-                        />
-                      </div>
-                    </>
-                  )}
+                  <div className="col-md-6">
+                    <input type="text" name="name" className="form-control shadow-none text-white"
+                      style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                      placeholder="Full Name*"
+                      autoComplete="off"
+                      value={serviceEnquery.name}
+                      onChange={handleEnquiryInputChange}
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <input type="number" name="phone" className="form-control shadow-none text-white"
+                      style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                      placeholder="Phone Number*"
+                      autoComplete="off"
+                      value={serviceEnquery.phone}
+                      onChange={handleEnquiryInputChange}
+                    />
+                  </div>
+                  <div className="col-12">
+                    <input type="email" name="email" className="form-control shadow-none text-white"
+                      style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                      placeholder="Email*"
+                      autoComplete="off"
+                      value={serviceEnquery.email}
+                      onChange={handleEnquiryInputChange}
+                    />
+                  </div>
                   <div className="col-md-4">
                     <input type="text" name="city" className="form-control shadow-none text-white"
                       style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}

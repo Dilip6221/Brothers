@@ -8,7 +8,7 @@ import NotFound from './pages/NotFound.jsx'
 import Navbar from './component/Navbar.jsx'
 import { UserContext } from "./context/UserContext.jsx";
 import Footer from "./component/Footer.jsx";
-import ServiceIcon from "./component/ServiceIcon.jsx";
+// import ServiceIcon from "./component/ServiceIcon.jsx";
 import AdminLayout from './pages/Admin/AdminLayout.jsx'
 import AdminInquery from './pages/Admin/AdminInquery.jsx'
 import AdminUserList from './pages/Admin/AdminUserList.jsx'
@@ -22,6 +22,7 @@ import AdminServiceList from './pages/Admin/AdminServiceList.jsx'
 import AdminNewsLatters from './pages/Admin/AdminNewsLatters.jsx'
 import Gallery from './pages/Gallery.jsx'
 import AdminGallery from './pages/Admin/AdminGallery.jsx'
+import Ppf from './pages/Service/Ppf.jsx'
 
 const App = () => {
   const location = useLocation();
@@ -55,12 +56,13 @@ const App = () => {
 
   return (
     <>
-      {!shouldHideNavbar && <ServiceIcon />}
+      {/* {!shouldHideNavbar && <ServiceIcon />} */}
       {!shouldHideNavbar && <Navbar />}
 
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
+        <Route path="/ppf" element={<Ppf />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact-us" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
