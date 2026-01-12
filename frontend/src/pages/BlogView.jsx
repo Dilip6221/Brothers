@@ -46,7 +46,7 @@ if (loading) return <SmallLoader />;
 
   return (
     <div className="bg-black text-white pb-5">
-      <div className="carbon-fiber py-5 mb-5 position-relative">
+      <div className="py-5 mb-5 position-relative">
           {/* Back Arrow */}
           <Link to="/blog" className="back-arrow">
             <i className="bi bi-arrow-right-circle"></i>

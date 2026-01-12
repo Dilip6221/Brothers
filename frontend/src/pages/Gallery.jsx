@@ -83,6 +83,27 @@ const Gallery = () => {
     e.stopPropagation();
     if (activeIndex > 0) setActiveIndex(activeIndex - 1);
   };
+
+
+  const downloadImage = async (url, filename) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = blobUrl;
+      link.download = filename || "image";
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download failed", error);
+    }
+  };
+
   return (
 
     <div className="bg-black text-white">
@@ -140,11 +161,22 @@ const Gallery = () => {
       {activeIndex !== null && images[activeIndex] && (
         <div className="premium-modal" onClick={() => setActiveIndex(null)}>
           <span className="premium-close">✕</span>
-
+          <span
+            className="premium-fullscreen"
+            onClick={(e) => {
+              e.stopPropagation();
+              const modal = document.querySelector(".premium-modal");
+              if (!document.fullscreenElement) {
+                modal.requestFullscreen();
+              } else {
+                document.exitFullscreen();
+              }
+            }}
+          >
+            ⛶
+          </span>
           {activeIndex > 0 && (
-            <span className="nav-arrow left" onClick={handlePrev}>
-              ❮
-            </span>
+            <span className="nav-arrow left" onClick={handlePrev}>❮</span>
           )}
           <img
             src={images[activeIndex].imageUrl}
@@ -152,10 +184,21 @@ const Gallery = () => {
             onClick={(e) => e.stopPropagation()}
           />
           {activeIndex < images.length - 1 && (
-            <span className="nav-arrow right" onClick={handleNext}>
-              ❯
-            </span>
+            <span className="nav-arrow right" onClick={handleNext}>❯</span>
           )}
+          <button
+            className="premium-download "
+            onClick={(e) => {
+              e.stopPropagation();
+              downloadImage(
+                images[activeIndex].imageUrl,
+                images[activeIndex].title
+              );
+            }}
+          >
+            <i className="bi bi-download"></i>
+          </button>
+
         </div>
       )}
     </div>

@@ -18,10 +18,12 @@ html, body {
   left: 120px;
 }
 
-.navbar-wrapper .container {
+/* .navbar-wrapper .container {
+  padding-left: 160px;
+} */
+.navbar-wrapper {
   padding-left: 160px;
 }
-
 .cool-link {
   position: relative;
   color: white;
@@ -229,15 +231,6 @@ body.modal-open {
 .service-card:hover .service-img{
   transform:scale(1.0);
 }
-/* For Our sercvice home page card */
-.carbon-fiber {
-    background-color: #1b1b1b;
-    background-image:
-        repeating-linear-gradient(45deg, #050505 0px, #090808 3px, #0f0f0f 6px),
-        repeating-linear-gradient(-45deg, #050505 0px, #090808 3px, #0f0f0f 6px);
-    padding: 80px 0;
-}
-/*START: For a all blog view */
 .blog-card {
     background: black;
     border-radius: 13px;
@@ -358,13 +351,12 @@ body.modal-open {
     font-weight: 700;
     z-index: 5;
 }
-
 /* CONTENT WRAPPER */
 .blog-content-wrapper {
     display: flex;
     flex-direction: column;
-    flex: 1 1 auto; /* allows content to grow and push buttons down */
-    padding: 1rem;
+    flex: 1 1 auto;
+    padding: 1.5rem;
 }
 
 /* META ABOVE TITLE */

@@ -52,12 +52,12 @@ const Blog = () => {
                     url,
                 });
             } else {
-                console.log("Web Share API not supported in this browser.");
                 await navigator.clipboard.writeText(url);
+                console.log("Web Share API not supported in this browser.");
                 toast.success("Blog URL copied to clipboard!");
             }
         } catch (err) {
-            console.error(err);
+            console.log(err);
             toast.error("Error sharing the blog");
         }
     };

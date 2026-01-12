@@ -112,29 +112,7 @@
     0 0 140px rgba(207,161,68,0.15);
 }
 /* Close Button */
-.premium-close {
-  position: absolute;
-  top: 25px;
-  right: 30px;
-  font-size: 26px;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.6);
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10000;
-  transition: all 0.3s ease;
-}
 
-.premium-close:hover {
-  background: rgb(201, 50, 50);
-  color: black;
-  transform: rotate(180deg);
-}
 .nav-arrow {
   position: absolute;
   top: 50%;
@@ -270,14 +248,6 @@
     font-size: 11px;
   }
 
-  .premium-close {
-    top: 12px;
-    right: 12px;
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
-  }
-
   .nav-arrow {
     width: 40px;
     height: 40px;
@@ -305,4 +275,38 @@
   .premium-overlay h5 {
     font-size: 13px;
   }
+}
+.premium-close,
+.premium-fullscreen,
+.premium-download {
+  position: absolute;
+  top: 22px;
+  font-size: 22px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10000;
+  transition: all 0.3s ease;
+  border: none;
+  outline: none;
+}
+.premium-fullscreen {
+  right: 80px;
+}
+.premium-download {
+  right: 130px;
+}
+.premium-close {
+  right: 30px;
+} 
+.premium-close:hover {
+  background: rgb(201, 50, 50);
+  color: black;
+  transform: rotate(180deg);
 }
