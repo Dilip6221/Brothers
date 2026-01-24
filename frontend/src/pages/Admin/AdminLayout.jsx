@@ -97,24 +97,13 @@ const AdminLayout = ({ children }) => {
                 placeholder="Search"
               />
             </form>
-
             <div className="navbar-nav align-items-center ms-auto">
-              <div className="nav-item dropdown">
-                <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                  <i className="fa fa-envelope me-lg-2"></i>
-                  <span className="d-none d-lg-inline-flex">Message</span>
-                </a>
-
-                
-              </div>
               <div className="nav-item dropdown">
                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                   <i className="fa fa-user me-lg-2"></i>
                   <span className="d-none d-lg-inline-flex">{user?.name}</span>
                 </a>
                 <div className="dropdown-menu dropdown-menu-end bg-dark border-0 rounded-0 rounded-bottom m-0">
-                  <a href="#" className="dropdown-item">My Profile</a>
-                  <a href="#" className="dropdown-item">Settings</a>
                   <a href="#" className="dropdown-item" onClick={logout}>Logout</a>
                   <a href="/" className="dropdown-item"  > Back Portal</a>
                 </div>

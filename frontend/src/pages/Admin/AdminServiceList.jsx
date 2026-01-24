@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import AdminLayout from './AdminLayout';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AdminServiceList = () => {
     const navigate = useNavigate();
-    const location = useLocation();
     const [service, setService] = useState([]);
     const [search, setSearch] = useState("");
 
@@ -24,22 +23,7 @@ const AdminServiceList = () => {
         window.addEventListener("ourServiceClick", handler);
         return () => window.removeEventListener("ourServiceClick", handler);
     }, []);
-    /* On change status */
-    // const handleStatusChange = async (serviceId, newStatus) => {
-    //     try {
-    //         const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/service/admin/update-status`,{ id: serviceId,newStatus });
-    //         if (res.data.success) {
-    //             toast.success(res.data.message);
-    //             fetchData();
-    //         } else {
-    //             toast.error(res.data.message);
-    //         }
-    //     } catch (err) {
-    //         toast.error("Failed to update status");
-    //     }
-    // };
 
-    // Filter blogs based on search input
     const filteredBlogs = (service || []).filter(item => {
         if (!search.trim()) return true;
         const text = search.toLowerCase();
@@ -51,6 +35,20 @@ const AdminServiceList = () => {
         );
     });
 
+    const handleUserStatus = async (id, currentStatus) => {
+        try {
+            const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/service/admin/update-status`,{ serviceId: id, status: newStatus });
+            if (res.data.success) {
+                toast.success(res.data.message);
+                fetchData();
+            } else {
+                toast.error(res.data.message);
+            }
+        } catch (error) {
+            toast.error("Status update failed");
+        }
+    }
     return (
         <AdminLayout>
             <div className="container-fluid">
@@ -62,16 +60,9 @@ const AdminServiceList = () => {
                         </span>
                         <div className="d-flex align-items-center gap-3">
                             <div className="input-group" style={{ width: "200px" }}>
-                                <input
-                                    type="search"
-                                    className="form-control bg-dark text-white border-white"
-                                    name="text"
-                                    placeholder="Search..."
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                />
+                                <input type="search" className="form-control bg-dark text-white border-white" name="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
                             </div>
-                            <Link to="/admin/services/create-service" className="text-decoration-none">
+                            <Link to="/admin/services/create" className="text-decoration-none">
                                 <button className="btn btn-outline-danger d-flex align-items-center gap-2 px-3"> <i className="bi bi-plus-circle"></i>Create</button>
                             </Link>
                         </div>
@@ -83,10 +74,10 @@ const AdminServiceList = () => {
                                     <th>#</th>
                                     <th>Name</th>
                                     <th>Slug</th>
+                                    <th>Icon</th>
                                     <th>Category</th>
-                                    <th>Price</th>
-                                    <th>DiscountPrice</th>
-                                    <th>IsFeatured</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
                                     <th className="text-center">Action</th>
                                 </tr>
                             </thead>
@@ -97,11 +88,27 @@ const AdminServiceList = () => {
                                             <td>{index + 1}</td>
                                             <td>{item.title}</td>
                                             <td>{item.slug}</td>
+                                            <td>{item.icon}</td>
                                             <td>{item.category}</td>
-                                            <td>{item.price}</td>
-                                            <td>{item.discountPrice}</td>
-                                            <td>{item.isFeatured ? "Yes" : "No"}</td>
-                                            <td>{new Date(item.createdAt).toLocaleString()}</td>
+                                            <td>{item.duration}</td>
+                                            <td>
+                                               <div className="form-check form-switch d-flex justify-content-center">
+                                                    <input
+                                                        className="form-check-input bg-dark border-light"
+                                                        type="checkbox"
+                                                        checked={item.status === "ACTIVE"}
+                                                        onChange={() => handleUserStatus(item._id, item.status)}
+                                                        
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="text-center">
+                                                <i
+                                                    className="fa-solid fa-pen-to-square text-warning"
+                                                    style={{ cursor: "pointer", fontSize: "18px" }}
+                                                    onClick={() => navigate(`/admin/services/edit/${item._id}`)}
+                                                ></i>
+                                            </td>
                                         </tr>
                                     ))
                                 ) : (

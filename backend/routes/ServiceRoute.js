@@ -1,10 +1,10 @@
 const express = require('express');
 const serviceRoute = express.Router();
-const { createService,getAllInquiries,getSlugService} = require('../controller/ServiceController');
-// const { authUser } = require('../middleware/auth.js');
-// 
-serviceRoute.post('/admin/create-service', createService);
+const { createService,getAllInquiries,getSlugService,updateServiceStatus} = require('../controller/ServiceController');
+
+serviceRoute.post('/admin/create', createService);
 serviceRoute.get('/admin/services', getAllInquiries);
-serviceRoute.get('/service/:slug', getSlugService);
+serviceRoute.get('/get-service/:id', getSlugService);
+serviceRoute.post("/admin/update-status", updateServiceStatus);
 
 module.exports = serviceRoute;

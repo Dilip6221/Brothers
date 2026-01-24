@@ -2,18 +2,19 @@ const { Blog } = require("../model/blog.js");
 const { Subscription } = require('../model/Subscribe.js');
 const { EmailTracking } = require("../model/EmailTracking.js");
 const { sendSubscribeMail } = require("../mail/BlogMail.js");
+const slugify = require('slugify');
 
 // Create Blog for admin side
 //router.post("/admin/create-blog", creteAdminBlog);
 const creteAdminBlog = async (req, res) => {
     try {
-        const { id, title, slug, thumbnail, content, category, tags, metaTitle, metaDescription } = req.body;
+        const { id, title, thumbnail, content, category, tags, metaTitle, metaDescription } = req.body;
         // Validation
-        if (!title || !slug || !content || !category || !metaTitle || !metaDescription || !thumbnail || !tags) {
+        if (!title || !content || !category || !metaTitle || !metaDescription || !thumbnail || !tags) {
             return res.json({ success: false, message: "All fields are required" });
         }
 
-        // Check if slug already exists for another blog (important for update)
+        const slug = slugify(title, { lower: true, strict: true });
         const existingSlug = await Blog.findOne({ slug, _id: { $ne: id } });
         if (existingSlug) {
             return res.json({ success: false, message: "Slug already exists. Please choose a different one." });

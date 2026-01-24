@@ -30,6 +30,7 @@ const Navbar = () => {
     { to: "/premium-car-wash", label: "Premium Car Wash" },
   ];
   const MORE_MENU = [
+    { to: "/car-vault", label: "My Car Vault" },
     { to: "/blog", label: "Blog" },
     { to: "/gallery", label: "Gallery" },
     { to: "/contact-us", label: "Contact" },

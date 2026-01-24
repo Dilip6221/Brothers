@@ -1,49 +1,105 @@
 const { Services } = require('../model/Services.js');
 
 // Create a new service in admin role
-const createService = async (req, res) => {
-    try {
-        const { name, email, subject, message } = req.body; 
-        const newInquiry = new Services({
-            name,
-            email,
-            subject,
-            message
-        });
-        await newInquiry.save();
-        res.status(201).json({ message: 'Inquiry created successfully', inquiry: newInquiry });
-    }
-    catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
+const express = require('express');
+const router = express.Router();
+const slugify = require('slugify');
 
+// Create admin through the service
+// serviceRoute.post('/admin/create', createService);
+const createService = async (req, res) => {
+  try {
+    const {id, title, shortDescription, description, icon, category, duration, metaTitle, metaDescription, metaKeywords, status } = req.body;
+    if (!title || !shortDescription || !description) {
+      return res.json({ success: false, message: 'Required fields missing' });
+    }
+    const slug = slugify(title, { lower: true, strict: true });
+    const existingSlug = await Services.findOne({ slug, _id: { $ne: id } });
+    if (existingSlug) {
+      return res.json({ success: false, message: "Slug already exists. Please choose a different one." });
+    }
+    let service;
+    if (id) {
+      service = await Services.findById(id);
+      if (!service) {
+        return res.json({ success: false, message: "Service not found for update" });
+      }
+      service.title = title;
+      service.slug = slug;
+      service.shortDescription = shortDescription;
+      service.description = description;
+      service.icon = icon;
+      service.category = category;
+      service.duration = duration;
+      service.metaTitle = metaTitle;
+      service.metaDescription = metaDescription;
+      service.updatedAt = new Date();
+      await service.save();
+      return res.json({ success: true, message: "Service updated successfully!", data: service });
+    } else {
+      service = await Services.create({
+        title,
+        slug,
+        shortDescription,
+        description,
+        icon,
+        category,
+        duration,
+        metaTitle,
+        metaDescription,
+      });
+      return res.json({ success: true, message: "Service created successfully!", data: service });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.json({ success: false, message: "Something went wrong" });
+  }
 };
 
 // Get all service 
+// serviceRoute.get('service/admin/services', getAllInquiries);
 const getAllInquiries = async (req, res) => {
-    try {
-        const services = await Services.find().sort({ createdAt: -1 });
-        res.json({ success: true, data: services });
-    }
-    catch (error) {
-        console.error('Error in fetching all Services:', error);
-        res.json({ success: false, message: error.message });
-    }
+  try {
+    const services = await Services.find().sort({ createdAt: -1 });
+    res.json({ success: true, data: services });
+  }
+  catch (error) {
+    console.error('Error in fetching all Services:', error);
+    res.json({ success: false, message: error.message });
+  }
 };
-// Get service by slug
+// Get service by id or slug in admin and platform
+// serviceRoute.get('/service/get-service/:id', getSlugService);
 const getSlugService = async (req, res) => {
-    try {   
-        const { slug } = req.params;
-        const service = await Services.findOne({ slug: slug });
-        if (!service) {
-            return res.status(404).json({ message: 'Service not found' });
-        }
-        res.json({ success: true, data: service });
+  try {
+    const { id } = req.params;
+    const service = await Services.findOne({ _id: id });
+    if (!service) {
+      return res.json({ message: 'Service not found' });
     }
-    catch (error) {
-        console.error('Error in fetching Service by slug:', error);
-        res.json({ success: false, message: error.message });
-    }
+    res.json({ success: true, data: service });
+  }
+  catch (error) {
+    console.error('Error in fetching Service by slug:', error);
+    res.json({ success: false, message: error.message });
+  }
 };
 
-module.exports = { createService, getAllInquiries,getSlugService};
+const updateServiceStatus = async (req,res) =>  {
+    try {
+        const { serviceId, status } = req.body;
+        if (!serviceId || !status) {          
+            return res.json({success: false,message: "All fields are required",});
+        }
+        const updatedService = await Services.findByIdAndUpdate(serviceId,{ status },{ new: true });
+        if (!updatedService) {
+            return res.json({success: false,message: "Service not found"});
+        }
+        return res.json({success: true,message: `Service status changed to ${status}`,});
+    } catch (error) {
+        console.log(error);
+        return res.json({success: false,message: "Something went wrong"});
+    }
+}
+
+module.exports = { createService, getAllInquiries, getSlugService,updateServiceStatus };

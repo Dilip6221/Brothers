@@ -12,7 +12,6 @@ const AdminCreateBlog = () => {
     const { id } = useParams(); // ID => update mode
     const [form, setForm] = useState({
         title: "",
-        slug: "",
         category: "",
         tags: "",
         metaTitle: "",
@@ -29,12 +28,10 @@ const AdminCreateBlog = () => {
                 const b = res.data.data;
                 setForm({
                     title: b.title,
-                    slug: b.slug,
                     category: b.category,
                     tags: b.tags?.join(", "),
                     metaTitle: b.metaTitle,
                     metaDescription: b.metaDescription,
-                    // status: b.status,
                     thumbnail: b.thumbnail,
                     content: b.contentHTML
                 });
@@ -83,10 +80,6 @@ const AdminCreateBlog = () => {
                 <form className="row g-3 bg-dark rounded text-white p-3" onSubmit={handleSubmit}>
                     <div className="col-md-4">
                         <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Blog title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
-                    </div>
-                    
-                    <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
                     </div>
                     <div className="col-md-4">
                         <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
