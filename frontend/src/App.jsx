@@ -23,6 +23,9 @@ import AdminNewsLatters from './pages/Admin/AdminNewsLatters.jsx'
 import Gallery from './pages/Gallery.jsx'
 import AdminGallery from './pages/Admin/AdminGallery.jsx'
 import Ppf from './pages/Service/Ppf.jsx'
+import Paint from './pages/Service/Paint.jsx'
+import Ceramic from './pages/Service/Ceramic.jsx'
+import CarWash from './pages/Service/CarWash.jsx'
 
 const App = () => {
   const location = useLocation();
@@ -62,7 +65,11 @@ const App = () => {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
+
         <Route path="/ppf" element={<Ppf />} />
+        <Route path="/paint" element={<Paint />} />
+        <Route path="/ceramic" element={<Ceramic />} />
+        <Route path="/premium-car-wash" element={<CarWash />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact-us" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />

@@ -76,16 +76,6 @@ const AdminLayout = ({ children }) => {
               >
                 <i className="fa fa-keyboard me-2"></i>Services
               </NavLink>
-
-              <NavLink
-                to="/admin/chart"
-                className={({ isActive }) =>
-                  `nav-item nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                <i className="fa fa-chart-bar me-2"></i>Charts
-              </NavLink>
-
             </div>
           </nav>
         </div>
