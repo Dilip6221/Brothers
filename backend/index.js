@@ -4,12 +4,13 @@ dotenv.config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const userRoute = require('./routes/UserRoute.js');
+const UserRoute = require('./routes/UserRoute.js');
 const serviceInquiryRoute = require('./routes/InquiryRoute.js');
 const SubscribeRoute = require('./routes/SubscribeRoute.js')
 const BlogRoute = require('./routes/BlogRoute.js')
-const serviceRoute = require('./routes/ServiceRoute.js')
-const galleryRoute = require('./routes/GalleryRoute.js');
+const ServiceRoute = require('./routes/ServiceRoute.js')
+const GalleryRoute = require('./routes/GalleryRoute.js');
+const JobCardRoute = require('./routes/JobCardRoute.js');
 const connectDB = require('./config/db.js');
 const cookieParser = require('cookie-parser');
 app.use(express.static('public'));
@@ -25,12 +26,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 /* Routes */
-app.use('/api/user', userRoute);
+app.use('/api/user', UserRoute);
 app.use('/api/inquery', serviceInquiryRoute);
 app.use('/api/subscribe', SubscribeRoute);
 app.use('/api/blog', BlogRoute);
-app.use('/api/service', serviceRoute);
-app.use('/api/gallery', galleryRoute);
+app.use('/api/service', ServiceRoute);
+app.use('/api/gallery', GalleryRoute);
+app.use('/api/jobcard', JobCardRoute);
 
 app.get('/', (req, res) => {
     res.send('Welcome To Brothers');

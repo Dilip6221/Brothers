@@ -1,10 +1,11 @@
-import { React, useContext } from "react";
+import { React, useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import "../../css/style.css";
 
 const AdminLayout = ({ children }) => {
-  const {user,logout} = useContext(UserContext);
+  const { user, logout } = useContext(UserContext);
+
   return (
     <>
       <div className="container-fluid position-relative d-flex p-0">
@@ -39,6 +40,22 @@ const AdminLayout = ({ children }) => {
               >
                 <i className="bi bi-person-badge-fill me-2"></i>Our Team
               </NavLink>
+              <NavLink
+                to="/admin/user-cars"
+                className={({ isActive }) =>
+                  `nav-item nav-link ${isActive ? "active" : ""}`
+                }
+              >
+                <i className="fa fa-keyboard me-2"></i>User Cars
+              </NavLink>
+              <NavLink
+                to="/admin/job-cards"
+                className={({ isActive }) =>
+                  `nav-item nav-link ${isActive ? "active" : ""}`
+                }
+              >
+                <i className="fa fa-keyboard me-2"></i>Job Cards
+              </NavLink>
 
               <NavLink
                 to="/admin/inquery"
@@ -57,10 +74,10 @@ const AdminLayout = ({ children }) => {
               >
                 <i className="bi bi-envelope-arrow-up-fill me-2"></i>Newsletters
               </NavLink>
-              <NavLink to="/admin/blogs" onClick={() => window.dispatchEvent(new Event("ourBlogClick"))} className={({ isActive }) =>`nav-item nav-link ${isActive ? "active" : ""}`}>
+              <NavLink to="/admin/blogs" onClick={() => window.dispatchEvent(new Event("ourBlogClick"))} className={({ isActive }) => `nav-item nav-link ${isActive ? "active" : ""}`}>
                 <i className="fa fa-keyboard me-2"></i>Our Blogs
               </NavLink>
-               <NavLink
+              <NavLink
                 to="/admin/gallery"
                 className={({ isActive }) =>
                   `nav-item nav-link ${isActive ? "active" : ""}`

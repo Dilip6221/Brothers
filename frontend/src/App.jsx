@@ -27,6 +27,8 @@ import Paint from './pages/Service/Paint.jsx'
 import Ceramic from './pages/Service/Ceramic.jsx'
 import CarWash from './pages/Service/CarWash.jsx'
 import AdminCreateService from './pages/Admin/AdminCreateService.jsx'
+import AdminUserCars from './pages/Admin/AdminUserCars.jsx'
+import AdminCreateUserCars from './pages/Admin/AdminCreateUserCars.jsx'
 
 const App = () => {
   const location = useLocation();
@@ -94,6 +96,8 @@ const App = () => {
         <Route path="/admin/gallery/create" element={<AdminGallery />} />
         <Route path="/admin/services/create" element={<AdminCreateService />} />
         <Route path="/admin/services/edit/:id" element={<AdminCreateService />} />
+        <Route path="/admin/user-cars" element={<AdminUserCars />} />
+        <Route path="/admin/user-cars/create" element={<AdminCreateUserCars />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>
