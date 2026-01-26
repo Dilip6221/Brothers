@@ -29,6 +29,10 @@ import CarWash from './pages/Service/CarWash.jsx'
 import AdminCreateService from './pages/Admin/AdminCreateService.jsx'
 import AdminUserCars from './pages/Admin/AdminUserCars.jsx'
 import AdminCreateUserCars from './pages/Admin/AdminCreateUserCars.jsx'
+import AdminJobCards from './pages/Admin/AdminJobCards.jsx'
+import AdminCreateJobCards from './pages/Admin/AdminCreateJobCards.jsx'
+import AdminUpdateJobCards from './pages/Admin/AdminUpdateJobCards.jsx'
+import AdminJobCardTimeLine from './pages/Admin/AdminJobCardTimeLine.jsx'
 
 const App = () => {
   const location = useLocation();
@@ -98,6 +102,10 @@ const App = () => {
         <Route path="/admin/services/edit/:id" element={<AdminCreateService />} />
         <Route path="/admin/user-cars" element={<AdminUserCars />} />
         <Route path="/admin/user-cars/create" element={<AdminCreateUserCars />} />
+        <Route path="/admin/job-cards" element={<AdminJobCards />} />
+        <Route path="/admin/job-cards/create" element={<AdminCreateJobCards />} />
+        <Route path="/admin/job-cards/update/:id" element={<AdminUpdateJobCards />} />
+        <Route path="admin/job-cards/:id/timeline" element={<AdminJobCardTimeLine />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>

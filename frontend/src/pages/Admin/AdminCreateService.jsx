@@ -170,7 +170,18 @@ const AdminCreateService = () => {
             />
           </div>
 
-         
+         {/* STATUS */}
+          <div className="col-md-6">
+            <label className="form-label">Status</label>
+            <select
+              className="form-control bg-dark text-white border-secondary"
+              value={form.status}
+              onChange={(e) => setForm({ ...form, status: e.target.value })}
+            >
+              <option value="ACTIVE">ACTIVE</option>
+              <option value="INACTIVE">INACTIVE</option>
+            </select>
+          </div>
 
           {/* SEO */}
           <div className="col-md-6">
@@ -206,20 +217,6 @@ const AdminCreateService = () => {
               }
             />
           </div>
-
-          {/* STATUS */}
-          <div className="col-md-4">
-            <label className="form-label">Status</label>
-            <select
-              className="form-control bg-dark text-white border-secondary"
-              value={form.status}
-              onChange={(e) => setForm({ ...form, status: e.target.value })}
-            >
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="INACTIVE">INACTIVE</option>
-            </select>
-          </div>
-
           <div className="col-12">
             <button type="submit" className="btn btn-primary">
               {isEdit ? "Update Service" : "Create Service"}

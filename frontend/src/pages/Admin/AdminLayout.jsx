@@ -41,12 +41,20 @@ const AdminLayout = ({ children }) => {
                 <i className="bi bi-person-badge-fill me-2"></i>Our Team
               </NavLink>
               <NavLink
+                to="/admin/services"
+                className={({ isActive }) =>
+                  `nav-item nav-link ${isActive ? "active" : ""}`
+                }
+              >
+                <i className="fa fa-keyboard me-2"></i>Services
+              </NavLink>
+              <NavLink
                 to="/admin/user-cars"
                 className={({ isActive }) =>
                   `nav-item nav-link ${isActive ? "active" : ""}`
                 }
               >
-                <i className="fa fa-keyboard me-2"></i>User Cars
+                <i className="bi bi-car-front me-2"></i>User Cars
               </NavLink>
               <NavLink
                 to="/admin/job-cards"
@@ -54,7 +62,7 @@ const AdminLayout = ({ children }) => {
                   `nav-item nav-link ${isActive ? "active" : ""}`
                 }
               >
-                <i className="fa fa-keyboard me-2"></i>Job Cards
+                <i className="bi bi-card-checklist me-2"></i>Job Cards
               </NavLink>
 
               <NavLink
@@ -85,14 +93,7 @@ const AdminLayout = ({ children }) => {
               >
                 <i className="bi bi-images me-2"></i>Gallery
               </NavLink>
-              <NavLink
-                to="/admin/services"
-                className={({ isActive }) =>
-                  `nav-item nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                <i className="fa fa-keyboard me-2"></i>Services
-              </NavLink>
+              
             </div>
           </nav>
         </div>

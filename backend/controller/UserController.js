@@ -354,4 +354,15 @@ const changeUserStatus = async (req,res) =>  {
         return res.json({success: false,message: "Something went wrong"});
     }
 }
-module.exports = { registerUser, loginUser, sendForgotPasswordEmail, resetPassword, getUserData, changePassword, logoutUser, allUsers, getDashboardDataCount, exportUsersData,changeUserStatus,updateUserData };
+//  For getting user by user cars section by searching 
+//  userRoute.get("/admin/get-user-job", getUsersForJob);
+const getUsersForJob = async (req, res) => {
+  const search = req.query.search || "";
+  const users = await User.find({
+    name: { $regex: search, $options: "i" }
+  })
+    .select("name phone")
+    .limit(20);
+  res.json({ success: true, data: users });
+};
+module.exports = { registerUser, loginUser, sendForgotPasswordEmail, resetPassword, getUserData, changePassword, logoutUser, allUsers, getDashboardDataCount, exportUsersData,changeUserStatus,updateUserData,getUsersForJob };

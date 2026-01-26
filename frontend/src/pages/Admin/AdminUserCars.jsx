@@ -35,7 +35,7 @@ const AdminUserCars = () => {
 
                     <h4 className="text-white border-bottom pb-2 mb-3 d-flex justify-content-between align-items-center">
                         <span>
-                            <i className="bi bi-envelope-arrow-up-fill me-2"></i>
+                            <i className="bi bi-car-front me-2"></i>
                             User Cars Management
                         </span>
                         <div className="d-flex align-items-center gap-3">

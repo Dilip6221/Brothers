@@ -65,7 +65,16 @@ const AdminCreateUserCars = () => {
     return (
         <AdminLayout>
             <div className="container py-4">
-                <h4 className="text-white mb-4">Create User Car</h4>
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h4 className="section-title">
+                        <span className="first-letter">C</span>
+                        reate User Car
+                    </h4>
+
+                    <button type="button" className="btn btn-outline-danger d-flex align-items-center gap-2" onClick={() => navigate("/admin/user-cars")}>
+                        <i className="bi bi-arrow-left"></i> Back
+                    </button>
+                </div>
                 <form className="row g-3 bg-dark rounded text-white p-4" onSubmit={handleSubmit}>
                     <div className="col-md-4">
                         <label className="form-label">Customer</label>
