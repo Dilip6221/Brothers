@@ -6,6 +6,8 @@ const bcrypt = require('bcryptjs')
 const { sendWelcomeMail } = require('../mail/UserMail.js');
 const exportToCSV = require("../config/csv.js");
 const { Subscription } = require('../model/Subscribe.js');
+const { Services } = require('../model/Services.js');
+const { UserCars } = require('../model/UserCars.js');
 
 /* For Generate token */
 const generateToken = (userId) => {
@@ -293,7 +295,8 @@ const getDashboardDataCount = async (req, res) => {
         const cancelledInquiries = await Inquiry.countDocuments({ status: "COMPLETED" });
         const subscribeUser = await Subscription.countDocuments({ status: "SUBSCRIBE" });
         const unsubscribeUser = await Subscription.countDocuments({ status: "UNSUBSCRIBE" });
-
+        const services = await Services.countDocuments({ status: "ACTIVE" });
+        const userCars = await UserCars.countDocuments({ isActive: true });
         res.json({
             success: true,
             data: {
@@ -305,11 +308,14 @@ const getDashboardDataCount = async (req, res) => {
                 completedInquiries,
                 cancelledInquiries,
                 subscribeUser,
-                unsubscribeUser
+                unsubscribeUser,
+                services,
+                userCars,
             }
         });
     } catch (error) {
-        res.json({ success: false, message: "Error For Counting dashboard", error: error.message });
+        console.log(error);
+        res.json({ success: false, message: "Error For Counting dashboard",});
     }
 };
 
@@ -333,7 +339,8 @@ const exportUsersData = async (req, res) => {
         res.setHeader("Content-Disposition", "attachment; filename=users.csv");
         res.send(csv);
     } catch (error) {
-        res.status(500).json({ success: false, message: "CSV export failed" });
+        console.log(error);
+        res.json({ success: false, message: "CSV export failed" });
     }
 };
 /* Admin side user list change status active or not */

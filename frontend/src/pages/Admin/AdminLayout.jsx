@@ -46,7 +46,7 @@ const AdminLayout = ({ children }) => {
                   `nav-item nav-link ${isActive ? "active" : ""}`
                 }
               >
-                <i className="fa fa-keyboard me-2"></i>Services
+                <i className="bi bi-tools me-2"></i>Services
               </NavLink>
               <NavLink
                 to="/admin/user-cars"

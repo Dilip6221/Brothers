@@ -55,7 +55,7 @@ const AdminServiceList = () => {
                 <div className="bg-dark rounded p-4">
                     <h4 className="text-white border-bottom pb-2 mb-3 d-flex justify-content-between align-items-center">
                         <span>
-                            <i className="bi bi-envelope-arrow-up-fill me-2"></i>
+                            <i className="bi bi-tools me-2"></i>
                             Our Services
                         </span>
                         <div className="d-flex align-items-center gap-3">

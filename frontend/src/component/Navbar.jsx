@@ -33,7 +33,7 @@ const Navbar = () => {
     { to: "/car-vault", label: "My Car Vault" },
     { to: "/blog", label: "Blog" },
     { to: "/gallery", label: "Gallery" },
-    { to: "/contact-us", label: "Contact" },
+    { to: "/contact-us", label: "Contact Us" },
   ];
 
   const MegaDropdown = ({ title, isActive, items }) => (

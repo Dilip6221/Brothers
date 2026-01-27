@@ -103,7 +103,7 @@ const Footer = () => {
                             <li><a href="/services" className="nav-link social-icon mb-2">Services</a></li>
                             <li><a href="/gallery" className="nav-link social-icon mb-2">Gallery</a></li>
                             <li><a href="/blog" className="nav-link social-icon mb-2">Blog</a></li>
-                            <li><a href="/contact" className="nav-link social-icon mb-2">Contact</a></li>
+                            <li><a href="/contact-us" className="nav-link social-icon mb-2">Contact Us</a></li>
                         </ul>
                     </div>
 

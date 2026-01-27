@@ -130,7 +130,7 @@ const Blog = () => {
                                 <div className="empty-icon">
                                     <i className="bi bi-journal-x"></i>
                                 </div>
-                                <h3 className="mt-3 empty-title">No Blogs Available</h3>
+                                <h3 className="mt-3">No Blogs Available</h3>
                                 <p className="empty-text">
                                     We're preparing something exciting for you.
                                     <br />

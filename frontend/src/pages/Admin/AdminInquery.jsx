@@ -95,7 +95,7 @@ const AdminInquery = () => {
                 <div className="bg-dark rounded p-4">
                     <h4 className="text-white border-bottom pb-2 mb-3 d-flex justify-content-between align-items-center">
                         <span>
-                            <i className="bi bi-clipboard me-2"></i>
+                            <i className="bi bi-clipboard-check-fill me-2"></i>
                             Customer Inquiry
                         </span>
                         <div className="d-flex align-items-center gap-3">

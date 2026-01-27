@@ -11,20 +11,20 @@ const AdminDashboard = () => {
 
   // Fetch dashboard stats from backend
   const fetchStats = async () => {
-  try {
-    setLoading(true);
-    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/admin/dashboard-stats`);
-    setStats(res.data.data);
-  } catch (e) {
-    toast.error("Dashboard fetch error:", e);
-  } finally {
-    setLoading(false);
-  }
-};
-const SmallLoader = () => (
-  <div className="spinner-border text-danger spinner-border-sm " role="status">
-  </div>
-);
+    try {
+      setLoading(true);
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/admin/dashboard-stats`);
+      setStats(res.data.data);
+    } catch (e) {
+      toast.error("Dashboard fetch error:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const SmallLoader = () => (
+    <div className="spinner-border text-danger spinner-border-sm " role="status">
+    </div>
+  );
 
 
   useEffect(() => {// Initial fetch
@@ -168,7 +168,7 @@ const SmallLoader = () => (
                 <div className="ms-3 text-white">
                   <p className="mb-2">Subscribed User</p>
                   <div className="d-flex align-items-center justify-content-end">
-                      <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.subscribeUser}</h5>
+                    <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.subscribeUser}</h5>
                     <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/subscribe", { state: { openTab: "SUBSCRIBE" } })}>
                       View
                     </span>
@@ -192,24 +192,33 @@ const SmallLoader = () => (
                 </div>
               </div>
             </div>
-            {/* Total Revenue */}
+            {/* Top services*/}
             <div className="col-sm-6 col-xl-3">
               <div className="bg-dark rounded d-flex align-items-center justify-content-between p-4 shadow-sm border border-secondary">
-                <i className="fa fa-dollar-sign fa-2x text-info"></i>
+                <i className="bi bi-tools fa-2x text-white"></i>
                 <div className="ms-3 text-white">
-                  <p className="mb-2">Revenue</p>
-                  <h6 className="mb-0">$12,345</h6>
+                  <p className="mb-2">Top Service</p>
+                  <div className="d-flex align-items-center justify-content-end">
+                    <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.services}</h5>
+                    <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/services")}>
+                      View
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-
-            {/* Top Services */}
+            {/* User Cars*/}
             <div className="col-sm-6 col-xl-3">
               <div className="bg-dark rounded d-flex align-items-center justify-content-between p-4 shadow-sm border border-secondary">
-                <i className="fa fa-car fa-2x text-primary"></i>
+                <i className="bi bi-car-front fa-2x text-danger"></i>
                 <div className="ms-3 text-white">
-                  <p className="mb-2">Top Services</p>
-                  <h6 className="mb-0">PPF, Paint</h6>
+                  <p className="mb-2">User Cars</p>
+                  <div className="d-flex align-items-center justify-content-end">
+                    <h5 className="mb-0 me-2">{loading ? <SmallLoader /> : stats.userCars}</h5>
+                    <span className="badge bg-danger mt-1" style={{ fontSize: "10px", padding: "4px 6px", cursor: "pointer" }} onClick={() => navigate("/admin/user-cars")}>
+                      View
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
