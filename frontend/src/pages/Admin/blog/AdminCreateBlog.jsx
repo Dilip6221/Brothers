@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import AdminLayout from "./AdminLayout";
+import AdminLayout from "../AdminLayout.jsx";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import TextEditor from "../../component/Admin/TextEditor";
+import TextEditor from "../../../component/Admin/TextEditor.jsx";
 import { useEffect } from "react";
 
 const AdminCreateBlog = () => {

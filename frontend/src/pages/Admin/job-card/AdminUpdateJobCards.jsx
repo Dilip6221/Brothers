@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import AdminLayout from "./AdminLayout";
+import AdminLayout from "../AdminLayout.jsx";
 import toast from "react-hot-toast";
 
 const AdminUpdateJobCard = () => {

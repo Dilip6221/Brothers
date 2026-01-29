@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import AdminLayout from "./AdminLayout";
+import AdminLayout from "../AdminLayout.jsx";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
-import { UserContext } from "../../context/UserContext";
+import { UserContext } from "../../../context/UserContext.jsx";
 
 const AdminUserList = () => {
     const { downloadCSV } = useContext(UserContext);

@@ -11,28 +11,29 @@ import Footer from "./component/Footer.jsx";
 // import ServiceIcon from "./component/ServiceIcon.jsx";
 import AdminLayout from './pages/Admin/AdminLayout.jsx'
 import AdminInquery from './pages/Admin/AdminInquery.jsx'
-import AdminUserList from './pages/Admin/AdminUserList.jsx'
-import AdminBlogs from './pages/Admin/AdminBlogs.jsx'
-import AdminCreateBlog from './pages/Admin/AdminCreateBlog.jsx'
+import AdminUserList from './pages/Admin/user/AdminUserList.jsx'
+import AdminBlogs from './pages/Admin/blog/AdminBlogs.jsx'
+import AdminCreateBlog from './pages/Admin/blog/AdminCreateBlog.jsx'
 import Blog from './pages/Blog.jsx'
 import BlogView from './pages/BlogView.jsx'
 import AdminDashboard from './pages/Admin/AdminDashboard.jsx'
 import Contact from './pages/Contact.jsx'
-import AdminServiceList from './pages/Admin/AdminServiceList.jsx'
-import AdminNewsLatters from './pages/Admin/AdminNewsLatters.jsx'
+import AdminServiceList from './pages/Admin/service/AdminServiceList.jsx'
+import AdminCreateService from './pages/Admin/service/AdminCreateService.jsx'
+import AdminNewsLatters from './pages/Admin/news-latter/AdminNewsLatters.jsx'
 import Gallery from './pages/Gallery.jsx'
 import AdminGallery from './pages/Admin/AdminGallery.jsx'
 import Ppf from './pages/Service/Ppf.jsx'
 import Paint from './pages/Service/Paint.jsx'
 import Ceramic from './pages/Service/Ceramic.jsx'
 import CarWash from './pages/Service/CarWash.jsx'
-import AdminCreateService from './pages/Admin/AdminCreateService.jsx'
-import AdminUserCars from './pages/Admin/AdminUserCars.jsx'
-import AdminCreateUserCars from './pages/Admin/AdminCreateUserCars.jsx'
-import AdminJobCards from './pages/Admin/AdminJobCards.jsx'
-import AdminCreateJobCards from './pages/Admin/AdminCreateJobCards.jsx'
-import AdminUpdateJobCards from './pages/Admin/AdminUpdateJobCards.jsx'
-import AdminJobCardTimeLine from './pages/Admin/AdminJobCardTimeLine.jsx'
+import AdminUserCars from './pages/Admin/user-cars/AdminUserCars.jsx'
+import AdminCreateUserCars from './pages/Admin/user-cars/AdminCreateUserCars.jsx'
+import AdminJobCards from './pages/Admin/job-card/AdminJobCards.jsx'
+import AdminCreateJobCards from './pages/Admin/job-card/AdminCreateJobCards.jsx'
+import AdminUpdateJobCards from './pages/Admin/job-card/AdminUpdateJobCards.jsx'
+import AdminJobCardTimeLine from './pages/Admin/job-card/AdminJobCardTimeLine.jsx'
+import AdminJobServices from './pages/Admin/job-card/AdminJobServices.jsx'
 
 const App = () => {
   const location = useLocation();
@@ -105,7 +106,8 @@ const App = () => {
         <Route path="/admin/job-cards" element={<AdminJobCards />} />
         <Route path="/admin/job-cards/create" element={<AdminCreateJobCards />} />
         <Route path="/admin/job-cards/update/:id" element={<AdminUpdateJobCards />} />
-        <Route path="admin/job-cards/:id/timeline" element={<AdminJobCardTimeLine />} />
+        <Route path="/admin/job-cards/:id/timeline" element={<AdminJobCardTimeLine />} />
+        <Route path="/admin/job-cards/:jobId/services" element={<AdminJobServices />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>
