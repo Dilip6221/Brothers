@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from 'react'
-import AdminLayout from './AdminLayout.jsx'
+import AdminLayout from '../AdminLayout.jsx'
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import toast from 'react-hot-toast';

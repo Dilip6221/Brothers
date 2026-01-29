@@ -1,9 +1,9 @@
 import React, { useEffect, useState ,useContext} from 'react';
-import AdminLayout from './AdminLayout';
+import AdminLayout from '../AdminLayout';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useLocation } from 'react-router-dom';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../../context/UserContext.jsx';
 
 const AdminInquery = () => {
     const location = useLocation();
