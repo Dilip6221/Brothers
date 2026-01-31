@@ -120,33 +120,28 @@ const createJobCard = async (req, res) => {
 
 const updateJobProgress = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { status, progressPercent, note, expectedDelivery } = req.body;
+    const { stage, note, progressPercent, expectedDelivery } = req.body;
 
-    const job = await ServiceJobs.findById(id);
-    if (!job) {
-      return res.json({ success: false, message: "Job not found" });
-    }
+    const STATUS_MAP = {
+      CHECK_IN: "PENDING",
+      INSPECTION: "PROGRESS",
+      WORK_STARTED: "PROGRESS",
+      PART_REPLACED: "PROGRESS",
+      QUALITY_CHECK: "PROGRESS",
+      READY: "COMPLETED",
+      DELIVERED: "DELIVERED"
+    };
 
-    if (status) job.status = status;
-    if (progressPercent !== undefined)
-      job.progressPercent = progressPercent;
-    if (expectedDelivery)
-      job.expectedDelivery = expectedDelivery;
+    const job = await ServiceJobs.findById(req.params.id);
+    if (!job) return res.json({ success: false, message: "Job not found" });
 
-    job.timeline.push({
-      stage: "JOB UPDATE",
-      status: job.status,
-      note,
-      updatedAt: new Date()
-    });
-
+    job.currentStage = stage;
+    job.progressPercent = progressPercent;
+    job.status = STATUS_MAP[stage];
+    job.expectedDelivery = expectedDelivery;
+    job.timeline.push({ stage, note });
     await job.save();
-
-    res.json({
-      success: true,
-      message: "Job progress updated successfully"
-    });
+    res.json({ success: true });
   } catch (err) {
     console.error(err);
     res.json({ success: false, message: "Failed to update job progress" });
@@ -198,7 +193,7 @@ const getJobMedia = async (req, res) => {
     const media = await JobMedia.find(filter).sort({ createdAt: -1 });
     res.json({ success: true, data: media });
   } catch (err) {
-    res.json({success: false,message: "Failed to fetch media"});
+    res.json({ success: false, message: "Failed to fetch media" });
   }
 };
 
@@ -207,14 +202,14 @@ const uploadJobMedia = async (req, res) => {
     const { jobId } = req.params;
     const { stage } = req.body;
     if (!stage) {
-      return res.json({success: false,message: "Stage is required"});
+      return res.json({ success: false, message: "Stage is required" });
     }
     if (!req.file) {
-      return res.json({success: false,message: "No file uploaded"});
+      return res.json({ success: false, message: "No file uploaded" });
     }
     const job = await ServiceJobs.findById(jobId);
     if (!job) {
-      return res.json({success: false,message: "Job not found"});
+      return res.json({ success: false, message: "Job not found" });
     }
     const uploadResult = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
@@ -236,10 +231,10 @@ const uploadJobMedia = async (req, res) => {
       publicId: uploadResult.public_id,
       uploadedBy: req.user?._id || null
     });
-    res.json({success: true,message: "Media uploaded",data: media});
+    res.json({ success: true, message: "Media uploaded", data: media });
   } catch (err) {
     console.error(err);
-    res.json({success: false,message: "Upload failed"});
+    res.json({ success: false, message: "Upload failed" });
   }
 };
 /* ===================== DELETE MEDIA ===================== */

@@ -69,9 +69,11 @@ const AdminJobCardTimeLine = () => {
                 <div className="bg-dark text-white rounded p-3 mb-4 text-center">
                     <h6 className="mb-1">{job.jobCode}</h6>
                     <span className="badge bg-warning text-dark">
-                        {job.progressPercent}% Completed
+                        {job.progressPercent}% Completed · {job.status}
                     </span>
+
                 </div>
+                {/* Timeline */}
                 {/* Timeline */}
                 <div className="timeline">
                     {job.timeline?.length > 0 ? (
@@ -84,11 +86,20 @@ const AdminJobCardTimeLine = () => {
                                     className={`timeline-item ${idx % 2 === 0 ? "left" : "right"}`}
                                 >
                                     <div className="timeline-content">
+                                        {/* DATE */}
                                         <span className="year">
                                             {new Date(t.updatedAt).toLocaleString()}
                                         </span>
-                                        <h4>{t.status}</h4>
-                                        <p className="mb-0">{t.note || "-"}</p>
+
+                                        {/* STAGE (NOT STATUS) */}
+                                        <h4 className="text-info">
+                                            {t.stage?.replaceAll("_", " ")}
+                                        </h4>
+
+                                        {/* NOTE */}
+                                        <p className="mb-0">
+                                            {t.note || <span className="text-muted">No note added</span>}
+                                        </p>
                                     </div>
                                 </div>
                             ))
@@ -98,6 +109,7 @@ const AdminJobCardTimeLine = () => {
                         </p>
                     )}
                 </div>
+
             </div>
         </AdminLayout>
     );

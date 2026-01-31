@@ -19,7 +19,7 @@ router.get("/admin/job-services/:jobId", getJobServicesByJob);
 router.delete("/admin/job-services/:id", deleteJobService);
 
 
-router.get("/admin/job-cards/:jobId/media",getJobMedia);
+router.get("/admin/job-cards/:jobId/get-media",getJobMedia);
 router.post("/admin/job-cards/:jobId/media",upload.single("media"),uploadJobMedia);
 router.delete("/admin/job-cards/:jobId/media/:mediaId",deleteJobMedia);
 

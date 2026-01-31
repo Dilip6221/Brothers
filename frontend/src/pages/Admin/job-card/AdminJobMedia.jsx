@@ -26,7 +26,7 @@ const AdminJobMedia = () => {
     const fetchMedia = async () => {
         try {
             const res = await axios.get(
-                `${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/job-cards/${id}/media`
+                `${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/job-cards/${id}/get-media`
             );
             setMedia(res.data.data || []);
         } catch {
@@ -41,7 +41,6 @@ const AdminJobMedia = () => {
     const uploadMedia = async () => {
         if (!file) return toast.error("Select file");
         if (!stage) return toast.error("Select stage");
-
         const formData = new FormData();
         formData.append("media", file);
         formData.append("stage", stage);
@@ -123,51 +122,49 @@ const AdminJobMedia = () => {
                 </div>
 
                 <div className="row g-3">
-    {media.length === 0 && (
-        <p className="text-center text-white">No media</p>
-    )}
-
-    {media.map((m) => (
-        <div className="col-md-3 col-sm-6" key={m._id}>
-            <div className="job-media-card">
-                <div className="media-wrapper">
-                    {m.mediaType === "video" ? (
-                        <video
-                            src={m.url}
-                            controls
-                            className="media-preview"
-                        />
-                    ) : (
-                        <img
-                            src={m.url}
-                            alt="job-media"
-                            className="media-preview"
-                        />
+                    {media.length === 0 && (
+                        <p className="text-center text-white">No media</p>
                     )}
 
-                    {/* stage badge */}
-                    {m.stage && (
-                        <span className="stage-badge">
-                            {m.stage}
-                        </span>
-                    )}
+                    {media.map((m) => (
+                        <div className="col-md-3 col-sm-6" key={m._id}>
+                            <div className="job-media-card">
+                                <div className="media-wrapper">
+                                    {m.mediaType === "video" ? (
+                                        <video
+                                            src={m.url}
+                                            controls
+                                            className="media-preview"
+                                        />
+                                    ) : (
+                                        <img
+                                            src={m.url}
+                                            alt="job-media"
+                                            className="media-preview"
+                                        />
+                                    )}
+
+                                    {/* stage badge */}
+                                    {m.stage && (
+                                        <span className="stage-badge">
+                                            {m.stage}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="media-footer">
+                                    <button
+                                        className="btn btn-sm btn-outline-danger w-100"
+                                        onClick={() => deleteMedia(m._id)}
+                                    >
+                                        <i className="bi bi-trash me-1"></i>
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-
-                <div className="media-footer">
-                    <button
-                        className="btn btn-sm btn-outline-danger w-100"
-                        onClick={() => deleteMedia(m._id)}
-                    >
-                        <i className="bi bi-trash me-1"></i>
-                        Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-    ))}
-</div>
-
-
             </div>
         </AdminLayout>
     );
