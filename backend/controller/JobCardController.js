@@ -2,7 +2,9 @@ const { UserCars } = require('../model/UserCars.js');
 const mongoose = require("mongoose");
 const { ServiceJobs } = require("../model/ServiceJobs.js");
 const { User } = require('../model/User.js');
-
+const { JobServices } = require('../model/JobServices.js');
+const { JobMedia } = require('../model/JobMedia.js');
+const cloudinary = require("../config/cloudinary");
 
 // Admin Side listing for user cars
 // router.post("/admin/user-cars",getUserCars );
@@ -151,4 +153,110 @@ const updateJobProgress = async (req, res) => {
   }
 };
 
-module.exports = { getUserCars, createUserCar, adminJobCardList, getJobCardById, getCarsByUser, createJobCard, updateJobProgress };
+
+const createJobService = async (req, res) => {
+  try {
+    const { jobId, serviceName, price } = req.body;
+    const service = await JobServices.create({
+      jobId,
+      serviceName,
+      price: Number(price),
+    });
+
+    res.json({ success: true, data: service });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, message: err.message });
+  }
+};
+
+const getJobServicesByJob = async (req, res) => {
+  try {
+    const services = await JobServices.find({ jobId: req.params.jobId });
+    res.json({ success: true, data: services });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const deleteJobService = async (req, res) => {
+  try {
+    await JobServices.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+
+const getJobMedia = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { stage } = req.query;
+    const filter = { jobId, isActive: true };
+    if (stage) filter.stage = stage;
+    const media = await JobMedia.find(filter).sort({ createdAt: -1 });
+    res.json({ success: true, data: media });
+  } catch (err) {
+    res.json({success: false,message: "Failed to fetch media"});
+  }
+};
+
+const uploadJobMedia = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { stage } = req.body;
+    if (!stage) {
+      return res.json({success: false,message: "Stage is required"});
+    }
+    if (!req.file) {
+      return res.json({success: false,message: "No file uploaded"});
+    }
+    const job = await ServiceJobs.findById(jobId);
+    if (!job) {
+      return res.json({success: false,message: "Job not found"});
+    }
+    const uploadResult = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: `job-media/${jobId}/${stage}`,
+          resource_type: "auto"
+        },
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        }
+      ).end(req.file.buffer);
+    });
+    const media = await JobMedia.create({
+      jobId,
+      stage,
+      mediaType: uploadResult.resource_type === "video" ? "video" : "photo",
+      url: uploadResult.secure_url,
+      publicId: uploadResult.public_id,
+      uploadedBy: req.user?._id || null
+    });
+    res.json({success: true,message: "Media uploaded",data: media});
+  } catch (err) {
+    console.error(err);
+    res.json({success: false,message: "Upload failed"});
+  }
+};
+/* ===================== DELETE MEDIA ===================== */
+const deleteJobMedia = async (req, res) => {
+  try {
+    const { mediaId } = req.params;
+    const media = await JobMedia.findById(mediaId);
+    if (!media) {
+      return res.json({ success: false, message: "Media not found" });
+    }
+    media.isActive = false;
+    await media.save();
+    return res.json({ success: true, message: "Media deleted" });
+  } catch (err) {
+    console.log(err.message);
+    return res.json({ success: false, message: "Delete failed" });
+  }
+};
+
+module.exports = { getUserCars, createUserCar, adminJobCardList, getJobCardById, getCarsByUser, createJobCard, updateJobProgress, createJobService, getJobServicesByJob, deleteJobService, getJobMedia, deleteJobMedia, uploadJobMedia };

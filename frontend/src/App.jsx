@@ -1,32 +1,38 @@
 import React, { useContext } from 'react'
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
+import { UserContext } from "./context/UserContext.jsx";
 import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Login from './pages/Login.jsx'
 import ForgetPassword from './pages/ForgetPassword.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Navbar from './component/Navbar.jsx'
-import { UserContext } from "./context/UserContext.jsx";
 import Footer from "./component/Footer.jsx";
-// import ServiceIcon from "./component/ServiceIcon.jsx";
-import AdminLayout from './pages/Admin/AdminLayout.jsx'
-import AdminInquery from './pages/Admin/inquery/AdminInquery.jsx'
-import AdminUserList from './pages/Admin/user/AdminUserList.jsx'
-import AdminBlogs from './pages/Admin/blog/AdminBlogs.jsx'
-import AdminCreateBlog from './pages/Admin/blog/AdminCreateBlog.jsx'
 import Blog from './pages/Blog.jsx'
 import BlogView from './pages/BlogView.jsx'
-import AdminDashboard from './pages/Admin/dashboard/AdminDashboard.jsx'
 import Contact from './pages/Contact.jsx'
-import AdminServiceList from './pages/Admin/service/AdminServiceList.jsx'
-import AdminCreateService from './pages/Admin/service/AdminCreateService.jsx'
-import AdminNewsLatters from './pages/Admin/news-latter/AdminNewsLatters.jsx'
 import Gallery from './pages/Gallery.jsx'
-import AdminGallery from './pages/Admin/gallery/AdminGallery.jsx'
+
 import Ppf from './pages/Service/Ppf.jsx'
 import Paint from './pages/Service/Paint.jsx'
 import Ceramic from './pages/Service/Ceramic.jsx'
 import CarWash from './pages/Service/CarWash.jsx'
+
+// import ServiceIcon from "./component/ServiceIcon.jsx";
+import AdminLayout from './pages/Admin/AdminLayout.jsx'
+import AdminDashboard from './pages/Admin/dashboard/AdminDashboard.jsx'
+import AdminUserList from './pages/Admin/user/AdminUserList.jsx'
+import AdminBlogs from './pages/Admin/blog/AdminBlogs.jsx'
+import AdminCreateBlog from './pages/Admin/blog/AdminCreateBlog.jsx'
+import AdminInquery from './pages/Admin/inquery/AdminInquery.jsx'
+import AdminNewsLatters from './pages/Admin/news-latter/AdminNewsLatters.jsx'
+
+import AdminServiceList from './pages/Admin/service/AdminServiceList.jsx'
+import AdminCreateService from './pages/Admin/service/AdminCreateService.jsx'
+
+import AdminGallery from './pages/Admin/gallery/AdminGallery.jsx'
+
+
 import AdminUserCars from './pages/Admin/user-cars/AdminUserCars.jsx'
 import AdminCreateUserCars from './pages/Admin/user-cars/AdminCreateUserCars.jsx'
 import AdminJobCards from './pages/Admin/job-card/AdminJobCards.jsx'
@@ -34,6 +40,7 @@ import AdminCreateJobCards from './pages/Admin/job-card/AdminCreateJobCards.jsx'
 import AdminUpdateJobCards from './pages/Admin/job-card/AdminUpdateJobCards.jsx'
 import AdminJobCardTimeLine from './pages/Admin/job-card/AdminJobCardTimeLine.jsx'
 import AdminJobServices from './pages/Admin/job-card/AdminJobServices.jsx'
+import AdminJobMedia from './pages/Admin/job-card/AdminJobMedia.jsx';
 
 const App = () => {
   const location = useLocation();
@@ -108,6 +115,7 @@ const App = () => {
         <Route path="/admin/job-cards/update/:id" element={<AdminUpdateJobCards />} />
         <Route path="/admin/job-cards/:id/timeline" element={<AdminJobCardTimeLine />} />
         <Route path="/admin/job-cards/:jobId/services" element={<AdminJobServices />} />
+        <Route path="/admin/job-cards/:id/media" element={<AdminJobMedia />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>

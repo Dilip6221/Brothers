@@ -30,5 +30,5 @@ const JobServicesSchema = new mongoose.Schema(
   },
   { timestamps: true, versionKey: false }
 );
-
-module.exports = mongoose.model('JobServices', JobServicesSchema);
+const JobServices = mongoose.model('JobServices', JobServicesSchema);
+module.exports = {JobServices};

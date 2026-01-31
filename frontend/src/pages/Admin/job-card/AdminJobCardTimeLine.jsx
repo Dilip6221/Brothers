@@ -50,10 +50,11 @@ const AdminJobCardTimeLine = () => {
                         <span className="first-letter">J</span>ob Timeline
                     </h4>
                     <div className="d-flex gap-2">
-                        <Link
-                            to={`/admin/job-cards/${id}/services`}
-                            className="btn btn-outline-success"
-                        >
+                        <Link to={`/admin/job-cards/${id}/media`} className="btn btn-outline-success" >
+                            <i className="bi bi-tools me-1"></i>
+                            Manage Media
+                        </Link>
+                        <Link to={`/admin/job-cards/${id}/services`} className="btn btn-outline-success">
                             <i className="bi bi-tools me-1"></i>
                             Manage Services
                         </Link>
