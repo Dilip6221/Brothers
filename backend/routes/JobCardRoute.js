@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const {upload} = require("../middleware/multer.js"); // multer middleware
+const {authUser} = require('../middleware/auth');
 
-const { getUserCars,createUserCar,adminJobCardList,getJobCardById,getCarsByUser,createJobCard,updateJobProgress,getJobServicesByJob,createJobService,deleteJobService,uploadJobMedia,getJobMedia, deleteJobMedia} = require("../controller/JobCardController.js");
+
+const { getUserCars,createUserCar,adminJobCardList,getJobCardById,getCarsByUser,createJobCard,updateJobProgress,getJobServicesByJob,createJobService,deleteJobService,uploadJobMedia,getJobMedia, deleteJobMedia,getMyCars,getCustomerJobCard} = require("../controller/JobCardController.js");
 
 router.post("/admin/user-cars",getUserCars );  // Listing for User Cars
 router.post("/admin/user-cars/create",createUserCar );  // Create A User Cars
@@ -13,14 +15,17 @@ router.get("/admin/user-cars/:userId", getCarsByUser);  // Get A card By UserId
 router.post("/admin/job-card/create", createJobCard);  // Create a job Job Card by admin
 router.patch("/admin/jobcard/:id/progress", updateJobProgress);  // Update a job card via ID by admin
 
-
 router.post("/admin/job-services/create", createJobService);
 router.get("/admin/job-services/:jobId", getJobServicesByJob);
 router.delete("/admin/job-services/:id", deleteJobService);
 
-
 router.get("/admin/job-cards/:jobId/get-media",getJobMedia);
 router.post("/admin/job-cards/:jobId/media",upload.single("media"),uploadJobMedia);
 router.delete("/admin/job-cards/:jobId/media/:mediaId",deleteJobMedia);
+
+/* Platfrom side route */
+router.get("/customer/my-cars",authUser, getMyCars); // Get My Cars
+router.get("/customer/job-card/:carId",authUser, getCustomerJobCard); // Get Customer Job Card
+
 
 module.exports = router;

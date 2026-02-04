@@ -41,6 +41,8 @@ import AdminUpdateJobCards from './pages/Admin/job-card/AdminUpdateJobCards.jsx'
 import AdminJobCardTimeLine from './pages/Admin/job-card/AdminJobCardTimeLine.jsx'
 import AdminJobServices from './pages/Admin/job-card/AdminJobServices.jsx'
 import AdminJobMedia from './pages/Admin/job-card/AdminJobMedia.jsx';
+import MyCarVault from './pages/MyCarVault.jsx';
+import CustomerJobCard from './pages/CustomerJobCard.jsx';
 
 const App = () => {
   const location = useLocation();
@@ -92,6 +94,8 @@ const App = () => {
         <Route path="/blog/:slug" element={<BlogView />} />
         <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
         <Route path="/forget-password/:token" element={<ForgetPassword />} />
+        <Route path="/my-car-vault" element={<MyCarVault />} />
+        <Route path="/my-car-vault/:carId/job-card" element={<CustomerJobCard />} />
         <Route path="*" element={<NotFound />} />
 
         {/*  ALL ADMIN ROUTES ARE NOW PROTECTED AUTOMATICALLY */}

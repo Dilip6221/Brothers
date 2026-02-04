@@ -62,7 +62,7 @@ const Contact = () => {
                     Contact Us
                 </span>
                 <div className="container text-center">
-                    <h3 className="section-title section-title-large">
+                    <h3 className="section-title section-title-small">
                         <span className="first-letter">G</span>et in Touch
                     </h3>
                     <p className="text-secondary fs-5 mt-2">

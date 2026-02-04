@@ -8,6 +8,7 @@ import * as bootstrap from "bootstrap";
 import Select from "react-select";
 
 const Navbar = () => {
+  const { user, logout, token } = useContext(UserContext);
   const modalRef = useRef(null);
   const bsModalRef = useRef(null);
   const serviceModalRef = useRef(null);
@@ -17,7 +18,7 @@ const Navbar = () => {
   /* For Service and More Dropdowns */
   const ROUTE_GROUPS = {
     services: ["/ceramic", "/ppf", "/paint", "/detailing", "/premium-car-wash",],
-    more: ["/blog", "/gallery", "/contact-us"],
+    more: ["/blog", "/gallery", "/contact-us","/my-car-vault"],
   };
   const isRouteActive = (routes) => routes.some(route => location.pathname.startsWith(route));
   const isServiceActive = isRouteActive(ROUTE_GROUPS.services);
@@ -30,7 +31,7 @@ const Navbar = () => {
     { to: "/premium-car-wash", label: "Premium Car Wash" },
   ];
   const MORE_MENU = [
-    { to: "/car-vault", label: "My Car Vault" },
+     ...(user ? [{ to: "/my-car-vault", label: "My Car Vault" }] : []),
     { to: "/blog", label: "Blog" },
     { to: "/gallery", label: "Gallery" },
     { to: "/contact-us", label: "Contact Us" },
@@ -58,7 +59,6 @@ const Navbar = () => {
 
   /* For Service and More Dropdowns */
 
-  const { user, logout, token } = useContext(UserContext);
   const [resetPassword, setResetPassword] = useState({
     currentPassword: "",
     newPassword: "",

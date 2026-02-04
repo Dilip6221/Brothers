@@ -2,6 +2,7 @@ import { React, useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import "../../css/style.css";
+import "../../css/admin.css";
 
 const AdminLayout = ({ children }) => {
   const { user, logout } = useContext(UserContext);

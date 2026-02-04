@@ -39,6 +39,53 @@ const createUserCar = async (req, res) => {
   }
 };
 
+const getMyCars = async (req, res) => {
+  try {
+    const cars = await UserCars.find({ userId: req.user._id });
+    res.json({ success: true, data: cars });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, message: err.message });
+  }
+};
+const getCustomerJobCard = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { carId } = req.params;
+
+    const job = await ServiceJobs.findOne({
+      userId,
+      carId,
+      status: { $ne: "CANCELLED" }
+    }).lean();
+
+    if (!job) {
+      return res.json({
+        success: false,
+        message: "No active job found"
+      });
+    }
+
+    const media = await JobMedia.find({
+      jobId: job._id,
+      isActive: true
+    }).sort({ createdAt: -1 });
+
+    job.media = media;
+
+    res.json({
+      success: true,
+      data: job
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
+
+
 const adminJobCardList = async (req, res) => {
   try {
     const jobs = await ServiceJobs.find()
@@ -254,4 +301,4 @@ const deleteJobMedia = async (req, res) => {
   }
 };
 
-module.exports = { getUserCars, createUserCar, adminJobCardList, getJobCardById, getCarsByUser, createJobCard, updateJobProgress, createJobService, getJobServicesByJob, deleteJobService, getJobMedia, deleteJobMedia, uploadJobMedia };
+module.exports = { getUserCars, createUserCar, adminJobCardList, getJobCardById, getCarsByUser, createJobCard, updateJobProgress, createJobService, getJobServicesByJob, deleteJobService, getJobMedia, deleteJobMedia, uploadJobMedia,getMyCars,getCustomerJobCard };
