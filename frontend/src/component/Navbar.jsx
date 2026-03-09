@@ -9,11 +9,73 @@ import Select from "react-select";
 
 const Navbar = () => {
   const { user, logout, token } = useContext(UserContext);
+
   const modalRef = useRef(null);
   const bsModalRef = useRef(null);
   const serviceModalRef = useRef(null);
   const bsServiceModalRef = useRef(null);
   const location = useLocation();
+
+  // Common React Select Styles (Single + Multi)
+  const reactSelectStyles = {
+    control: (base, state) => ({
+      ...base,
+      background: "rgba(255,255,255,0.08)",
+      border: state.isFocused
+        ? "1px solid #0d6efd"
+        : "1px solid rgba(255,255,255,0.2)",
+      boxShadow: "none",
+      minHeight: "44px",
+      cursor: "pointer",
+    }),
+
+    singleValue: (base) => ({
+      ...base,
+      color: "white",
+    }),
+
+    menu: (base) => ({
+      ...base,
+      background: "#222",
+      borderRadius: "6px",
+    }),
+
+    option: (base, state) => ({
+      ...base,
+      background: state.isFocused ? "#444" : "#222",
+      color: "white",
+      cursor: "pointer",
+    }),
+
+    placeholder: (base) => ({
+      ...base,
+      color: "#ccc",
+    }),
+
+    indicatorSeparator: () => ({ display: "none" }),
+
+    dropdownIndicator: (base) => ({
+      ...base,
+      color: "#ccc",
+    }),
+
+    multiValueRemove: (base) => ({
+      ...base,
+      color: "black",
+    }),
+  };
+
+  const carBrandOptions = [
+    { value: "Hyundai", label: "Hyundai" },
+    { value: "BMW", label: "BMW" },
+    { value: "Suzuki", label: "Suzuki" },
+  ];
+
+  const carModelOptions = [
+    { value: "Creta", label: "Creta" },
+    { value: "i20", label: "i20" },
+  ];
+
 
   /* For Service and More Dropdowns */
   const ROUTE_GROUPS = {
@@ -31,7 +93,7 @@ const Navbar = () => {
     { to: "/premium-car-wash", label: "Premium Car Wash" },
   ];
   const MORE_MENU = [
-     ...(user ? [{ to: "/my-car-vault", label: "My Car Vault" }] : []),
+    ...(user ? [{ to: "/my-car-vault", label: "My Car Vault" }] : []),
     { to: "/blog", label: "Blog" },
     { to: "/gallery", label: "Gallery" },
     { to: "/contact-us", label: "Contact Us" },
@@ -68,7 +130,7 @@ const Navbar = () => {
   const [serviceEnquery, setServiceEnquery] = useState({
     name: user ? user.name : "",
     phone: user ? user.phone : "",
-    email:  user ? user.email : "",
+    email: user ? user.email : "",
     city: "",
     address: "",
     carBrand: "",
@@ -356,31 +418,27 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div className="modal fade" id="resetModal" tabIndex="-1" aria-hidden="true" ref={modalRef}>
-        <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: "330px" }}>
-          <div
-            className="modal-content border-0 p-0"
-            style={{
-              backdropFilter: "blur(20px)",
-              background: "rgba(79, 62, 62, 0.15)",
-              borderRadius: "8px",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              boxShadow: "0 0 25px rgba(0,0,0,0.25)",
-            }}
-          >
-            {/* FORM START */}
+      {/* RESET PASSWORD MODAL */}
+      <div
+        className="modal fade"
+        id="resetModal"
+        tabIndex="-1"
+        aria-hidden="true"
+        ref={modalRef}
+      >
+        <div className="modal-dialog modal-dialog-centered reset-modal">
+          <div className="modal-content reset-modal-content">
             <form onSubmit={handleResetSubmit}>
-              <div className="p-3 pb-1 border-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-                <h4 className="text-white d-flex  m-0" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "23px", fontWeight: "700" }}><i className="bi bi-shield-check me-2"></i>
-                  <span style={{ color: "red" }}>R</span>eset Password
+              <div className="p-3 pb-1 border-0 reset-header">
+                <h4 className="text-white d-flex m-0 reset-title">
+                  <i className="bi bi-shield-check me-2"></i>
+                  <span className="text-danger">R</span>eset Password
                 </h4>
-
                 <button
                   type="button"
                   className="btn-close position-absolute"
                   data-bs-dismiss="modal"
-                  style={{ right: "12px", top: "12px", filter: "invert(1)" }}
-                ></button>
+                />
               </div>
 
               <div className="modal-body p-3">
@@ -388,11 +446,7 @@ const Navbar = () => {
                   <input
                     type="password"
                     name="currentPassword"
-                    className="form-control shadow-none text-white"
-                    style={{
-                      background: "rgba(255,255,255,0.08)",
-                      border: "1px solid rgba(255,255,255,0.2)",
-                    }}
+                    className="form-control reset-input"
                     placeholder="Current Password"
                     value={resetPassword.currentPassword}
                     onChange={handleInputChange}
@@ -403,11 +457,7 @@ const Navbar = () => {
                   <input
                     type="password"
                     name="newPassword"
-                    className="form-control shadow-none text-white"
-                    style={{
-                      background: "rgba(255,255,255,0.08)",
-                      border: "1px solid rgba(255,255,255,0.2)",
-                    }}
+                    className="form-control reset-input"
                     placeholder="New Password"
                     value={resetPassword.newPassword}
                     onChange={handleInputChange}
@@ -418,211 +468,168 @@ const Navbar = () => {
                   <input
                     type="password"
                     name="confirmPassword"
-                    className="form-control shadow-none text-white"
-                    style={{
-                      background: "rgba(255,255,255,0.08)",
-                      border: "1px solid rgba(255,255,255,0.2)",
-                    }}
+                    className="form-control reset-input"
                     placeholder="Confirm Password"
                     value={resetPassword.confirmPassword}
                     onChange={handleInputChange}
                   />
                 </div>
               </div>
-
               <div className="p-3 pt-0">
-                <button type="submit" className="py-2 w-100 btn btn-outline-danger " data-mdb-ripple-init data-mdb-ripple-color="dark">Change Password</button>
+                <button type="submit" className="w-100 btn btn-outline-danger">
+                  Change Password
+                </button>
               </div>
             </form>
-            {/* FORM END */}
-
           </div>
         </div>
       </div>
-      {/* SERVICE ENQUIRY MODAL */}
-      <div className="modal fade" id="serviceEnquiryModal" tabIndex="-1" aria-hidden="true" ref={serviceModalRef}>
-        <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: "35%" }}>
-          <div
-            className="modal-content border-0 p-0"
-            style={{
-              backdropFilter: "blur(20px)",
-              background: "rgba(79, 62, 62, 0.15)",
-              borderRadius: "8px",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              boxShadow: "0 0 25px rgba(0,0,0,0.25)",
-            }}
-          >
-            {/* FORM START */}
+      <div
+        className="modal fade"
+        id="serviceEnquiryModal"
+        tabIndex="-1"
+        aria-hidden="true"
+        ref={serviceModalRef}
+      >
+        <div className="modal-dialog modal-dialog-centered service-modal">
+          <div className="modal-content service-modal-content">
             <form onSubmit={handleEnquirySubmit}>
-              <div
-                className="p-3 pb-1 border-0"
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}
-              >
-                <h4 className="text-white  d-flex align-items-center mb-2 m-0" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "25px", fontWeight: "700" }}><i className="bi-tools me-2 fs-4"></i>
-                  <span style={{ color: "red" }}>S</span>ervice Enquiry
+              <div className="p-3 pb-1 border-0 reset-header">
+                <h4 className="text-white d-flex m-0 reset-title">
+                  <i className="bi-tools me-2 fs-4"></i>
+                  <span className="text-danger">S</span>ervice Enquiry
                 </h4>
                 <button
                   type="button"
                   className="btn-close position-absolute"
                   data-bs-dismiss="modal"
-                  style={{ right: "12px", top: "12px", filter: "invert(1)" }}
-                ></button>
+                />
               </div>
-
               <div className="modal-body p-3">
                 <div className="row g-3">
                   <div className="col-md-6">
-                    <input type="text" name="name" className="form-control shadow-none text-white"
-                      style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                    <input
+                      type="text"
+                      name="name"
+                      className="form-control service-input"
                       placeholder="Full Name*"
-                      autoComplete="off"
                       value={serviceEnquery.name}
                       onChange={handleEnquiryInputChange}
                     />
                   </div>
                   <div className="col-md-6">
-                    <input type="number" name="phone" className="form-control shadow-none text-white"
-                      style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                    <input
+                      type="number"
+                      name="phone"
+                      className="form-control service-input"
                       placeholder="Phone Number*"
-                      autoComplete="off"
                       value={serviceEnquery.phone}
                       onChange={handleEnquiryInputChange}
                     />
                   </div>
+
                   <div className="col-12">
-                    <input type="email" name="email" className="form-control shadow-none text-white"
-                      style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                    <input
+                      type="email"
+                      name="email"
+                      className="form-control service-input"
                       placeholder="Email*"
-                      autoComplete="off"
                       value={serviceEnquery.email}
                       onChange={handleEnquiryInputChange}
                     />
                   </div>
+
                   <div className="col-md-4">
-                    <input type="text" name="city" className="form-control shadow-none text-white"
-                      style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                    <input
+                      type="text"
+                      name="city"
+                      className="form-control service-input"
                       placeholder="City*"
-                      autoComplete="off"
                       value={serviceEnquery.city}
                       onChange={handleEnquiryInputChange}
                     />
                   </div>
 
                   <div className="col-md-8">
-                    <input type="text" name="address" className="form-control shadow-none text-white"
-                      style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                    <input
+                      type="text"
+                      name="address"
+                      className="form-control service-input"
                       placeholder="Address*"
-                      autoComplete="off"
                       value={serviceEnquery.address}
                       onChange={handleEnquiryInputChange}
                     />
                   </div>
 
                   <div className="col-md-6">
-                    <select
-                      name="carBrand"
-                      className="form-control shadow-none text-white"
-                      style={{
-                        background: "rgba(255,255,255,0.08)",
-                        border: "1px solid rgba(255,255,255,0.2)",
-                      }}
-                      value={serviceEnquery.carBrand || ""}
-                      onChange={handleEnquiryInputChange}
-                    >
-                      <option value="" >Car Manufacturer*</option>
-                      <option value="Hyundai">Hyundai</option>
-                      <option value="BMW">BMW</option>
-                      <option value="Suzuki">Suzuki</option>
-                    </select>
+                    <Select
+                      options={carBrandOptions}
+                      placeholder="Car Manufacturer*"
+                      styles={reactSelectStyles}
+                      value={carBrandOptions.find(
+                        opt => opt.value === serviceEnquery.carBrand
+                      )}
+                      onChange={(selected) =>
+                        setServiceEnquery(prev => ({
+                          ...prev,
+                          carBrand: selected ? selected.value : "",
+                        }))
+                      }
+                    />
                   </div>
-
-
                   <div className="col-md-6">
-                    <select
-                      name="carModel"
-                      className="form-control shadow-none text-white"
-                      style={{
-                        background: "rgba(255,255,255,0.08)",
-                        border: "1px solid rgba(255,255,255,0.2)",
-                      }}
-                      value={serviceEnquery.carModel || ""}
-                      onChange={handleEnquiryInputChange}
-                    >
-                      <option value="" >Model Name*</option>
-                      <option value="Creta">Creta</option>
-                      <option value="i20">i20</option>
-                    </select>
+                    <Select
+                      options={carModelOptions}
+                      placeholder="Model Name*"
+                      styles={reactSelectStyles}
+                      value={carModelOptions.find(
+                        opt => opt.value === serviceEnquery.carModel
+                      )}
+                      onChange={(selected) =>
+                        setServiceEnquery(prev => ({
+                          ...prev,
+                          carModel: selected ? selected.value : "",
+                        }))
+                      }
+                    />
                   </div>
-                  <div className="col-md-12">
+
+
+                  <div className="col-12">
                     <Select
                       isMulti
-                      name="services"
                       options={serviceOptions}
                       placeholder="Required Service*"
-                      className="text-white"
-                      classNamePrefix="react-select"
-                      value={serviceOptions.filter(option =>
-                        serviceEnquery.services.includes(option.value)
+                      value={serviceOptions.filter(opt =>
+                        serviceEnquery.services.includes(opt.value)
                       )}
-                      onChange={(selected) => {
-                        setServiceEnquery((prev) => ({
+                      onChange={(selected) =>
+                        setServiceEnquery(prev => ({
                           ...prev,
-                          services: selected ? selected.map((s) => s.value) : [],
-                        }));
-                      }}
-                      styles={{
-                        control: (base) => ({
-                          ...base,
-                          background: "rgba(255,255,255,0.08)",
-                          border: "1px solid rgba(255,255,255,0.2)",
-                          boxShadow: "none",
-
-                        }),
-                        multiValueRemove: (base) => ({
-                          ...base,
-                          color: "black",
-                        }),
-                        menu: (base) => ({
-                          ...base,
-                          background: "#222",
-                          color: "white",
-                        }),
-                        option: (base, state) => ({
-                          ...base,
-                          background: state.isFocused ? "#444444ff" : "#222",
-                          color: "white",
-                          cursor: "pointer",
-                        }),
-                        placeholder: (base) => ({
-                          ...base,
-                          color: "white",
-                        }),
-                      }}
+                          services: selected ? selected.map(s => s.value) : [],
+                        }))
+                      }
+                      styles={reactSelectStyles}
                     />
                   </div>
                   <div className="col-12">
                     <textarea
                       name="notes"
-                      className="form-control shadow-none text-white"
-                      style={{
-                        background: "rgba(255,255,255,0.08)",
-                        border: "1px solid rgba(255,255,255,0.2)",
-                      }}
                       rows="2"
+                      className="form-control service-input"
                       placeholder="Comments or Special Requirements"
                       value={serviceEnquery.notes}
                       onChange={handleEnquiryInputChange}
-                    ></textarea>
+                    />
                   </div>
                 </div>
               </div>
-
-              <div className="p-3 pt-0 justify-content-end d-flex">
-                <button type="submit" className="btn btn-outline-danger d-flex align-items-center gap-2 px-3" data-mdb-ripple-init data-mdb-ripple-color="dark">Submit Enquiry</button>
+              <div className="p-3 pt-0 d-flex justify-content-end">
+                <button type="submit" className="btn btn-outline-danger px-3">
+                  Submit Enquiry
+                </button>
               </div>
             </form>
-            {/* FORM END */}
-
           </div>
         </div>
       </div>

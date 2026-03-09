@@ -43,60 +43,66 @@ const ForgetPassword = () => {
     <section
       className="min-vh-100 d-flex align-items-center justify-content-center"
       style={{
-        backgroundColor: "#000",
+        background: "radial-gradient(circle at top, #111 0%, #000 60%)",
         padding: "20px",
       }}
     >
       <div
-        className="container p-4"
+        className="container p-0 overflow-hidden"
         style={{
           maxWidth: "900px",
-          backdropFilter: "blur(10px)",
-          borderRadius: "12px",
-          background: "rgba(33, 155, 27, 0.05)",
-          border: "1px solid rgba(198, 31, 31, 0.2)",
+          borderRadius: "14px",
+          border: "1px solid rgba(255, 0, 0, 0.17)",
         }}
       >
         <div className="row g-0">
           <div
-            className="col-md-6 d-flex flex-column justify-content-center align-items-center text-center p-4 border-md-end"
+            className="col-md-6 d-flex flex-column justify-content-center align-items-center text-center p-4"
             style={{
-              borderRight: "1px solid rgba(255,255,255,0.2)",
+              borderRight: "1px solid rgba(255,255,255,0.08)",
             }}
           >
-            <img src={loginLogo} alt="Brand Logo" className="img-fluid mb-3" style={{maxWidth: "170px", width: "70%" }}/>
+            <img
+              src={loginLogo}
+              alt="Brand Logo"
+              className="img-fluid mb-4"
+              style={{ maxWidth: "180px" }}
+            />
             <div
-              className="px-3 py-2 fw-semibold text-uppercase"
+              className="px-4 py-3 fw-semibold"
               style={{
-                color: "#f5f5f5",
-                letterSpacing: "1px",
-                fontSize: "12px",
-                borderRadius: "8px",
-                boxShadow: "0 4px 10px rgba(182, 34, 29, 0.66)",
-                maxWidth: "260px",
-                lineHeight: "1.4",
+                color: "#eee",
+                fontSize: "13px",
+                borderRadius: "10px",
+                background: "rgba(255,0,0,0.08)",
+                border: "1px solid rgba(255,0,0,0.3)",
+                lineHeight: "1.6",
                 fontFamily: "'Poppins', sans-serif",
               }}
             >
               <i className="bi bi-wrench-adjustable me-2 text-danger"></i>
-              At{" "}
-              <span style={{ fontSize: "16px", color: "red" }}>BROTHER'S</span>, We Don’t Just Fix Cars – We Build Trust
+              At <span style={{ color: "#ff3b3b", fontSize: "15px" }}>BROTHER'S</span>,
+              We Don’t Just Fix Cars – We Build Trust
             </div>
           </div>
-
-          {/* RIGHT SIDE FORM */}
-          <div className="col-md-6 p-4">
-            <h4 className="text-white text-center mb-4">Change Password</h4>
+          <div className="col-md-6 p-4 p-md-5">
+            <h4 className="text-white text-center mb-4 fw-semibold">
+              Reset Your Password
+            </h4>
 
             <form onSubmit={handleForgetPassword}>
               {/* PASSWORD */}
               <div className="mb-3 position-relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="form-control bg-transparent border-light text-white py-2"
+                  className="form-control text-white py-2"
                   placeholder="New Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  style={{
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                  }}
                 />
                 <i
                   className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"} text-light`}
@@ -106,19 +112,24 @@ const ForgetPassword = () => {
                     top: "50%",
                     transform: "translateY(-50%)",
                     cursor: "pointer",
+                    opacity: 0.7,
                   }}
                   onClick={() => setShowPassword(!showPassword)}
                 ></i>
               </div>
 
               {/* CONFIRM PASSWORD */}
-              <div className="mb-3 position-relative">
+              <div className="mb-4 position-relative">
                 <input
                   type={showRePassword ? "text" : "password"}
-                  className="form-control bg-transparent border-light text-white py-2"
+                  className="form-control text-white py-2"
                   placeholder="Confirm Password"
                   value={rePassword}
                   onChange={(e) => setRePassword(e.target.value)}
+                  style={{
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                  }}
                 />
                 <i
                   className={`bi ${showRePassword ? "bi-eye-slash" : "bi-eye"} text-light`}
@@ -128,14 +139,25 @@ const ForgetPassword = () => {
                     top: "50%",
                     transform: "translateY(-50%)",
                     cursor: "pointer",
+                    opacity: 0.7,
                   }}
                   onClick={() => setShowRePassword(!showRePassword)}
                 ></i>
               </div>
 
               {/* BUTTON */}
-              <button type="submit" className="user-profile w-100">
-                <div className="user-profile-inner">Reset Password</div>
+              <button
+                type="submit"
+                className="w-100 py-2 fw-semibold"
+                style={{
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, #ff3b3b, #b40000)",
+                  border: "none",
+                  color: "#fff",
+                  boxShadow: "0 8px 25px rgba(255,0,0,0.35)",
+                }}
+              >
+                Reset Password
               </button>
             </form>
           </div>
@@ -143,6 +165,7 @@ const ForgetPassword = () => {
         </div>
       </div>
     </section>
+
   );
 };
 
