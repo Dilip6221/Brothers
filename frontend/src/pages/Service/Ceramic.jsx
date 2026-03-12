@@ -40,8 +40,8 @@ const Ceramic = () => {
               </ul>
 
               <div className="service-enquiry">
-                <button className="enquiry-btn">
-                  Enquire for PPF Service
+                <button className="cont-btn" onClick={() => navigate("/contact-us")}>
+                    Enquire for Ceramic Service!
                 </button>
 
                 <p className="enquiry-subtext">

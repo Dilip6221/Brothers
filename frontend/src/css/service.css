@@ -105,7 +105,7 @@
 .service-enquiry {
   margin-top: 30px;
 }
-
+/* 
 .enquiry-btn {
   padding: 14px 36px;
   border-radius: 22px;
@@ -119,15 +119,15 @@
 .enquiry-btn:hover {
   background: #cfa144;
   color: #000;
-  box-shadow: 0 10px 35px rgba(207,161,68,0.4);
-}
+  box-shadow: 0 10px 35px rgba(207,161,68,0.4); */
+/* } */
 .enquiry-subtext {
   margin-top: 10px;
   font-size: 14px;
   color: #bdbdbd;
 }
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .enquiry-btn {
     width: 100%;
   }
-}
+} */

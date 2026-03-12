@@ -80,7 +80,7 @@ const Navbar = () => {
   /* For Service and More Dropdowns */
   const ROUTE_GROUPS = {
     services: ["/ceramic", "/ppf", "/paint", "/detailing", "/premium-car-wash",],
-    more: ["/blog", "/gallery", "/contact-us","/my-car-vault"],
+    more: ["/blog", "/gallery", "/contact-us","/my-car-vault", "/faqs"],
   };
   const isRouteActive = (routes) => routes.some(route => location.pathname.startsWith(route));
   const isServiceActive = isRouteActive(ROUTE_GROUPS.services);
@@ -97,6 +97,7 @@ const Navbar = () => {
     { to: "/blog", label: "Blog" },
     { to: "/gallery", label: "Gallery" },
     { to: "/contact-us", label: "Contact Us" },
+    { to: "/faqs", label: "FAQS" },
   ];
 
   const MegaDropdown = ({ title, isActive, items }) => (
@@ -278,17 +279,17 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link social-icon" href="https://x.com/DilipBe00479036" target="_blank" rel="noopener noreferrer">
+                <a className="nav-link social-icons" href="https://x.com/DilipBe00479036" target="_blank" rel="noopener noreferrer">
                   <i className="bi bi-twitter-x"></i>
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link social-icon" href="https://www.instagram.com/brotomotiv.in" target="_blank" rel="noreferrer">
+                <a className="nav-link social-icons" href="https://www.instagram.com/brotomotiv.in" target="_blank" rel="noreferrer">
                   <i className="bi bi-instagram"></i>
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link social-icon" href="https://youtube.com/@dilipahir6221" target="_blank" rel="noopener noreferrer">
+                <a className="nav-link social-icons" href="https://youtube.com/@dilipahir6221" target="_blank" rel="noopener noreferrer">
                   <i className="bi bi-youtube"></i>
                 </a>
               </li>
