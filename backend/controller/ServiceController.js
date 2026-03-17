@@ -1,4 +1,6 @@
 const { Services } = require('../model/Services.js');
+const cloudinary = require("../config/cloudinary");
+
 
 // Create a new service in admin role
 const express = require('express');
@@ -9,7 +11,7 @@ const slugify = require('slugify');
 // serviceRoute.post('/admin/create', createService);
 const createService = async (req, res) => {
   try {
-    const {id, title, shortDescription, description, icon, category, duration, metaTitle, metaDescription, metaKeywords, status } = req.body;
+    const {id, title, shortDescription, description, icon, category, duration, status } = req.body;
     if (!title || !shortDescription || !description) {
       return res.json({ success: false, message: 'Required fields missing' });
     }
@@ -18,6 +20,26 @@ const createService = async (req, res) => {
     if (existingSlug) {
       return res.json({ success: false, message: "Slug already exists. Please choose a different one." });
     }
+    let imageData = null;
+    if (req.file) {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: "services",
+          },
+          (error, result) => {
+            if (result) resolve(result);
+            else reject(error);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+      imageData = {
+        url: uploadResult.secure_url,
+        public_id: uploadResult.public_id,
+      };
+    }
+
     let service;
     if (id) {
       service = await Services.findById(id);
@@ -31,9 +53,12 @@ const createService = async (req, res) => {
       service.icon = icon;
       service.category = category;
       service.duration = duration;
-      service.metaTitle = metaTitle;
-      service.metaDescription = metaDescription;
       service.updatedAt = new Date();
+      service.status = status;
+
+       if (imageData) {
+        service.image = imageData;
+      }
       await service.save();
       return res.json({ success: true, message: "Service updated successfully!", data: service });
     } else {
@@ -45,8 +70,6 @@ const createService = async (req, res) => {
         icon,
         category,
         duration,
-        metaTitle,
-        metaDescription,
       });
       return res.json({ success: true, message: "Service created successfully!", data: service });
     }

@@ -16,11 +16,11 @@ const AdminCreateService = () => {
     icon: "",
     category: "",
     duration: "",
-    metaTitle: "",
-    metaDescription: "",
-    metaKeywords: "",
     status: "ACTIVE",
   });
+
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState("");
 
   // ================= FETCH FOR EDIT =================
   const fetchService = async () => {
@@ -35,11 +35,11 @@ const AdminCreateService = () => {
           icon: s.icon || "",
           category: s.category || "",
           duration: s.duration || "",
-          metaTitle: s.metaTitle || "",
-          metaDescription: s.metaDescription || "",
-          metaKeywords: s.metaKeywords?.join(", ") || "",
           status: s.status,
         });
+        if (s.image?.url) {
+          setPreview(s.image.url);
+        }
       }
     } catch {
       toast.error("Failed to load service");
@@ -50,22 +50,33 @@ const AdminCreateService = () => {
     if (isEdit) fetchService();
   }, [id]);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const payload = {
-      ...form,
-      metaKeywords: form.metaKeywords
-        .split(",")
-        .map((k) => k.trim())
-        .filter(Boolean),
-      id: isEdit ? id : undefined,
-    };
-
     try {
+      const formData = new FormData();
+      Object.keys(form).forEach((key) => {
+        formData.append(key, form[key]);
+      });
+      if (image) {
+        formData.append("image", image);
+      }
+      if (isEdit) {
+        formData.append("id", id);
+      }
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/service/admin/create`,
-        payload
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
 
       if (res.data.success) {
@@ -160,7 +171,7 @@ const AdminCreateService = () => {
           </div>
 
           {/* ICON */}
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label className="form-label">Icon (class / url)</label>
             <input
               type="text"
@@ -171,7 +182,7 @@ const AdminCreateService = () => {
           </div>
 
          {/* STATUS */}
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label className="form-label">Status</label>
             <select
               className="form-control bg-dark text-white border-secondary"
@@ -183,40 +194,24 @@ const AdminCreateService = () => {
             </select>
           </div>
 
-          {/* SEO */}
-          <div className="col-md-6">
-            <label className="form-label">Meta Title</label>
+          <div className="col-md-4">
+            <label className="form-label">Service Image</label>
             <input
-              type="text"
+              type="file"
               className="form-control bg-dark text-white border-secondary"
-              value={form.metaTitle}
-              onChange={(e) => setForm({ ...form, metaTitle: e.target.value })}
+              onChange={handleImageChange}
             />
           </div>
 
-          <div className="col-md-6">
-            <label className="form-label">Meta Keywords (comma separated)</label>
-            <input
-              type="text"
-              className="form-control bg-dark text-white border-secondary"
-              value={form.metaKeywords}
-              onChange={(e) =>
-                setForm({ ...form, metaKeywords: e.target.value })
-              }
-            />
-          </div>
-
-          <div className="col-md-12">
-            <label className="form-label">Meta Description</label>
-            <textarea
-              className="form-control bg-dark text-white border-secondary"
-              rows="2"
-              value={form.metaDescription}
-              onChange={(e) =>
-                setForm({ ...form, metaDescription: e.target.value })
-              }
-            />
-          </div>
+          {preview && (
+            <div className="col-md-6">
+              <img
+                src={preview}
+                alt="preview"
+                style={{ width: "200px", marginTop: "10px" }}
+              />
+            </div>
+          )}
           <div className="col-12">
             <button type="submit" className="btn btn-primary">
               {isEdit ? "Update Service" : "Create Service"}

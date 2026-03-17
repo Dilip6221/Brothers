@@ -1,186 +1,175 @@
-import React, { useEffect, useRef, useState } from "react";
-import "../css/slider.css";
-
-const portfolioData = [
-  {
-    id: 1,
-    title: "Neural Network",
-    description: "Advanced AI system with deep learning capabilities.",
-    image:
-      "https://static.vecteezy.com/system/resources/thumbnails/053/733/179/small/every-detail-of-a-sleek-modern-car-captured-in-close-up-photo.jpg",
-    tech: ["TensorFlow", "Python", "CUDA"],
-  },
-  {
-    id: 2,
-    title: "Quantum Cloud",
-    description: "Next-generation cloud infrastructure.",
-    image:
-      "https://static.vecteezy.com/system/resources/thumbnails/053/733/179/small/every-detail-of-a-sleek-modern-car-captured-in-close-up-photo.jpg",
-    tech: ["AWS", "Docker", "Kubernetes"],
-  },
-  {
-    id: 3,
-    title: "Blockchain Vault",
-    description: "Secure decentralized storage solution.",
-    image:
-      "https://static.vecteezy.com/system/resources/thumbnails/053/733/179/small/every-detail-of-a-sleek-modern-car-captured-in-close-up-photo.jpg",
-    tech: ["Ethereum", "Solidity", "Web3"],
-  },
-  {
-    id: 4,
-    title: "Cyber Defense",
-    description: "Military-grade cybersecurity framework.",
-    image:
-      "https://static.vecteezy.com/system/resources/thumbnails/053/733/179/small/every-detail-of-a-sleek-modern-car-captured-in-close-up-photo.jpg",
-    tech: ["Zero Trust", "AI Defense"],
-  },
-  {
-    id: 5,
-    title: "Data Nexus",
-    description: "Big data processing platform.",
-    image:
-      "https://static.vecteezy.com/system/resources/thumbnails/053/733/179/small/every-detail-of-a-sleek-modern-car-captured-in-close-up-photo.jpg",
-    tech: ["Spark", "Kafka", "Hadoop"],
-  },
-];
+import { useEffect, useState } from "react";
+import axios from "axios";
+// import "../css/slider.css";
+import '../css/slider.css';
 
 const ServiceSlider = () => {
+
+  const [services, setServices] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const carouselRef = useRef(null);
+
+  // ================= FETCH SERVICES =================
+  const fetchServices = async () => {
+    try {
+
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/service/admin/services`
+      );
+
+      if (res.data.success) {
+
+        // ACTIVE SERVICES FILTER
+        const activeServices = res.data.data.filter(
+          (s) => s.status === "ACTIVE"
+        );
+
+        setServices(activeServices);
+
+        if (activeServices.length > 0) {
+          setCurrentIndex(Math.floor(activeServices.length / 2));
+        }
+      }
+
+    } catch (error) {
+      console.log("Service fetch error", error);
+    }
+  };
 
   useEffect(() => {
-    updateCarousel();
-  }, [currentIndex]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 5000);
-    return () => clearInterval(interval);
+    fetchServices();
   }, []);
 
-  const updateCarousel = () => {
-    if (!carouselRef.current) return;
+  // ================= NAVIGATION =================
+  const navigate = (direction) => {
 
-    const items =
-      carouselRef.current.querySelectorAll(".carousel-item");
-    const total = items.length;
+    setCurrentIndex((prev) => {
 
-    items.forEach((item, index) => {
-      let offset = index - currentIndex;
+      let next = prev + direction;
 
-      if (offset > total / 2) offset -= total;
-      if (offset < -total / 2) offset += total;
+      if (next < 0) next = services.length - 1;
+      if (next >= services.length) next = 0;
 
-      const abs = Math.abs(offset);
-      const sign = offset < 0 ? -1 : 1;
+      return next;
 
-      item.style.opacity = "1";
-      item.style.zIndex = "1";
-
-      if (abs === 0) {
-        item.style.transform =
-          "translate(-50%, -50%) scale(1)";
-        item.style.zIndex = "10";
-      } else if (abs === 1) {
-        item.style.transform = `translate(-50%, -50%) translateX(${
-          sign * 350
-        }px) rotateY(${-sign * 30}deg) scale(0.85)`;
-        item.style.opacity = "0.8";
-      } else if (abs === 2) {
-        item.style.transform = `translate(-50%, -50%) translateX(${
-          sign * 600
-        }px) rotateY(${-sign * 40}deg) scale(0.7)`;
-        item.style.opacity = "0.5";
-      } else {
-        item.style.opacity = "0";
-        item.style.transform =
-          "translate(-50%, -50%) scale(0.5)";
-      }
     });
   };
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % portfolioData.length);
-  };
+  // ================= AUTO SLIDE =================
+  useEffect(() => {
 
-  const prevSlide = () => {
-    setCurrentIndex(
-      (prev) =>
-        (prev - 1 + portfolioData.length) %
-        portfolioData.length
-    );
-  };
+    if (services.length === 0) return;
+
+    const interval = setInterval(() => {
+      navigate(1);
+    }, 4000);
+
+    return () => clearInterval(interval);
+
+  }, [services]);
+
+  if (services.length === 0) {
+    return <div className="text-center py-5">Loading services...</div>;
+  }
 
   return (
-    <section className="hero">
-      <div className="carousel-container">
-        <div className="service-carousel" ref={carouselRef}>
-          {portfolioData.map((item) => (
-            <div className="carousel-item" key={item.id}>
-              <div className="card">
-                <div className="card-number">
-                  0{item.id}
-                </div>
+    <section className="section">
 
-                <div className="card-image">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                  />
-                </div>
+      <div className="coverflow-wrapper">
 
-                <h3 className="card-title">
-                  {item.title}
-                </h3>
-                <p className="card-description">
-                  {item.description}
-                </p>
-
-                <div className="card-tech">
-                  {item.tech.map((t, i) => (
-                    <span
-                      className="tech-badge"
-                      key={i}
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-
-                <button className="card-cta">
-                  Explore
-                </button>
-              </div>
-            </div>
-          ))}
+        {/* ================= SERVICE INFO ================= */}
+        <div className="info">
+          <h2>{services[currentIndex]?.title}</h2>
+          <p>{services[currentIndex]?.shortDescription}</p>
         </div>
 
-        <div className="carousel-controls">
-          <button
-            className="carousel-btn"
-            onClick={prevSlide}
-          >
+        <div className="coverflow-container">
+
+          <div className="coverflow">
+
+            {services.map((item, index) => {
+
+              let offset = index - currentIndex;
+
+              if (offset > services.length / 2) offset -= services.length;
+              if (offset < -services.length / 2) offset += services.length;
+
+              const absOffset = Math.abs(offset);
+              const sign = Math.sign(offset);
+
+              let translateX = offset * 260;
+              let translateZ = -absOffset * 200;
+              let rotateY = -sign * Math.min(absOffset * 60, 60);
+              let scale = 1 - absOffset * 0.1;
+              let opacity = 1 - absOffset * 0.2;
+
+              if (absOffset > 3) {
+                opacity = 0;
+                translateX = sign * 800;
+              }
+
+              const style = {
+                transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
+                opacity,
+                zIndex: 100 - absOffset,
+              };
+
+              return (
+                <div
+                  key={item._id}
+                  className={`coverflow-item ${
+                    index === currentIndex ? "active" : ""
+                  }`}
+                  style={style}
+                  onClick={() => setCurrentIndex(index)}
+                >
+                  <div className="cover">
+
+                    <img
+                      src={
+                        item.image?.url ||
+                        "https://via.placeholder.com/400x300"
+                      }
+                      alt={item.title}
+                    />
+
+                  </div>
+
+                  <div
+                    className="reflection"
+                    style={{
+                      backgroundImage: `url(${
+                        item.image?.url ||
+                        "https://via.placeholder.com/400x300"
+                      })`,
+                    }}
+                  />
+
+                </div>
+              );
+            })}
+          </div>
+
+          {/* PREV BUTTON */}
+          <button className="nav-button prev" onClick={() => navigate(-1)}>
             ‹
           </button>
-          <button
-            className="carousel-btn"
-            onClick={nextSlide}
-          >
+
+          {/* NEXT BUTTON */}
+          <button className="nav-button next" onClick={() => navigate(1)}>
             ›
           </button>
-        </div>
 
-        <div className="carousel-indicators">
-          {portfolioData.map((_, i) => (
-            <div
-              key={i}
-              className={`indicator ${
-                i === currentIndex ? "active" : ""
-              }`}
-              onClick={() => setCurrentIndex(i)}
-            />
-          ))}
+          {/* DOTS */}
+          <div className="dots-container">
+            {services.map((_, i) => (
+              <div
+                key={i}
+                className={`dot ${i === currentIndex ? "active" : ""}`}
+                onClick={() => setCurrentIndex(i)}
+              />
+            ))}
+          </div>
+
         </div>
       </div>
     </section>

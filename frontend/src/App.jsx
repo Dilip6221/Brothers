@@ -7,6 +7,7 @@ import Login from './pages/Login.jsx'
 import ForgetPassword from './pages/ForgetPassword.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Navbar from './component/Navbar.jsx'
+import WhatsappButton  from './component/WhatsappButton.jsx'
 import Footer from "./component/Footer.jsx";
 import Blog from './pages/Blog.jsx'
 import BlogView from './pages/BlogView.jsx'
@@ -126,6 +127,8 @@ const App = () => {
         <Route path="/admin/job-cards/:id/media" element={<AdminJobMedia />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
+      <WhatsappButton />
+
     </>
   );
 };
