@@ -55,9 +55,11 @@ const createService = async (req, res) => {
       service.duration = duration;
       service.updatedAt = new Date();
       service.status = status;
-
-       if (imageData) {
-        service.image = imageData;
+      if (imageData) {
+          if (service.image?.public_id) {
+              await cloudinary.uploader.destroy(service.image.public_id);
+          }
+          service.image = imageData;
       }
       await service.save();
       return res.json({ success: true, message: "Service updated successfully!", data: service });
@@ -70,6 +72,8 @@ const createService = async (req, res) => {
         icon,
         category,
         duration,
+        status,
+        image: imageData,
       });
       return res.json({ success: true, message: "Service created successfully!", data: service });
     }

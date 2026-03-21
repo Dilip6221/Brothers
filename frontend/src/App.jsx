@@ -46,6 +46,7 @@ import AdminJobMedia from './pages/Admin/job-card/AdminJobMedia.jsx';
 import MyCarVault from './pages/MyCarVault.jsx';
 import CustomerJobCard from './pages/CustomerJobCard.jsx';
 import ScrollToTop from './pages/ScrollToTop.jsx';
+import AdminCustomerReview from './pages/Admin/customer-review/AdminCustomerReview.jsx';
 
 const App = () => {
   const location = useLocation();
@@ -125,6 +126,7 @@ const App = () => {
         <Route path="/admin/job-cards/:id/timeline" element={<AdminJobCardTimeLine />} />
         <Route path="/admin/job-cards/:jobId/services" element={<AdminJobServices />} />
         <Route path="/admin/job-cards/:id/media" element={<AdminJobMedia />} />
+        <Route path="/admin/customer-reviews" element={<AdminCustomerReview />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
       <WhatsappButton />

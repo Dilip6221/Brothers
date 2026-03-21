@@ -81,7 +81,7 @@ if (loading) return <SmallLoader />;
       {/* ================= FEATURED IMAGE ================= */}
       <div className="container">
         <img
-          src={blog.thumbnail}
+          src={blog.thumbnail.url}
           className="w-100 rounded mb-4 shadow-lg"
           height="400"
           style={{

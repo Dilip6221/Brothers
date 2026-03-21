@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const services = [
     { title: "Paint Protection Film", img: ppf,url: "/ppf" },
-    { title: "Full Body Painting", img: "https://pacompro.com/wp-content/uploads/2019/07/websitepaint-and-dent_1.jpg",url: "/paint" },
+    { title: "Full Body Painting", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s3.png",url: "/paint" },
     { title: "Panel Painting", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s3.png",url: "/paint" },
     { title: "Ceramic & Graphene Coating", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s2.png",url: "/ceramic" },
     { title: "Vinyl Wrap", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s3.png",url: "/vinyl-wrap" },

@@ -94,6 +94,14 @@ const AdminLayout = ({ children }) => {
               >
                 <i className="bi bi-images me-2"></i>Gallery
               </NavLink>
+              <NavLink
+                to="/admin/customer-reviews"
+                className={({ isActive }) =>
+                  `nav-item nav-link ${isActive ? "active" : ""}`
+                }
+              >
+                <i className="bi bi-chat-dots me-2"></i>Reviews
+              </NavLink>
               
             </div>
           </nav>

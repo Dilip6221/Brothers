@@ -20,7 +20,7 @@ const sendSubscribeMail = async (email, blog) => {
 
           <!-- Blog Image -->
           ${blog.thumbnail ? `
-            <img src="${blog.thumbnail}" alt="${blog.title}"
+            <img src="${blog.thumbnail.url}" alt="${blog.title}"
               style="width:100%; max-height:280px; object-fit:cover;" />
           ` : ''}
 

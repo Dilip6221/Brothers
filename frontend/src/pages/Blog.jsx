@@ -33,7 +33,7 @@ const Blog = () => {
         const url = `${window.location.origin}/blog/${blog.slug}`;
         try {
             if (navigator.canShare && navigator.canShare({ files: [] })) {
-                const response = await fetch(blog.thumbnail);
+                const response = await fetch(blog.thumbnail.url);
                 const blob = await response.blob();
                 const file = new File([blob], "thumbnail.jpg", {
                     type: blob.type,
@@ -148,7 +148,7 @@ const Blog = () => {
                                 <div className="col-md-3 mb-4 d-flex" key={blog._id}>
                                     <div className="blog-card">
                                         <div className="blog-image-wrapper" onDoubleClick={() => likeAndAnimate(blog._id)}>
-                                            <img src={blog.thumbnail} alt={blog.title} />
+                                            <img src={blog.thumbnail.url} alt={blog.title} />
                                             {animatingId === blog._id && (<i className="bi bi-heart-fill double-like-heart"></i>)}
 
                                             <span className="blog-category badge-on-image">

@@ -2,18 +2,36 @@ const { Blog } = require("../model/blog.js");
 const { Subscription } = require('../model/Subscribe.js');
 const { EmailTracking } = require("../model/EmailTracking.js");
 const { sendSubscribeMail } = require("../mail/BlogMail.js");
+const cloudinary = require("../config/cloudinary");
 const slugify = require('slugify');
 
 // Create Blog for admin side
 //router.post("/admin/create-blog", creteAdminBlog);
 const creteAdminBlog = async (req, res) => {
     try {
-        const { id, title, thumbnail, content, category, tags, metaTitle, metaDescription } = req.body;
-        // Validation
-        if (!title || !content || !category || !metaTitle || !metaDescription || !thumbnail || !tags) {
+        const { id, title, content, category, tags, metaTitle, metaDescription } = req.body;
+        if (!title || !content || !category || !metaTitle || !metaDescription || !tags || tags.length === 0) {
             return res.json({ success: false, message: "All fields are required" });
         }
-
+        let imageData = null;
+        if (req.file) {
+            const uploadResult = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    {
+                        folder: "Blogs",
+                    },
+                    (error, result) => {
+                        if (result) resolve(result);
+                        else reject(error);
+                    }
+                );
+                stream.end(req.file.buffer);
+            });
+            imageData = {
+                url: uploadResult.secure_url,
+                public_id: uploadResult.public_id,
+            };
+        }
         const slug = slugify(title, { lower: true, strict: true });
         const existingSlug = await Blog.findOne({ slug, _id: { $ne: id } });
         if (existingSlug) {
@@ -28,26 +46,33 @@ const creteAdminBlog = async (req, res) => {
             }
             blog.title = title;
             blog.slug = slug;
-            blog.thumbnail = thumbnail;
             blog.contentHTML = content;
             blog.category = category;
             blog.tags = tags;
             blog.metaTitle = metaTitle;
             blog.metaDescription = metaDescription;
             blog.updatedAt = new Date();
+            if (imageData) {
+                if (blog.thumbnail?.public_id) {
+                    await cloudinary.uploader.destroy(blog.thumbnail.public_id);
+                }
+                blog.thumbnail = imageData;
+            }
             await blog.save();
             return res.json({ success: true, message: "Blog updated successfully!", data: blog });
         } else {
-            // Create new blog
+            if (!imageData) {
+                return res.json({ success: false, message: "Thumbnail image is required" });
+            }
             blog = await Blog.create({
                 title,
                 slug,
-                thumbnail,
                 contentHTML: content,
                 category,
                 tags,
                 metaTitle,
                 metaDescription,
+                thumbnail: imageData,
             });
             return res.json({ success: true, message: "Blog created successfully!", data: blog });
         }

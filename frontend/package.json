@@ -33,6 +33,7 @@
     "react-router-dom": "^7.9.3",
     "react-select": "^5.10.2",
     "react-tsparticles": "^2.12.2",
+    "swiper": "^12.1.2",
     "tailwindcss": "^4.1.13",
     "three": "^0.180.0",
     "toastify": "^2.0.1"

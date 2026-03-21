@@ -1,40 +1,43 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AdminLayout from "../AdminLayout.jsx";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TextEditor from "../../../component/Admin/TextEditor.jsx";
-import { useEffect } from "react";
 
 const AdminCreateBlog = () => {
     const navigate = useNavigate();
+    const { id } = useParams();
+    const isEdit = Boolean(id);
 
-    const { id } = useParams(); // ID => update mode
     const [form, setForm] = useState({
         title: "",
         category: "",
         tags: "",
         metaTitle: "",
         metaDescription: "",
-        // status: "DRAFT",
-        thumbnail: "",
+        thumbnail: null,
         content: ""
     });
-    const isEdit = Boolean(id);
+
+    const [preview, setPreview] = useState("");
+
     const fetchBlog = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/blog/blogs/${id}`);
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/blog/blogs/${id}`
+            );
             if (res.data.success) {
                 const b = res.data.data;
                 setForm({
-                    title: b.title,
-                    category: b.category,
-                    tags: b.tags?.join(", "),
-                    metaTitle: b.metaTitle,
-                    metaDescription: b.metaDescription,
-                    thumbnail: b.thumbnail,
-                    content: b.contentHTML
+                    title: b.title || "",
+                    category: b.category || "",
+                    tags: b.tags?.join(", ") || "",
+                    metaTitle: b.metaTitle || "",
+                    metaDescription: b.metaDescription || "",
+                    thumbnail: null,
+                    content: b.contentHTML || ""
                 });
+                setPreview(b.thumbnail?.url || "");
             }
         } catch {
             toast.error("Failed to load blog");
@@ -47,21 +50,38 @@ const AdminCreateBlog = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const payload = {
-                ...form,
-                id: isEdit ? id : undefined,
-                tags: form.tags.split(",").map(tag => tag.trim())
-            };
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/blog/admin/create-blog`, payload);
+            const formData = new FormData();
+            formData.append("title", form.title);
+            formData.append("category", form.category);
+            formData.append("metaTitle", form.metaTitle);
+            formData.append("metaDescription", form.metaDescription);
+            formData.append("content", form.content);
+            form.tags.split(",").forEach(tag => {
+                if (tag.trim()) {
+                    formData.append("tags[]", tag.trim());
+                }
+            });
+            if (isEdit) {
+                formData.append("id", id);
+            }
+            if (form.thumbnail) {
+                formData.append("image", form.thumbnail);
+            }
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/blog/admin/create-blog`,
+                formData,
+                {
+                    headers: {"Content-Type": "multipart/form-data"}
+                }
+            );
             if (res.data.success) {
                 toast.success(res.data.message);
                 navigate("/admin/blogs");
             } else {
                 toast.error(res.data.message);
             }
-            window.dispatchEvent(new Event("ourBlogClick"));
         } catch (err) {
-            toast.error("Failed to create blog");
+            console.error(err);
+            toast.error(err.response?.data?.message || "Error submitting the form");
         }
     };
 
@@ -73,56 +93,130 @@ const AdminCreateBlog = () => {
                         <span className="first-letter">{isEdit ? "U" : "C"}</span>
                         {isEdit ? "pdate Blog" : "reate Blog"}
                     </h4>
-                    <button type="button" className="btn btn-outline-danger d-flex align-items-center gap-2" onClick={() => navigate("/admin/blogs")}>
-                        <i className="bi bi-arrow-left"></i> Back
+                    <button className="btn btn-outline-danger" onClick={() => navigate("/admin/blogs")}>
+                        ← Back
                     </button>
                 </div>
-                <form className="row g-3 bg-dark rounded text-white p-3" onSubmit={handleSubmit}>
+                <form
+                    className="row g-3 bg-dark rounded text-white p-3"
+                    onSubmit={handleSubmit}
+                >
+                    {/* Title */}
                     <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Blog title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
-                    </div>
-                    <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
-                    </div>
-
-                    <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Metatitle" value={form.metaTitle} onChange={(e) => setForm({ ...form, metaTitle: e.target.value })} />
-                    </div>
-                    <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter MetaDescription" value={form.metaDescription} onChange={(e) => setForm({ ...form, metaDescription: e.target.value })} />
-                    </div>
-                    <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter Tags" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} />
-                    </div>
-
-                    {/* <div className="col-md-4">
-                        <select className="form-control bg-dark text-white border-secondary shadow-none" value={form.status}
-                            onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                            <option value="DRAFT">Draft</option>
-                            <option value="PUBLISHED">Published</option>
-                            <option value="ARCHIVED">Archived</option>
-                        </select>
-                    </div> */}
-
-                    <div className="col-md-4">
-                        <input type="text" className="form-control bg-dark text-white border-secondary shadow-none" placeholder="Enter thumbnail" value={form.thumbnail} onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} />
+                        <input
+                            type="text"
+                            className="form-control bg-dark text-white border-secondary"
+                            placeholder="Title"
+                            value={form.title}
+                            onChange={(e) =>
+                                setForm({ ...form, title: e.target.value })
+                            }
+                        />
                     </div>
 
+                    {/* Category */}
+                    <div className="col-md-4">
+                        <input
+                            type="text"
+                            className="form-control bg-dark text-white border-secondary"
+                            placeholder="Category"
+                            value={form.category}
+                            onChange={(e) =>
+                                setForm({ ...form, category: e.target.value })
+                            }
+                        />
+                    </div>
+
+                    {/* Meta Title */}
+                    <div className="col-md-4">
+                        <input
+                            type="text"
+                            className="form-control bg-dark text-white border-secondary"
+                            placeholder="Meta Title"
+                            value={form.metaTitle}
+                            onChange={(e) =>
+                                setForm({ ...form, metaTitle: e.target.value })
+                            }
+                        />
+                    </div>
+
+                    {/* Meta Description */}
+                    <div className="col-md-4">
+                        <input
+                            type="text"
+                            className="form-control bg-dark text-white border-secondary"
+                            placeholder="Meta Description"
+                            value={form.metaDescription}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    metaDescription: e.target.value
+                                })
+                            }
+                        />
+                    </div>
+
+                    {/* Tags */}
+                    <div className="col-md-4">
+                        <input
+                            type="text"
+                            className="form-control bg-dark text-white border-secondary"
+                            placeholder="Tags (comma separated)"
+                            value={form.tags}
+                            onChange={(e) =>
+                                setForm({ ...form, tags: e.target.value })
+                            }
+                        />
+                    </div>
+
+                    {/* Thumbnail Upload */}
+                    <div className="col-md-4">
+                        <input
+                            type="file"
+                            className="form-control bg-dark text-white border-secondary"
+                            onChange={(e) => {
+                                const file = e.target.files[0];
+                                setForm({ ...form, thumbnail: file });
+                                if (file) {
+                                    setPreview(URL.createObjectURL(file));
+                                }
+                            }}
+                        />
+                        {preview && (
+                            <img
+                                src={preview}
+                                alt="preview"
+                                className="mt-2 rounded"
+                                width="120"
+                            />
+                        )}
+                    </div>
+
+                    {/* Content */}
                     <div className="col-12 mt-4">
-                        <h5 className="mb-2 border-bottom pb-2">✍️ Blog Content</h5>
+                        <h5>✍️ Blog Content</h5>
                         <div
                             style={{
                                 border: "1px solid #444",
                                 borderRadius: "8px",
                                 padding: "10px",
-                                background: "#0f0f0f",
+                                background: "#0f0f0f"
                             }}
                         >
-                            <TextEditor value={form.content} onChange={(value) => setForm({ ...form, content: value })} />
+                            <TextEditor
+                                value={form.content}
+                                onChange={(value) =>
+                                    setForm({ ...form, content: value })
+                                }
+                            />
                         </div>
                     </div>
+
+                    {/* Submit */}
                     <div className="col-12">
-                        <button type="submit" className="btn btn-primary">Save </button>
+                        <button className="btn btn-primary">
+                            {isEdit ? "Update Blog" : "Create Blog"}
+                        </button>
                     </div>
                 </form>
             </div>

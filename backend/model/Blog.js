@@ -4,7 +4,10 @@ const blogSchema = new mongoose.Schema({
 
     title: {type: String,required: true},
     slug: {type: String,required: true,unique: true},
-    thumbnail: {type: String,default: null},
+    thumbnail: {
+        url: { type: String, default: null },
+        public_id: { type: String, default: null }
+    },
     contentHTML: {type: String,required: true},
     category: {type: String,default: "General"},
     tags: [{type: String}],// Search keywords (car paint, wrap, ppf)

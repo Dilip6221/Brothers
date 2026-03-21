@@ -6,6 +6,7 @@ const app = express();
 const cors = require('cors');
 const UserRoute = require('./routes/UserRoute.js');
 const serviceInquiryRoute = require('./routes/InquiryRoute.js');
+const CustomerReviewRoute = require('./routes/CustomerReviewRoute.js');
 const SubscribeRoute = require('./routes/SubscribeRoute.js')
 const BlogRoute = require('./routes/BlogRoute.js')
 const ServiceRoute = require('./routes/ServiceRoute.js')
@@ -33,9 +34,10 @@ app.use('/api/blog', BlogRoute);
 app.use('/api/service', ServiceRoute);
 app.use('/api/gallery', GalleryRoute);
 app.use('/api/jobcard', JobCardRoute);
+app.use('/api/customer-reviews', CustomerReviewRoute);
 
 app.get('/', (req, res) => {
-    res.send('Welcome To Brothers');
+    res.send('Welcome To BROTHERS');
 });
 
 /* Port running */
