@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 
 const WhatsappButton = () => {
 
@@ -8,16 +9,15 @@ const WhatsappButton = () => {
   const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
   return (
-    <a
-      href={whatsappLink}
+    <NavLink
+      to={whatsappLink}
       className="whatsapp-float"
       target="_blank"
       rel="noopener noreferrer"
-      title="Chat on WhatsApp"
+      title="WhatsApp"
     >
-      <i className="bi bi-whatsapp"></i>
-      <span className="whatsapp-text">Hi, how can I help?</span>
-    </a>
+      <i className="bi bi-whatsapp fs-4"></i>
+    </NavLink>
   );
 };
 

@@ -133,8 +133,7 @@ const App = () => {
         <Route path="/admin/about-timeline/edit/:id" element={<AdminCreateAboutTimeLine />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
-      <WhatsappButton />
-
+      {!shouldHideNavbar && <WhatsappButton />}
     </>
   );
 };

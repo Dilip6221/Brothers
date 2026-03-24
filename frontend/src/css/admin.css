@@ -234,3 +234,34 @@
 .media-card:hover {
     transform: scale(1.05);
 }
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: #111;
+    margin-left: 10px;
+    border-left: 2px solid var(--primary);
+}
+.nav-item.open .submenu {
+    max-height: 500px;
+}
+.submenu .dropdown-item {
+    padding: 8px 20px 8px 35px;
+    font-size: 14px;
+    color: var(--light);
+    display: block;
+}
+
+.submenu .dropdown-item:hover {
+    color: var(--primary);
+}
+.submenu-toggle {
+    cursor: pointer;
+}
+.submenu-toggle i.fa-angle-down {
+    transition: 0.3s;
+}
+
+.nav-item.open .fa-angle-down {
+    transform: rotate(360deg);
+}

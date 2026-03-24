@@ -3,6 +3,7 @@ import * as bootstrap from "bootstrap";
 import axios from "axios";
 import toast from "react-hot-toast";
 import "../css/footer.css";
+import { NavLink } from "react-router-dom";
 
 const Footer = () => {
     const [email, setEmail] = useState("");
@@ -88,13 +89,13 @@ const Footer = () => {
                                 <div className="footer-line"></div>
 
                                 <ul className="footer-links">
-                                    <li><a href="/">Home</a></li>
-                                    <li><a href="/about">About Us</a></li>
-                                    <li><a href="/services">Services</a></li>
-                                    <li><a href="/blog">Blog</a></li>
-                                    <li><a href="/gallery">Gallery</a></li>
-                                    <li><a href="/contact-us">Contact Us</a></li>
-                                    <li><a href="/faqs">Faqs</a></li>
+                                    <li><NavLink to="/">Home</NavLink></li>
+                                    <li><NavLink to="/about">About Us</NavLink></li>
+                                    <li><NavLink to="/services">Services</NavLink></li>
+                                    <li><NavLink to="/blog">Blog</NavLink></li>
+                                    <li><NavLink to="/gallery">Gallery</NavLink></li>
+                                    <li><NavLink to="/contact-us">Contact Us</NavLink></li>
+                                    <li><NavLink to="/faqs">Faqs</NavLink></li>
                                 </ul>
                             </div>
 
@@ -105,26 +106,23 @@ const Footer = () => {
                                     Our Services
                                 </h5>
                                 <div className="footer-line"></div>
-
                                 <ul className="footer-links">
-                                    <li><a href="/ppf">PPF Installation</a></li>
-                                    <li><a href="/paint">Full Body Painting</a></li>
-                                    <li><a href="/panel-paint">Panel Painting</a></li>
-                                    <li><a href="/ceramic">Ceramic & Graphene Coating</a></li>
-                                    <li><a href="/sound-damping">Sound Damping</a></li>
-                                    <li><a href="/vinyl-wrap">Vinyl Wrap</a></li>
-                                    <li><a href="/film">Safety Glazing Film</a></li>
-                                    <li><a href="/sunroof-ppf">Sunroof Protection Film</a></li>
-                                    <li><a href="/Miscellaneous">Alloy & Caliper Paint</a></li>
-                                    <li><a href="/Miscellaneous">Detailing</a></li>
-                                    <li><a href="/car-wash">Premium Car Wash</a></li>
-                                    <li><a href="/car-wash">Tyre polish</a></li>
-                                    <li><a href="/car-wash">Accessories</a></li>
-                                    <li><a href="/interior-custmization">Interior Customization</a></li>
+                                    <li><NavLink to="/ppf">PPF Installation</NavLink></li>
+                                    <li><NavLink to="/paint">Full Body Painting</NavLink></li>
+                                    <li><NavLink to="/panel-paint">Panel Painting</NavLink></li>
+                                    <li><NavLink to="/ceramic">Ceramic & Graphene Coating</NavLink></li>
+                                    <li><NavLink to="/sound-damping">Sound Damping</NavLink></li>
+                                    <li><NavLink to="/vinyl-wrap">Vinyl Wrap</NavLink></li>
+                                    <li><NavLink to="/film">Safety Glazing Film</NavLink></li>
+                                    <li><NavLink to="/sunroof-ppf">Sunroof Protection Film</NavLink></li>
+                                    <li><NavLink to="/Miscellaneous">Alloy & Caliper Paint</NavLink></li>
+                                    <li><NavLink to="/Miscellaneous">Detailing</NavLink></li>
+                                    <li><NavLink to="/car-wash">Premium Car Wash</NavLink></li>
+                                    <li><NavLink to="/car-wash">Tyre polish</NavLink></li>
+                                    <li><NavLink to="/car-wash">Accessories</NavLink></li>
+                                    <li><NavLink to="/interior-custmization">Interior Customization</ NavLink></li>
                                 </ul>
                             </div>
-
-                            {/* ===== Newsletter ===== */}
                             <div className="col-lg-3 col-md-6 col-12">
                                 <h5 className="footer-title">
                                     <i className="bi bi-envelope-arrow-up-fill text-danger me-2"></i>

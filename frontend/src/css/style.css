@@ -1,11 +1,9 @@
-/********** Template CSS **********/
 :root {
     --primary: #EB1616;
     --secondary: #191C24;
     --light: #6C7293;
     --dark: #000000;
 }
-
 .back-to-top {
     position: fixed;
     display: none;
@@ -13,25 +11,19 @@
     bottom: 45px;
     z-index: 99;
 }
-
-
-/*** Spinner ***/
 #spinner {
     opacity: 0;
     visibility: hidden;
     transition: opacity .5s ease-out, visibility 0s linear .5s;
     z-index: 99999;
 }
-
-#spinner.show {
+/* #spinner.show {
     transition: opacity .5s ease-out, visibility 0s linear 0s;
     visibility: visible;
     opacity: 1;
-}
+} */
 
-
-/*** Button ***/
-.btn {
+/* .btn {
     transition: .5s;
 }
 
@@ -59,7 +51,7 @@
     justify-content: center;
     font-weight: normal;
     border-radius: 50px;
-}
+} */
 
 
 /*** Layout ***/
