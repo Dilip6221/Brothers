@@ -12,6 +12,7 @@ const BlogRoute = require('./routes/BlogRoute.js')
 const ServiceRoute = require('./routes/ServiceRoute.js')
 const GalleryRoute = require('./routes/GalleryRoute.js');
 const JobCardRoute = require('./routes/JobCardRoute.js');
+const AboutTimeLineRoute = require('./routes/AboutTimeLineRoute.js');
 const connectDB = require('./config/db.js');
 const cookieParser = require('cookie-parser');
 app.use(express.static('public'));
@@ -34,6 +35,7 @@ app.use('/api/blog', BlogRoute);
 app.use('/api/service', ServiceRoute);
 app.use('/api/gallery', GalleryRoute);
 app.use('/api/jobcard', JobCardRoute);
+app.use('/api/about-timeline', AboutTimeLineRoute);
 app.use('/api/customer-reviews', CustomerReviewRoute);
 
 app.get('/', (req, res) => {

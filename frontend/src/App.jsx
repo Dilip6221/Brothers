@@ -47,6 +47,8 @@ import MyCarVault from './pages/MyCarVault.jsx';
 import CustomerJobCard from './pages/CustomerJobCard.jsx';
 import ScrollToTop from './pages/ScrollToTop.jsx';
 import AdminCustomerReview from './pages/Admin/customer-review/AdminCustomerReview.jsx';
+import AdminAboutTimeLine from './pages/Admin/about-time-line/AdminAboutTimeLine.jsx';
+import AdminCreateAboutTimeLine from './pages/Admin/about-time-line/AdminCreateAboutTimeLine.jsx';
 
 const App = () => {
   const location = useLocation();
@@ -57,7 +59,6 @@ const App = () => {
     location.pathname.startsWith(route)
   );
 
-  //  Simple Admin Route Guard
   const isAdminRoute = location.pathname.toLowerCase().startsWith("/admin");
 
   if (authLoading) {
@@ -127,6 +128,9 @@ const App = () => {
         <Route path="/admin/job-cards/:jobId/services" element={<AdminJobServices />} />
         <Route path="/admin/job-cards/:id/media" element={<AdminJobMedia />} />
         <Route path="/admin/customer-reviews" element={<AdminCustomerReview />} />
+        <Route path="/admin/about-timeline" element={<AdminAboutTimeLine />} />
+        <Route path="/admin/about-timeline/create" element={<AdminCreateAboutTimeLine />} />
+        <Route path="/admin/about-timeline/edit/:id" element={<AdminCreateAboutTimeLine />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
       <WhatsappButton />

@@ -102,6 +102,14 @@ const AdminLayout = ({ children }) => {
               >
                 <i className="bi bi-chat-dots me-2"></i>Reviews
               </NavLink>
+              <NavLink
+                to="/admin/about-timeline"
+                className={({ isActive }) =>
+                  `nav-item nav-link ${isActive ? "active" : ""}`
+                }
+              >
+                <i className="bi bi-clock-history me-2"></i>About Timeline
+              </NavLink>
               
             </div>
           </nav>
