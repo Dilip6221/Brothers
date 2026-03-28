@@ -22,29 +22,30 @@ const Navbar = () => {
       ...base,
       background: "rgba(255,255,255,0.08)",
       border: state.isFocused
-        ? "1px solid #0d6efd"
+        ? "1px solid #254c87c8"
         : "1px solid rgba(255,255,255,0.2)",
       boxShadow: "none",
       minHeight: "44px",
       cursor: "pointer",
     }),
-
     singleValue: (base) => ({
       ...base,
       color: "white",
     }),
-
     menu: (base) => ({
       ...base,
       background: "#222",
       borderRadius: "6px",
     }),
-
     option: (base, state) => ({
-      ...base,
-      background: state.isFocused ? "#444" : "#222",
-      color: "white",
-      cursor: "pointer",
+        ...base,
+        backgroundColor: state.isSelected
+            ? "#254c87"
+            : state.isFocused
+            ? "#444"
+            : "#222",
+        color: "white",
+        cursor: "pointer",
     }),
 
     placeholder: (base) => ({
@@ -53,7 +54,6 @@ const Navbar = () => {
     }),
 
     indicatorSeparator: () => ({ display: "none" }),
-
     dropdownIndicator: (base) => ({
       ...base,
       color: "#ccc",

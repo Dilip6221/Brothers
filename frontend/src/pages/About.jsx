@@ -52,7 +52,6 @@ const About = () => {
       <div className="container">
         <h2 className="text-center mb-4 story-title">Our Journey</h2>
         <div className="timeline-wrapper">
-
           {/* LEFT SIDE TIMELINE */}
           <div className="timeline">
             {timeline.map((item, index) => (
@@ -78,22 +77,17 @@ const About = () => {
             ))}
           </div>
 
-          {/* 🔥 RIGHT SIDE GALLERY */}
           <div className={`timeline-gallery ${activeImages.length ? "open" : ""}`}>
-
             <div className="gallery-header">
               <h5>Gallery</h5>
               <span onClick={closeGallery}>×</span>
             </div>
-
             <div className="gallery-grid">
               {activeImages.map((img, index) => (
                 <img key={index} src={img.url} alt="" />
               ))}
             </div>
-
           </div>
-
         </div>
         <div className="core-values-section py-5">
           <div className="container">

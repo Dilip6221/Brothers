@@ -12,6 +12,63 @@ const Contact = () => {
         { value: "PAINT", label: "Full Body Paint" },
         { value: "COTTING", label: "Ceramic Coating" },
     ];
+    const carBrandOptions = [
+        { value: "Hyundai", label: "Hyundai" },
+        { value: "BMW", label: "BMW" },
+        { value: "Suzuki", label: "Suzuki" },
+    ];
+
+    const carModelOptions = [
+        { value: "Creta", label: "Creta" },
+        { value: "i20", label: "i20" },
+    ];
+
+    const reactSelectStyles = {
+        control: (base, state) => ({
+        ...base,
+        background: "rgba(255,255,255,0.08)",
+        border: state.isFocused
+            ? "1px solid #254c87c8"
+            : "1px solid rgba(255,255,255,0.2)",
+        boxShadow: "none",
+        minHeight: "44px",
+        cursor: "pointer",
+        }),
+        singleValue: (base) => ({
+        ...base,
+        color: "white",
+        }),
+        menu: (base) => ({
+        ...base,
+        background: "#222",
+        borderRadius: "6px",
+        }),
+        option: (base, state) => ({
+            ...base,
+            backgroundColor: state.isSelected
+                ? "#254c87"
+                : state.isFocused
+                ? "#444"
+                : "#222",
+            color: "white",
+            cursor: "pointer",
+        }),
+        placeholder: (base) => ({
+        ...base,
+        color: "#ccc",
+        }),
+
+        indicatorSeparator: () => ({ display: "none" }),
+        dropdownIndicator: (base) => ({
+        ...base,
+        color: "#ccc",
+        }),
+
+        multiValueRemove: (base) => ({
+        ...base,
+        color: "black",
+        }),
+    };
 
     const [serviceEnquery, setServiceEnquery] = useState({
         name: user ? user.name : "",
@@ -172,85 +229,57 @@ const Contact = () => {
                                 onChange={handleEnquiryInputChange}
                             />
                         </div>
-
-                        <div className="col-md-6 mb-2">
-                            <select
-                                name="carBrand"
-                                className="form-control shadow-none text-white"
-                                style={{
-                                    background: "rgba(255,255,255,0.08)",
-                                    border: "1px solid rgba(255,255,255,0.2)",
-                                }}
-                                value={serviceEnquery.carBrand || ""}
-                                onChange={handleEnquiryInputChange}
-                            >
-                                <option value="" >Car Manufacturer*</option>
-                                <option value="Hyundai">Hyundai</option>
-                                <option value="BMW">BMW</option>
-                                <option value="Suzuki">Suzuki</option>
-                            </select>
-                        </div>
-                        <div className="col-md-6 mb-2">
-                            <select
-                                name="carModel"
-                                className="form-control shadow-none text-white"
-                                style={{
-                                    background: "rgba(255,255,255,0.08)",
-                                    border: "1px solid rgba(255,255,255,0.2)",
-                                }}
-                                value={serviceEnquery.carModel || ""}
-                                onChange={handleEnquiryInputChange}
-                            >
-                                <option value="" >Model Name*</option>
-                                <option value="Creta">Creta</option>
-                                <option value="i20">i20</option>
-                            </select>
-                        </div>
-                        <div className="col-md-12">
+                        <div className="col-md-6">
                             <Select
-                                isMulti
-                                name="services"
-                                options={serviceOptions}
-                                placeholder="Required Service*"
-                                className="text-white w-100"
-                                classNamePrefix="react-select"
-                                value={serviceOptions.filter(option =>
-                                    serviceEnquery.services.includes(option.value)
-                                )}
-                                onChange={(selected) => {
-                                    setServiceEnquery((prev) => ({
-                                        ...prev,
-                                        services: selected ? selected.map((s) => s.value) : [],
-                                    }));
-                                }}
-                                styles={{
-                                    control: (base) => ({
-                                        ...base,
-                                        background: "rgba(255,255,255,0.08)",
-                                        border: "1px solid rgba(255,255,255,0.2)",
-                                        boxShadow: "none",
-
-                                    }),
-                                    multiValueRemove: (base) => ({
-                                        ...base,
-                                        color: "black",
-                                    }),
-                                    menu: (base) => ({
-                                        ...base,
-                                        background: "#222",
-                                        color: "white",
-                                    }),
-                                    option: (base, state) => ({
-                                        ...base,
-                                        background: state.isFocused ? "#444444ff" : "#222",
-                                        color: "white",
-                                        cursor: "pointer",
-                                    }),
-                                    placeholder: (base) => ({
-                                        ...base,
-                                        color: "white",
-                                    }),
-                                }}
+                            options={carBrandOptions}
+                            placeholder="Car Manufacturer*"
+                            styles={reactSelectStyles}
+                            value={carBrandOptions.find(
+                                opt => opt.value === serviceEnquery.carBrand
+                            )}
+                            onChange={(selected) =>
+                                handleEnquiryInputChange({
+                                    target: {
+                                    name: "carBrand",
+                                    value: selected ? selected.value : ""
+                                    }
+                                })
+                                }
+                            />
+                        </div>
+                        <div className="col-md-6 mb-2">
+                            <Select
+                            options={carModelOptions}
+                            placeholder="Car Model*"
+                            styles={reactSelectStyles}
+                            value={carModelOptions.find(
+                                opt => opt.value === serviceEnquery.carModel
+                            )}
+                            onChange={(selected) =>
+                                handleEnquiryInputChange({
+                                    target: {
+                                    name: "carModel",
+                                    value: selected ? selected.value : ""
+                                    }
+                                })
+                                }
+                            />
+                        </div>
+                         <div className="col-md-12 mb-2">
+                            <Select
+                            isMulti
+                            options={serviceOptions}
+                            placeholder="Required Service*"
+                            value={serviceOptions.filter(opt =>
+                                serviceEnquery.services.includes(opt.value)
+                            )}
+                            onChange={(selected) =>
+                                setServiceEnquery(prev => ({
+                                ...prev,
+                                services: selected ? selected.map(s => s.value) : [],
+                                }))
+                            }
+                            styles={reactSelectStyles}
                             />
                         </div>
                         <div className="col-12 mb-4 mb-2">
@@ -268,7 +297,10 @@ const Contact = () => {
                             ></textarea>
                         </div>
                     </div>
-                    <button type="submit" className="submit-btn">
+                    {/* <button type="submit" className="submit-btn">
+                        Submit Enquiry
+                    </button> */}
+                    <button type="submit" className="cont-btn w-100" >
                         Submit Enquiry
                     </button>
                 </form>
