@@ -1,4 +1,4 @@
-import React, { useContext,useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "../css/contact.css";
 import Select from "react-select";
 import axios from "axios";
@@ -7,69 +7,55 @@ import { UserContext } from "../context/UserContext.jsx";
 
 const Contact = () => {
     const { user } = useContext(UserContext);
-    const serviceOptions = [
-        { value: "PPF", label: "PPF Installation" },
-        { value: "PAINT", label: "Full Body Paint" },
-        { value: "COTTING", label: "Ceramic Coating" },
-    ];
-    const carBrandOptions = [
-        { value: "Hyundai", label: "Hyundai" },
-        { value: "BMW", label: "BMW" },
-        { value: "Suzuki", label: "Suzuki" },
-    ];
-
-    const carModelOptions = [
-        { value: "Creta", label: "Creta" },
-        { value: "i20", label: "i20" },
-    ];
-
+    const [carBrandOptions, setCarBrandOptions] = useState([]);
+    const [carModelOptions, setCarModelOptions] = useState([]);
+    const [serviceOptions, setServiceOptions] = useState([]);
+ 
     const reactSelectStyles = {
         control: (base, state) => ({
-        ...base,
-        background: "rgba(255,255,255,0.08)",
-        border: state.isFocused
-            ? "1px solid #254c87c8"
-            : "1px solid rgba(255,255,255,0.2)",
-        boxShadow: "none",
-        minHeight: "44px",
-        cursor: "pointer",
+            ...base,
+            background: "rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,255,255,0.2)",
+            boxShadow: "none",
+            cursor: "pointer",
+            "&:hover": {
+                border: "1px solid rgba(255,255,255,0.2)",
+            }
         }),
         singleValue: (base) => ({
-        ...base,
-        color: "white",
+            ...base,
+            color: "white",
         }),
         menu: (base) => ({
-        ...base,
-        background: "#222",
-        borderRadius: "6px",
+            ...base,
+            background: "#222",
+            borderRadius: "6px",
         }),
         option: (base, state) => ({
             ...base,
             backgroundColor: state.isSelected
                 ? "#254c87"
                 : state.isFocused
-                ? "#444"
-                : "#222",
+                    ? "#444"
+                    : "#222",
             color: "white",
             cursor: "pointer",
         }),
         placeholder: (base) => ({
-        ...base,
-        color: "#ccc",
+            ...base,
+            color: "#ccc",
         }),
 
         indicatorSeparator: () => ({ display: "none" }),
         dropdownIndicator: (base) => ({
-        ...base,
-        color: "#ccc",
+            ...base,
+            color: "#ccc",
         }),
-
         multiValueRemove: (base) => ({
-        ...base,
-        color: "black",
+            ...base,
+            color: "black",
         }),
     };
-
     const [serviceEnquery, setServiceEnquery] = useState({
         name: user ? user.name : "",
         phone: user ? user.phone : "",
@@ -81,6 +67,61 @@ const Contact = () => {
         services: [],
         notes: ""
     });
+    useEffect(() => {
+        const fetchCompanies = async () => {
+            try {
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/car-companies/companies`);
+                const options = res.data.data.map(c => ({
+                    value: c._id,
+                    label: c.name
+                }));
+                setCarBrandOptions(options);
+            } catch (err) {
+                console.error("Frontend Error Fetching Companies:", err);
+                toast.error(err.message || "Failed to load car companies");
+            }
+        };
+        fetchCompanies();
+    }, []);
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/service/admin/services`);
+                const options = res.data.data.map(c => ({
+                    value: c.title,
+                    label: c.title
+                }));
+                setServiceOptions(options);
+            } catch (err) {
+                console.error("Frontend Error Fetching Services:", err);
+                toast.error(err.message || "Failed to load services");
+            }
+        };
+        fetchServices();
+    }, []);
+
+    const handleBrandChange = async (selected) => {
+        const companyId = selected?.value || "";
+        setServiceEnquery(prev => ({
+            ...prev,
+            carBrand: selected?.label || "",
+            carModel: ""
+        }));
+        setCarModelOptions([]);
+        if (!companyId) return;
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/car-companies/${companyId}/car-models`);
+            const options = res.data.data.map(m => ({
+                value: m.name,
+                label: m.name
+            }));
+            setCarModelOptions(options);
+        } catch (err) {
+            console.error("Frontend Error Fetching Models:", err);
+            toast.error(err.message || "Failed to load car models");
+        }
+    };
 
     const handleEnquiryInputChange = (e) => {
         const { name, value } = e.target;
@@ -102,10 +143,10 @@ const Contact = () => {
             });
             if (res.data.success) {
                 toast.success(res.data.message);
+                setServiceEnquery({ name: user ? user.name : "", phone: user ? user.phone : "", email: user ? user.email : "", city: "", address: "", carBrand: "", carModel: "", services: [], notes: "" });
             } else {
                 toast.error(res.data.message);
             }
-            setServiceEnquery({ name: "", phone: "", email: "", city: "", address: "", carBrand: "", carModel: "", services: [], notes: "" });
         } catch (error) {
             console.error("Frontend Error submitting enquiry:", error);
             toast.error(error);
@@ -158,7 +199,7 @@ const Contact = () => {
                         </div>
                     </a>
 
-                   <div className="info-item social-card clean-social">
+                    <div className="info-item social-card clean-social">
                         <div className="info-text full-width">
                             <h4 className="social-title">Connect With Us</h4>
                             <div className="social-icons flex-wrap ">
@@ -223,7 +264,7 @@ const Contact = () => {
                         <div className="col-md-8 mb-2">
                             <input type="text" name="address" className="form-control shadow-none text-white"
                                 style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
-                                placeholder="Address*"
+                                placeholder="Address"
                                 autoComplete="off"
                                 value={serviceEnquery.address}
                                 onChange={handleEnquiryInputChange}
@@ -231,55 +272,52 @@ const Contact = () => {
                         </div>
                         <div className="col-md-6">
                             <Select
-                            options={carBrandOptions}
-                            placeholder="Car Manufacturer*"
-                            styles={reactSelectStyles}
-                            value={carBrandOptions.find(
-                                opt => opt.value === serviceEnquery.carBrand
-                            )}
-                            onChange={(selected) =>
-                                handleEnquiryInputChange({
-                                    target: {
-                                    name: "carBrand",
-                                    value: selected ? selected.value : ""
-                                    }
-                                })
-                                }
+                                options={carBrandOptions}
+                                placeholder="Car Manufacturer*"
+                                styles={reactSelectStyles}
+                                maxMenuHeight={180}
+                                value={carBrandOptions.find(
+                                    opt => opt.value === serviceEnquery.carBrand
+                                )}
+                                onChange={handleBrandChange}
                             />
                         </div>
                         <div className="col-md-6 mb-2">
                             <Select
-                            options={carModelOptions}
-                            placeholder="Car Model*"
-                            styles={reactSelectStyles}
-                            value={carModelOptions.find(
-                                opt => opt.value === serviceEnquery.carModel
-                            )}
-                            onChange={(selected) =>
-                                handleEnquiryInputChange({
-                                    target: {
-                                    name: "carModel",
-                                    value: selected ? selected.value : ""
-                                    }
-                                })
+                                options={carModelOptions}
+                                key={serviceEnquery.carBrand} 
+                                placeholder="Car Model*"
+                                styles={reactSelectStyles}
+                                maxMenuHeight={180}
+                                value={carModelOptions.find(
+                                    opt => opt.value === serviceEnquery.carModel
+                                )}
+                                onChange={(selected) =>
+                                    handleEnquiryInputChange({
+                                        target: {
+                                            name: "carModel",
+                                            value: selected ? selected.value : ""
+                                        }
+                                    })
                                 }
                             />
                         </div>
-                         <div className="col-md-12 mb-2">
+                        <div className="col-md-12 mb-2">
                             <Select
-                            isMulti
-                            options={serviceOptions}
-                            placeholder="Required Service*"
-                            value={serviceOptions.filter(opt =>
-                                serviceEnquery.services.includes(opt.value)
-                            )}
-                            onChange={(selected) =>
-                                setServiceEnquery(prev => ({
-                                ...prev,
-                                services: selected ? selected.map(s => s.value) : [],
-                                }))
-                            }
-                            styles={reactSelectStyles}
+                                isMulti
+                                options={serviceOptions}
+                                placeholder="Required Service*"
+                                maxMenuHeight={90}
+                                value={serviceOptions.filter(opt =>
+                                    serviceEnquery.services.includes(opt.value)
+                                )}
+                                onChange={(selected) =>
+                                    setServiceEnquery(prev => ({
+                                        ...prev,
+                                        services: selected ? selected.map(s => s.value) : [],
+                                    }))
+                                }
+                                styles={reactSelectStyles}
                             />
                         </div>
                         <div className="col-12 mb-4 mb-2">
