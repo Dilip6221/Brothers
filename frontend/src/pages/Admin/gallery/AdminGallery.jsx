@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 const AdminGallery = () => {
     const [images, setImages] = useState([]);
     const [showCreateModal, setShowCreateModal] = useState(false);// For display Gallery create model
+    const [serviceOptions, setServiceOptions] = useState([]);
     const [newImage, setNewImage] = useState({//Create new user
         title: "",
         service: "",
@@ -21,6 +22,19 @@ const AdminGallery = () => {
             setImages(res.data.data || []);
         } catch (error) {
             toast.error("Error fetching gallery data");
+        }
+    };
+    const fetchServices = async () => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/service/admin/services`);
+            const options = res.data.data.map(c => ({
+                value: c.title,
+                label: c.title
+            }));
+            setServiceOptions(options);
+        } catch (err) {
+            console.error("Frontend Error Fetching Services:", err);
+            toast.error(err.message || "Failed to load services");
         }
     };
     const deleteGalleryImage = (id) => async () => {
@@ -68,13 +82,12 @@ const AdminGallery = () => {
             }
         } catch (error) {
             console.error(error);
-            toast.error("Creation failed.");
+            toast.error("Image upload failed.");
         }
     };
-
-
     useEffect(() => {
         fetchData();
+        fetchServices();
     }, []);
 
     return (
@@ -183,14 +196,24 @@ const AdminGallery = () => {
                                 </div>
                                 <div className="mb-3">
                                     <label>Service</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        value={newImage.service}
+                                    <select
+                                        name="service"
+                                        className="form-control "
+                                        value={newImage.service || ""}
                                         onChange={(e) =>
-                                            setNewImage({ ...newImage, service: e.target.value })
+                                            setNewImage(prev => ({
+                                                ...prev,
+                                                service: e.target.value
+                                            }))
                                         }
-                                    />
+                                    >
+                                        <option value="">Select Service*</option>
+                                        {serviceOptions.map((opt, index) => (
+                                            <option key={index} value={opt.value}>
+                                                {opt.label}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <div className="mb-3">
                                     <label>Upload Image</label>

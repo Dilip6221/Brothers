@@ -1,5 +1,5 @@
 import '../css/about.css';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -7,6 +7,8 @@ const About = () => {
   const [timeline, setTimeline] = useState([]);
   const [activeImages, setActiveImages] = useState([]);
   const [activeId, setActiveId] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const scrollRef = useRef(null);
 
   const handleOpenGallery = (images, id) => {
     if (!images || images.length === 0) return;
@@ -33,6 +35,26 @@ const About = () => {
   useEffect(() => {
     fetchTimeline();
   }, []);
+  useEffect(() => {
+    if (timeline.length > 0) {
+      const firstItem = timeline[0];
+      if (firstItem.images?.length > 0) {
+        setActiveImages(firstItem.images);
+        setActiveId(firstItem._id);
+      }
+    }
+  }, [timeline]);
+  useEffect(() => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const interval = setInterval(() => {
+      container.scrollLeft += 200;
+      if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
+        container.scrollLeft = 0;
+      }
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [activeImages]);
   return (
     <div className="bg-black text-white">
       <div className="py-5 text-center">
@@ -52,41 +74,39 @@ const About = () => {
       <div className="container">
         <h2 className="text-center mb-4 story-title">Our Journey</h2>
         <div className="timeline-wrapper">
-          {/* LEFT SIDE TIMELINE */}
           <div className="timeline">
             {timeline.map((item, index) => (
-              <div
-                key={item._id}
-                className={`timeline-item ${index % 2 === 0 ? "left" : "right"}`}
-              >
+              <div key={item._id} className={`timeline-item ${index % 2 === 0 ? "left" : "right"}`}>
                 <div className="timeline-content">
                   <span className="year">{item.year}</span>
                   <h4>{item.title}</h4>
                   <p>{item.description}</p>
                 </div>
 
+                {/* PLUS BUTTON */}
                 {item.images?.length > 0 && (
                   <button
-                    className={`timeline-plus ${activeId === item._id ? "active" : ""}`}
+                    className={`timeline-plus ${activeId === item._id ? "active" : ""
+                      }`}
                     onClick={() => handleOpenGallery(item.images, item._id)}
                   >
                     +
                   </button>
                 )}
+                {activeId === item._id && (
+                  <div className="timeline-images-horizontal" ref={scrollRef}>
+                    {activeImages.map((img, i) => (
+                      <div key={i} className="img-card" onClick={() => setPreview(img.url)}>
+                        <img src={img.url} alt="" />
+                        <div className="overlay">
+                          <span>View</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
-          </div>
-
-          <div className={`timeline-gallery ${activeImages.length ? "open" : ""}`}>
-            <div className="gallery-header">
-              <h5>Gallery</h5>
-              <span onClick={closeGallery}>×</span>
-            </div>
-            <div className="gallery-grid">
-              {activeImages.map((img, index) => (
-                <img key={index} src={img.url} alt="" />
-              ))}
-            </div>
           </div>
         </div>
         <div className="core-values-section py-5">
@@ -195,6 +215,11 @@ const About = () => {
           </div>
         </div>
       </div>
+      {preview && (
+        <div className="image-preview" onClick={() => setPreview(null)}>
+          <img src={preview} alt="" />
+        </div>
+      )}
     </div>
 
   );

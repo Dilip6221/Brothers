@@ -42,16 +42,10 @@ const getGalleryImages = async (req, res) => {
     if (service) filter.service = service;
 
     const images = await Gallery.find(filter).sort({ createdAt: -1 });
-    res.json({
-      success: true,
-      data: images,
-    });
+    res.json({success: true,data: images,});
   } catch (error) {
     console.error("Gallery fetch error:", error);
-    res.json({
-      success: false,
-      message: "Failed to fetch gallery",
-    });
+    res.json({success: false,message: "Failed to fetch gallery",});
   }
 };
 const deleteGalleryImage = async (req, res) => {

@@ -3,28 +3,15 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import '../css/gallery.css';
 
-const CATEGORY_LIST = [
-  "ALL",
-  "PPF",
-  "PAINT",
-  "WRAP",
-  "WINDOW TINT",
-  "CERAMIC COATING",
-  "ACCESSORIES",
-];
-
 const Gallery = () => {
   const [images, setImages] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null);
   const [activeCategory, setActiveCategory] = useState("ALL");
+  const [categories, setCategories] = useState(["ALL"]);
 
-  // 🔐 race-condition killer
   const requestIdRef = useRef(0);
-
-  /* ================= FETCH ALL IMAGES ================= */
   const fetchImages = async (category) => {
     const requestId = ++requestIdRef.current;
-
     try {
       const res = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/gallery/gallery`,
@@ -34,10 +21,7 @@ const Gallery = () => {
           },
         }
       );
-
-      // ignore outdated response
       if (requestId !== requestIdRef.current) return;
-
       if (res.data.success) {
         setImages(res.data.data);
       } else {
@@ -49,6 +33,21 @@ const Gallery = () => {
       }
     }
   };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/service/admin/services`);
+        if (res.data.success) {
+          const dynamicCats = res.data.data.map(s => s.title);
+          setCategories(["ALL", ...dynamicCats]);
+        }
+      } catch (err) {
+        toast.error("Failed to load categories");
+      }
+    };
+    fetchCategories();
+  }, []);
 
   /* ================= CATEGORY CHANGE ================= */
   useEffect(() => {
@@ -100,6 +99,7 @@ const Gallery = () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
+      toast.error("Failed to download image");
       console.error("Download failed", error);
     }
   };
@@ -123,11 +123,10 @@ const Gallery = () => {
 
       <div className="container mb-3">
         <div className="category-bar">
-          {CATEGORY_LIST.map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat}
-              className={`category-btn ${activeCategory === cat ? "active" : ""
-                }`}
+              className={`category-btn ${activeCategory === cat ? "active" : ""}`}
               onClick={() => setActiveCategory(cat)}
             >
               {cat}
