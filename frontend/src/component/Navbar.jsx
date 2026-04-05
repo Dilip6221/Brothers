@@ -6,6 +6,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import * as bootstrap from "bootstrap";
 import Select from "react-select";
+// import "../css/header.css";
 
 const Navbar = () => {
   const { user, logout, token } = useContext(UserContext);
@@ -15,7 +16,29 @@ const Navbar = () => {
   const serviceModalRef = useRef(null);
   const bsServiceModalRef = useRef(null);
   const location = useLocation();
+  const offcanvasRef = useRef(null);
+  const bsOffcanvasRef = useRef(null);
+  const [mobileDropdown, setMobileDropdown] = useState({
+    services: false,
+    more: false,
+  });
+  const toggleMobileMenu = (menu) => {
+    setMobileDropdown((prev) => ({
+      ...prev,
+      [menu]: !prev[menu],
+    }));
+  };
 
+  useEffect(() => {
+    if (offcanvasRef.current) {
+      bsOffcanvasRef.current = new bootstrap.Offcanvas(offcanvasRef.current);
+    }
+  }, []);
+  useEffect(() => {
+    if (bsOffcanvasRef.current) {
+      bsOffcanvasRef.current.hide();
+    }
+  }, [location.pathname]);
   // Common React Select Styles (Single + Multi)
   const reactSelectStyles = {
     control: (base, state) => ({
@@ -38,14 +61,14 @@ const Navbar = () => {
       borderRadius: "6px",
     }),
     option: (base, state) => ({
-        ...base,
-        backgroundColor: state.isSelected
-            ? "#254c87"
-            : state.isFocused
-            ? "#444"
-            : "#222",
-        color: "white",
-        cursor: "pointer",
+      ...base,
+      backgroundColor: state.isSelected
+        ? "#254c87"
+        : state.isFocused
+          ? "#444"
+          : "#222",
+      color: "white",
+      cursor: "pointer",
     }),
 
     placeholder: (base) => ({
@@ -80,7 +103,7 @@ const Navbar = () => {
   /* For Service and More Dropdowns */
   const ROUTE_GROUPS = {
     services: ["/ceramic", "/ppf", "/paint", "/detailing", "/premium-car-wash",],
-    more: ["/blog", "/gallery", "/contact-us","/my-car-vault", "/faqs"],
+    more: ["/blog", "/gallery", "/contact-us", "/my-car-vault", "/faqs"],
   };
   const isRouteActive = (routes) => routes.some(route => location.pathname.startsWith(route));
   const isServiceActive = isRouteActive(ROUTE_GROUPS.services);
@@ -254,172 +277,207 @@ const Navbar = () => {
   };
   return (
     <>
-      {/* Wrapper */}
-      {/* <div className="navbar-wrapper bg-black text-light "> */}
       <div className="navbar-wrapper fixed-top">
-
         <div className="container d-flex align-items-center justify-content-between">
-          {/* Logo */}
-          <a href="/" className="navbar-brand d-flex align-items-center">
+          <a href="/" className="navbar-brand">
             <img src={loginLogo} alt="Logo" className="navbar-logo" />
           </a>
+          <button
+            className="mobile-menu-btn d-lg-none"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#mobileMenu"
+          >
+            <i className="bi bi-list"></i>
+          </button>
 
-          {/* Right Side Navbars */}
-          <div className="d-flex flex-column text-end">
-            {/* --- Top Navbar --- */}
-            <ul className="nav justify-content-end align-items-center small mb-2">
+          <nav className="navbar navbar-expand-lg navbar-dark p-0 d-none d-lg-flex">
+            <ul className="navbar-nav align-items-center gap-4">
               <li className="nav-item">
-                <a className="nav-link cool-link" href="mailto:beradilip39@gmail.com">
-                  <i className="bi bi-envelope "></i> beradilip39@gmail.com
-                </a>
+                <NavLink to="/" className="nav-link cool-link">Home</NavLink>
               </li>
+
               <li className="nav-item">
-                <a className="nav-link cool-link " href="tel:9313015917">
-                  <i className="bi bi-phone "></i> 9313015917
-                </a>
+                <NavLink to="/about" className="nav-link cool-link">About</NavLink>
               </li>
-              <li className="nav-item">
-                <a className="nav-link social-icons" href="https://x.com/DilipBe00479036" target="_blank" rel="noopener noreferrer">
-                  <i className="bi bi-twitter-x"></i>
-                </a>
+              <MegaDropdown
+                title="Services"
+                isActive={isServiceActive}
+                items={SERVICE_MENU}
+              />
+              <MegaDropdown
+                title="More"
+                isActive={isMoreActive}
+                items={MORE_MENU}
+              />
+              <li className="nav-item ms-4">
+                <button
+                  className="btn btn-warning btn-sm px-3 text-dark fw-semibold"
+                  onClick={openServiceModal}
+                >
+                  <i className="bi-tools me-1"></i> Service Enquiry
+                </button>
               </li>
-              <li className="nav-item">
-                <a className="nav-link social-icons" href="https://www.instagram.com/brotomotiv.in" target="_blank" rel="noreferrer">
-                  <i className="bi bi-instagram"></i>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link social-icons" href="https://youtube.com/@dilipahir6221" target="_blank" rel="noopener noreferrer">
-                  <i className="bi bi-youtube"></i>
-                </a>
-              </li>
-              {user?.role === 'ADMIN' && (
-                <li className="nav-item px-2">
-                  <Link className="btn btn-outline-warning btn-sm px-3" to="/admin/dashboard">
-                    <i className="bi bi-speedometer2 me-1"></i> Admin
-                  </Link>
-                </li>
-              )}
               {!user ? (
-                <li className="nav-item px-2">
-                  <Link className="btn btn-outline-warning btn-sm px-3 d-flex align-items-center" target="_blank" rel="noopener noreferrer" to="/login">
+                <li className="nav-item">
+                  <Link
+                    to="/login"
+                    className="btn btn-outline-warning btn-sm fw-semibold px-3"
+                  >
                     <i className="bi bi-box-arrow-in-right me-1"></i> Login
                   </Link>
                 </li>
               ) : (
-                <li className="nav-item dropdown px-2">
-                  <a href="#" className="btn btn-outline-warning btn-sm px-3 d-flex align-items-center" id="userDropdown" role="button" data-bs-display="static">
-                    <i className="bi bi-person-circle me-1"></i> {user.name}
-                  </a>
-                  <ul
-                    className="dropdown-menu border-0 rounded-2 shadow-lg"
-                    style={{
-                      outline: "1px solid red",
-                      minWidth: "220px",
-                      marginTop: "0px",
-                      background: "#000000",
-                      color: "#ffffff",
+                <li className="nav-item dropdown user-dropdown">
+                  <button className="btn btn-outline-warning btn-sm px-3">
+                    <i className="bi bi-person-circle me-1"></i>
+                    {user.name}
+                  </button>
 
-                    }}
-                  >
-                    {/* User Info */}
-                    <li className="px-3 py-2 border-bottom" style={{ borderColor: "rgba(255,255,255,0.15)" }}>
-                      <div className="d-flex align-items-center">
-                        <div
-                          className="rounded-circle bg-warning text-dark fw-bold d-flex justify-content-center align-items-center me-2"
-                          style={{ width: "35px", height: "35px" }}
-                        >
-                          {user.name.charAt(0)}
-                        </div>
-                        <div>
-                          <h6 className="mb-0 text-white">{user.name}</h6>
-                          <small className="text-secondary">{user.email}</small>
-                        </div>
+                  <div className="dropdown-menu-custom">
+
+                    <div className="user-info">
+                      <div className="avatar">
+                        {user.name.charAt(0)}
                       </div>
-                    </li>
-                    <li>
-                      <button
-                        className="dropdown-item d-flex align-items-center py-2"
-                        style={{
-                          color: "#ffffff",
-                          background: "transparent",
-                        }}
+                      <div>
+                        <h6>{user.name}</h6>
+                        <small>{user.email}</small>
+                      </div>
+                    </div>
+                    {user?.role === "ADMIN" && (
+                      <Link
+                        to="/admin/dashboard"
+                        className="dropdown-item-custom text-decoration-none"
                       >
-                        <i className="bi bi-person me-2 text-primary"></i>
-                        View Profile
-                      </button>
-                    </li>
+                        <i className="bi bi-speedometer2"></i> Admin Dashboard
+                      </Link>
+                    )}
+                    <button className="dropdown-item-custom">
+                      <i className="bi bi-person"></i> View Profile
+                    </button>
 
-                    <li>
-                      <button
-                        onClick={openModal}
-                        className="dropdown-item d-flex align-items-center py-2"
-                        style={{
-                          color: "#ffffff",
-                          background: "transparent",
-                        }}
-                      >
-                        <i className="bi bi-key me-2 text-warning"></i>
-                        Reset Password
-                      </button>
-                    </li>
+                    <button
+                      className="dropdown-item-custom"
+                      onClick={openModal}
+                    >
+                      <i className="bi bi-key"></i> Reset Password
+                    </button>
 
-                    <li>
-                      <button
-                        onClick={logout}
-                        className="dropdown-item d-flex align-items-center py-2"
-                        style={{
-                          color: "#ff4c4c",
-                          background: "transparent",
-                        }}
-                      >
-                        <i className="bi bi-box-arrow-right me-2"></i>
-                        Logout
-                      </button>
-                    </li>
-                  </ul>
+                    <button
+                      className="dropdown-item-custom logout"
+                      onClick={logout}
+                    >
+                      <i className="bi bi-box-arrow-right"></i> Logout
+                    </button>
+
+                  </div>
                 </li>
               )}
             </ul>
+          </nav>
+        </div>
+        <div
+          className="offcanvas offcanvas-end text-bg-dark"
+          tabIndex="-1"
+          id="mobileMenu"
+          ref={offcanvasRef}
+        >
+          <div className="offcanvas-header">
+            <h5>Menu</h5>
+            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+          </div>
 
-            {/* --- Bottom Navbar --- */}
-            <nav className="navbar navbar-expand-lg navbar-dark p-0" style={{ marginLeft: '-150px' }}>
-              <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-              </button>
-              <div className="collapse navbar-collapse" id="mainNavbar">
-                <ul className="navbar-nav gap-4" style={{ fontSize: '18px' }}>
-                  <li className="nav-item">
-                    <NavLink to="/" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>Home</NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink to="/about" className={({ isActive }) => `nav-link cool-link ${isActive ? "active" : ""}`}>About</NavLink>
-                  </li>
-                  <MegaDropdown
-                    title="Services"
-                    isActive={isServiceActive}
-                    items={SERVICE_MENU}
-                  />
-                  <MegaDropdown
-                    title="More"
-                    isActive={isMoreActive}
-                    items={MORE_MENU}
-                  />
-                  <li className="nav-item px-5 mt-2">
-                    <button
-                      className="btn btn-warning btn-sm px-3 text-dark fw-semibold"
-                      onClick={openServiceModal}
-                    >
-                      <i className="bi-tools me-1"></i> Service Enquiry
+          <div className="offcanvas-body">
+            <ul className="navbar-nav">
+
+              <li className="nav-item">
+                <NavLink to="/" className="nav-link">
+                  Home
+                </NavLink>
+              </li>
+
+              <li className="nav-item">
+                <NavLink to="/about" className="nav-link">
+                  About
+                </NavLink>
+              </li>
+
+              {/* SERVICES DROPDOWN */}
+              <li className="nav-item">
+                <div
+                  className="nav-link d-flex justify-content-between align-items-center"
+                  onClick={() => toggleMobileMenu("services")}
+                >
+                  Services
+                  <i className={`bi ${mobileDropdown.services ? "bi-chevron-up" : "bi-chevron-down"}`}></i>
+                </div>
+                {mobileDropdown.services && (
+                  <ul className="mobile-submenu">
+                    {SERVICE_MENU.map((item) => (
+                      <li key={item.to}>
+                        <NavLink to={item.to} className="nav-link ps-4">
+                          {item.label}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+
+              <li className="nav-item">
+                <div
+                  className="nav-link d-flex justify-content-between align-items-center"
+                  onClick={() => toggleMobileMenu("more")}
+                >
+                  More
+                  <i className={`bi ${mobileDropdown.more ? "bi-chevron-up" : "bi-chevron-down"}`}></i>
+                </div>
+
+                {mobileDropdown.more && (
+                  <ul className="mobile-submenu">
+                    {MORE_MENU.map((item) => (
+                      <li key={item.to}>
+                        <NavLink to={item.to} className="nav-link ps-4">
+                          {item.label}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+
+              <li className="nav-item mt-3">
+                <button className="btn btn-warning w-100" onClick={openServiceModal}>
+                  Service Enquiry
+                </button>
+              </li>
+
+              {!user ? (
+                <li className="nav-item mt-2">
+                  <Link to="/login" className="btn btn-outline-warning w-100">
+                    Login
+                  </Link>
+                </li>
+              ) : (
+                <>
+                  <li className="nav-item mt-2">
+                    <button className="btn btn-outline-warning w-100">
+                      {user.name}
                     </button>
                   </li>
-                </ul>
-              </div>
-            </nav>
+
+                  <li className="nav-item mt-2">
+                    <button className="btn btn-outline-danger w-100" onClick={logout}>
+                      Logout
+                    </button>
+                  </li>
+                </>
+              )}
+            </ul>
           </div>
         </div>
       </div>
-      {/* RESET PASSWORD MODAL */}
       <div
         className="modal fade"
         id="resetModal"

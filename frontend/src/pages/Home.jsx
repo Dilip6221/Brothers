@@ -9,7 +9,7 @@ const Home = () => {
 
   return (
     <>
-    <ServiceSlider />
+    {/* <ServiceSlider /> */}
     <ServiceCard />
     {/* <WhyChooseUs /> */}
     {/* <CustomerReview /> */}

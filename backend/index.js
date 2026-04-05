@@ -21,9 +21,13 @@ app.use(express.static('public'));
 connectDB();
 
 /* Middleware */
-app.use(cors(
-    { origin: process.env.FRONTEND_URL, credentials: true ,methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH']}
-));
+// app.use(cors(
+//     { origin: process.env.FRONTEND_URL, credentials: true ,methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH']}
+// ));
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -46,6 +50,10 @@ app.get('/', (req, res) => {
 
 /* Port running */
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+
+// app.listen(port, () => {
+//     console.log(`Server is running on port: ${port}`);
+// });
+app.listen(port, '0.0.0.0',() => {
     console.log(`Server is running on port: ${port}`);
 });

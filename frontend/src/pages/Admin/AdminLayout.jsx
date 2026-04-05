@@ -1,4 +1,4 @@
-import { React, useContext, useState } from "react";
+import { React, useContext, useState,useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import "../../css/style.css";
@@ -11,6 +11,10 @@ const AdminLayout = ({ children }) => {
   const toggleMenu = (menu) => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
+  useEffect(() => {
+    document.body.classList.add("admin-page");
+    return () => document.body.classList.remove("admin-page");
+  }, []);
   const isOthersActive =
     location.pathname.includes("blogs") ||
     location.pathname.includes("gallery") ||
