@@ -10,6 +10,9 @@ import Select from "react-select";
 
 const Navbar = () => {
   const { user, logout, token } = useContext(UserContext);
+  const [carBrandOptions, setCarBrandOptions] = useState([]);
+  const [carModelOptions, setCarModelOptions] = useState([]);
+  const [serviceOptions, setServiceOptions] = useState([]);
 
   const modalRef = useRef(null);
   const bsModalRef = useRef(null);
@@ -44,12 +47,12 @@ const Navbar = () => {
     control: (base, state) => ({
       ...base,
       background: "rgba(255,255,255,0.08)",
-      border: state.isFocused
-        ? "1px solid #254c87c8"
-        : "1px solid rgba(255,255,255,0.2)",
+      border: "1px solid rgba(255,255,255,0.2)",
       boxShadow: "none",
-      minHeight: "44px",
       cursor: "pointer",
+      "&:hover": {
+        border: "1px solid rgba(255,255,255,0.2)",
+      }
     }),
     singleValue: (base) => ({
       ...base,
@@ -70,7 +73,6 @@ const Navbar = () => {
       color: "white",
       cursor: "pointer",
     }),
-
     placeholder: (base) => ({
       ...base,
       color: "#ccc",
@@ -81,24 +83,11 @@ const Navbar = () => {
       ...base,
       color: "#ccc",
     }),
-
     multiValueRemove: (base) => ({
       ...base,
       color: "black",
     }),
   };
-
-  const carBrandOptions = [
-    { value: "Hyundai", label: "Hyundai" },
-    { value: "BMW", label: "BMW" },
-    { value: "Suzuki", label: "Suzuki" },
-  ];
-
-  const carModelOptions = [
-    { value: "Creta", label: "Creta" },
-    { value: "i20", label: "i20" },
-  ];
-
 
   /* For Service and More Dropdowns */
   const ROUTE_GROUPS = {
@@ -162,6 +151,64 @@ const Navbar = () => {
     services: [],
     notes: ""
   });
+
+
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/car-companies/companies`);
+        const options = res.data.data.map(c => ({
+          value: c._id,
+          label: c.name
+        }));
+        setCarBrandOptions(options);
+      } catch (err) {
+        console.error("Frontend Error Fetching Companies:", err);
+        toast.error(err.message || "Failed to load car companies");
+      }
+    };
+    fetchCompanies();
+  }, []);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/service/admin/services`);
+        const options = res.data.data.map(c => ({
+          value: c.title,
+          label: c.title
+        }));
+        setServiceOptions(options);
+      } catch (err) {
+        console.error("Frontend Error Fetching Services:", err);
+        toast.error(err.message || "Failed to load services");
+      }
+    };
+    fetchServices();
+  }, []);
+
+  const handleBrandChange = async (selected) => {
+    const companyId = selected?.value || "";
+    setServiceEnquery(prev => ({
+      ...prev,
+      carBrand: selected?.label || "",
+      carModel: ""
+    }));
+    setCarModelOptions([]);
+    if (!companyId) return;
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/car-companies/${companyId}/car-models`);
+      const options = res.data.data.map(m => ({
+        value: m.name,
+        label: m.name
+      }));
+      setCarModelOptions(options);
+    } catch (err) {
+      console.error("Frontend Error Fetching Models:", err);
+      toast.error(err.message || "Failed to load car models");
+    }
+  };
+
   useEffect(() => {
     if (user) {
       setServiceEnquery((prev) => ({
@@ -172,11 +219,7 @@ const Navbar = () => {
       }));
     }
   }, [user]);
-  const serviceOptions = [
-    { value: "PPF", label: "PPF Installation" },
-    { value: "PAINT", label: "Full Body Paint" },
-    { value: "COTTING", label: "Ceramic Coating" },
-  ];
+
   useEffect(() => {
     if (modalRef.current) {
       bsModalRef.current = new bootstrap.Modal(modalRef.current, {
@@ -236,10 +279,11 @@ const Navbar = () => {
 
   const openServiceModal = () => {
     if (bsServiceModalRef.current) {
-      setServiceEnquery({ name: user?.name || "", phone: user?.phone || "", email: user?.email || "", city: "", carBrand: "", carModel: "", services: [], address: "", notes: "" });
+  setServiceEnquery({ name: user?.name || "", phone: user?.phone || "", email: user?.email || "", city: "", carBrand: "", carModel: "", services: [], address: "", notes: "" });
     }
-    bsServiceModalRef.current.show();
-  };
+  bsServiceModalRef.current.show();
+};
+
   const closeServiceModal = () => {
     if (bsServiceModalRef.current) {
       bsServiceModalRef.current.hide();
@@ -384,13 +428,14 @@ const Navbar = () => {
           ref={offcanvasRef}
         >
           <div className="offcanvas-header">
-            <h5>Menu</h5>
-            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            {/* <h5>Menu</h5> */}
+             <a href="/" >
+              <img src={loginLogo} alt="Logo" className="mobile-navbar-logo" />
+            </a>
+            <button type="button" className="btn-close mb-5 btn-close-white" data-bs-dismiss="offcanvas"></button>
           </div>
-
           <div className="offcanvas-body">
             <ul className="navbar-nav">
-
               <li className="nav-item">
                 <NavLink to="/" className="nav-link">
                   Home
@@ -554,10 +599,10 @@ const Navbar = () => {
           <div className="modal-content service-modal-content">
             <form onSubmit={handleEnquirySubmit}>
               <div className="p-3 pb-1 border-0 reset-header">
-                <h4 className="text-white d-flex m-0 reset-title">
+                <h3 className="text-white d-flex m-0 reset-title align-items-center">
                   <i className="bi-tools me-2 fs-4"></i>
                   <span className="text-danger">S</span>ervice Enquiry
-                </h4>
+                </h3>
                 <button
                   type="button"
                   className="btn-close position-absolute"
@@ -567,11 +612,9 @@ const Navbar = () => {
               <div className="modal-body p-3">
                 <div className="row g-3">
                   <div className="col-md-6">
-                    <input
-                      type="text"
-                      name="name"
-                      className="form-control service-input"
+                    <input type="text" name="name" className="form-control service-input shadow-none text-white"
                       placeholder="Full Name*"
+                      autoComplete="off"
                       value={serviceEnquery.name}
                       onChange={handleEnquiryInputChange}
                     />
@@ -580,7 +623,7 @@ const Navbar = () => {
                     <input
                       type="number"
                       name="phone"
-                      className="form-control service-input"
+                      className="form-control service-input shadow-none text-white"
                       placeholder="Phone Number*"
                       value={serviceEnquery.phone}
                       onChange={handleEnquiryInputChange}
@@ -591,7 +634,7 @@ const Navbar = () => {
                     <input
                       type="email"
                       name="email"
-                      className="form-control service-input"
+                      className="form-control service-input shadow-none text-white"
                       placeholder="Email*"
                       value={serviceEnquery.email}
                       onChange={handleEnquiryInputChange}
@@ -602,7 +645,7 @@ const Navbar = () => {
                     <input
                       type="text"
                       name="city"
-                      className="form-control service-input"
+                      className="form-control service-input shadow-none text-white"
                       placeholder="City*"
                       value={serviceEnquery.city}
                       onChange={handleEnquiryInputChange}
@@ -613,8 +656,8 @@ const Navbar = () => {
                     <input
                       type="text"
                       name="address"
-                      className="form-control service-input"
-                      placeholder="Address*"
+                      className="form-control service-input shadow-none text-white"
+                      placeholder="Address"
                       value={serviceEnquery.address}
                       onChange={handleEnquiryInputChange}
                     />
@@ -625,36 +668,32 @@ const Navbar = () => {
                       options={carBrandOptions}
                       placeholder="Car Manufacturer*"
                       styles={reactSelectStyles}
-                      value={carBrandOptions.find(
+                                            value={carBrandOptions.find(
                         opt => opt.value === serviceEnquery.carBrand
                       )}
-                      onChange={(selected) =>
-                        setServiceEnquery(prev => ({
-                          ...prev,
-                          carBrand: selected ? selected.value : "",
-                        }))
-                      }
+                      onChange={handleBrandChange}
                     />
                   </div>
                   <div className="col-md-6">
                     <Select
                       options={carModelOptions}
-                      placeholder="Model Name*"
+                      key={serviceEnquery.carBrand}
+                      placeholder="Car Model*"
                       styles={reactSelectStyles}
                       value={carModelOptions.find(
                         opt => opt.value === serviceEnquery.carModel
                       )}
                       onChange={(selected) =>
-                        setServiceEnquery(prev => ({
-                          ...prev,
-                          carModel: selected ? selected.value : "",
-                        }))
+                        handleEnquiryInputChange({
+                          target: {
+                            name: "carModel",
+                            value: selected ? selected.value : ""
+                          }
+                        })
                       }
                     />
                   </div>
-
-
-                  <div className="col-12">
+                  <div className="col-md-12">
                     <Select
                       isMulti
                       options={serviceOptions}
@@ -675,7 +714,7 @@ const Navbar = () => {
                     <textarea
                       name="notes"
                       rows="2"
-                      className="form-control service-input"
+                      className="form-control service-input shadow-none text-white"
                       placeholder="Comments or Special Requirements"
                       value={serviceEnquery.notes}
                       onChange={handleEnquiryInputChange}

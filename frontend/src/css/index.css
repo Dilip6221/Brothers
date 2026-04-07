@@ -33,6 +33,15 @@ body:not(.admin-page) {
   position: absolute;
   left: 120px;
 }
+
+/* MOBILE OFFCANVAS LOGO */
+.mobile-navbar-logo {
+  height: 160px;
+  object-fit: contain;
+  position: static;
+  margin-top: -60px;
+  /* margin-left: 70px; */
+}
 .mobile-menu-btn {
   background: transparent;
   border: none;

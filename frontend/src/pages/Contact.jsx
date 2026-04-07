@@ -225,8 +225,7 @@ const Contact = () => {
                 <form className="contact-form" onSubmit={handleEnquirySubmit}>
                     <div className="row g-3 gx-2">
                         <div className="col-md-6 mb-2">
-                            <input type="text" name="name" className="form-control shadow-none text-white"
-                                style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                            <input type="text" name="name" className="form-control shadow-none text-white service-input"
                                 placeholder="Full Name*"
                                 autoComplete="off"
                                 value={serviceEnquery.name}
@@ -234,8 +233,7 @@ const Contact = () => {
                             />
                         </div>
                         <div className="col-md-6 mb-2">
-                            <input type="tel" name="phone" inputMode="numeric" className="form-control shadow-none text-white"
-                                style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                            <input type="tel" name="phone" inputMode="numeric" className="form-control shadow-none text-white service-input"
                                 placeholder="Phone Number*"
                                 autoComplete="off"
                                 value={serviceEnquery.phone}
@@ -243,8 +241,7 @@ const Contact = () => {
                             />
                         </div>
                         <div className="col-12 mb-2">
-                            <input type="email" name="email" className="form-control shadow-none text-white"
-                                style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                            <input type="email" name="email" className="form-control shadow-none text-white service-input"
                                 placeholder="Email*"
                                 autoComplete="off"
                                 value={serviceEnquery.email}
@@ -252,8 +249,7 @@ const Contact = () => {
                             />
                         </div>
                         <div className="col-md-4 mb-2">
-                            <input type="text" name="city" className="form-control shadow-none text-white"
-                                style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                            <input type="text" name="city" className="form-control shadow-none text-white service-input"
                                 placeholder="City*"
                                 autoComplete="off"
                                 value={serviceEnquery.city}
@@ -262,8 +258,7 @@ const Contact = () => {
                         </div>
 
                         <div className="col-md-8 mb-2">
-                            <input type="text" name="address" className="form-control shadow-none text-white"
-                                style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", }}
+                            <input type="text" name="address" className="form-control shadow-none text-white service-input"
                                 placeholder="Address"
                                 autoComplete="off"
                                 value={serviceEnquery.address}
@@ -323,11 +318,7 @@ const Contact = () => {
                         <div className="col-12 mb-4 mb-2">
                             <textarea
                                 name="notes"
-                                className="form-control shadow-none text-white"
-                                style={{
-                                    background: "rgba(255,255,255,0.08)",
-                                    border: "1px solid rgba(255,255,255,0.2)",
-                                }}
+                                className="form-control shadow-none text-white service-input"
                                 value={serviceEnquery.notes}
                                 onChange={handleEnquiryInputChange}
                                 rows="2"

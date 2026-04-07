@@ -11,7 +11,9 @@ import { Toaster } from "react-hot-toast"
 
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
+
+  <>
     <BrowserRouter>
       <UserProvider> 
         <App />
@@ -20,5 +22,6 @@ createRoot(document.getElementById('root')).render(
         />
       </UserProvider> 
     </BrowserRouter>
-  </StrictMode>,
+  {/* </StrictMode>, */}
+  </>
 )

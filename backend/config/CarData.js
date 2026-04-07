@@ -176,6 +176,72 @@ module.exports = [
       },
     ]
   },
+
+  {
+    name: "Volvo",
+    slug: "volvo",
+    code: "VOL",
+    models: [
+      { name: "EC40", code: "EC40", bodyType: "Sedan" },
+      { name: "EX30", code: "EX30", bodyType: "Sedan" },
+      { name: "EX40", code: "EX40", bodyType: "Sedan" },
+      { name: "S90", code: "S90", bodyType: "Sedan" },
+      { name: "XC60", code: "XC60", bodyType: "Sedan" },
+      { name: "XC90", code: "XC90", bodyType: "Sedan" },
+    ]
+  },
+
+  {
+    name: "Volkswagen",
+    slug: "volkswagen",
+    code: "VOLSWAGEN",
+    models: [
+      { name: "Golf GTI", code: "GOLF_GTI", bodyType: "Sedan" },
+      { name: "Taigun", code: "TAIGUN", bodyType: "Sedan" },
+      { name: "Tayron R-Line", code: "TAYRON_R_LINE", bodyType: "Sedan" },
+      { name: "Tiguan", code: "TIGUAN", bodyType: "Sedan" },
+      { name: "Tiguan R-Line", code: "TIGUAN_R_LINE", bodyType: "Sedan" },
+      { name: "Virtus", code: "VIRTUS", bodyType: "Sedan" },
+    ]
+  },
+  {
+    name: "Vinfast",
+    slug: "vinfast",
+    code: "VINF",
+    models: [
+      { name: "VF 6", code: "VF_6", bodyType: "Sedan" },
+      { name: "VF 7", code: "VF_7", bodyType: "Sedan" },
+      
+    ]
+  },
+  {
+    name: "Toyota",
+    slug: "toyota",
+    code: "TOY",
+    models: [
+      { name: "Urban Cruiser Hyryder", code: "URBAN_CRUISER_HYRYDER", bodyType: "Sedan" },
+      { name: "Innova Hycross", code: "INNOVA_HYCROSS", bodyType: "Sedan" },
+      { name: "Fortuner", code: "FORTUNER", bodyType: "Sedan" },
+      { name: "Urban Cruiser Taisor", code: "URBAN_CRUISER_TAISSOR", bodyType: "Sedan" },
+      { name: "Glanza", code: "GLANZA", bodyType: "Sedan" },
+      { name: "Innova Crysta", code: "INNOVA_CRYSTA", bodyType: "Sedan" },
+      { name: "Hilux", code: "HILUX", bodyType: "Sedan" },
+      { name: "Rumion", code: "RUMION", bodyType: "Sedan" },
+      { name: "Fortuner Legender", code: "FORTUNER_LEGENDER", bodyType: "Sedan" },
+      { name: "Land Cruiser", code: "LAND_CRUISER", bodyType: "Sedan" },
+      { name: "Vellfire", code: "VELLFIRE", bodyType: "Sedan" },
+      { name: "Camry", code: "CAMRY", bodyType: "Sedan" },
+      { name: "Urban Cruiser Ebella", code: "URBAN_CRUISER_EBELLA", bodyType: "Sedan" },
+    ]
+  },
+  {
+    name: "Tesla",
+    slug: "tesla",
+    code: "TES",
+    models: [
+      { name: "Model Y", code: "MODEL_Y", bodyType: "SUV" }
+    ]
+  },
 ];
 
 

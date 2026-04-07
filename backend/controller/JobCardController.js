@@ -135,6 +135,9 @@ const generateJobCode = async () => {
 const createJobCard = async (req, res) => {
   try {
     const { userId, carId, expectedDelivery, customerNotes } = req.body;
+    if (!userId || !carId || !expectedDelivery) {
+      return res.json({ success: false, message: "All fields are required" });
+    }
     const user = await User.findById(userId);
     if (!user) {
       return res.json({ success: false, message: "Invalid user" });

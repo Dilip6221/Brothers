@@ -23,6 +23,7 @@ const AdminCreateJobCards = () => {
   // 🔹 User change → load cars
   const handleUserChange = async (userId) => {
     setForm({ ...form, userId, carId: "" });
+    setCars([]);
     const res = await axios.get(
       `${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/user-cars/${userId}`
     );
