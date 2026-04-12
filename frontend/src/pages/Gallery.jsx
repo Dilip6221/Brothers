@@ -28,9 +28,8 @@ const Gallery = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      if (requestId === requestIdRef.current) {
-        toast.error("Error loading images");
-      }
+      console.error("Error fetching images:", error);
+      toast.error("Error loading images");
     }
   };
 
@@ -43,6 +42,7 @@ const Gallery = () => {
           setCategories(["ALL", ...dynamicCats]);
         }
       } catch (err) {
+        console.error("Error fetching categories:", err);
         toast.error("Failed to load categories");
       }
     };

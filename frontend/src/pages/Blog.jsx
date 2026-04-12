@@ -65,8 +65,8 @@ const Blog = () => {
     /* ================= LIKE TOGGLE ================= */
     const handleLikeToggle = async (blogId) => {
         if (!user) {
-            toast.error("Login required to like");
-            navigate("/login");
+            toast.error("Please log in First");
+            // navigate("/login");
             return;
         }
         try {
@@ -150,7 +150,6 @@ const Blog = () => {
                                         <div className="blog-image-wrapper" onDoubleClick={() => likeAndAnimate(blog._id)}>
                                             <img src={blog.thumbnail.url} alt={blog.title} />
                                             {animatingId === blog._id && (<i className="bi bi-heart-fill double-like-heart"></i>)}
-
                                             <span className="blog-category badge-on-image">
                                                 {blog.category}
                                             </span>

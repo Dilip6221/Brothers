@@ -407,7 +407,7 @@ body.modal-open {
 
 .blog-image-wrapper img {
   width: 100%;
-  height: 190px;
+  height: 210px;
   object-fit: cover;
   display: block;
 }

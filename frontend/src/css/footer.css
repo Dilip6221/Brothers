@@ -105,18 +105,12 @@
     }
 
 }
-
-
-
-/* address text */
-
 .location-text {
     color: #dcdcdc;
     font-size: 14px;
     margin-bottom: 10px;
     line-height: 1.6;
 }
-
 
 .direction-btn {
     display: inline-flex;
@@ -137,16 +131,11 @@
     transform: translateY(-2px);
 }
 
-
-/* brand section */
-
 .footer-brand-box {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
-
-/* brand name */
 
 .footer-brand {
     font-weight: 700;
@@ -154,12 +143,36 @@
     font-size: 28px;
     margin: 0;
 }
+.direction-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #ffffff;
+    font-size: 19px;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid #e10600;
+    padding-bottom: 2px;
+    transition: all 0.3s ease;
+}
+
+.direction-link i {
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+
+.direction-link:hover {
+    color: #d6a71b;
+    border-bottom: 1px solid #ff4d00;
+}
+
+.direction-link:hover i {
+    transform: translate(3px, -3px); /* arrow move up-right */
+}
 
 .brand-red {
     color: #e10600;
 }
-
-/* slogan */
 
 .footer-slogan{
 font-size:14px;

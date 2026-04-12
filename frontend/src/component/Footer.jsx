@@ -160,13 +160,10 @@ const Footer = () => {
                                         href="https://www.google.com/maps?q=Navi+Veraval,+Gujarat,+India"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="direction-btn"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="top"
-                                        title="Open in Google Maps"
+                                        className="direction-link"
                                     >
-                                        <i className="bi bi-geo-alt-fill me-2"></i>
                                         Get Directions
+                                        <i className="bi bi-arrow-up-right"></i>
                                     </a>
                                 </div>
                             </div>

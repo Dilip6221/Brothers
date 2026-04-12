@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import cars from "../assets/images/11.png";
 import { useNavigate } from "react-router-dom";
+import hornSound from "../assets/vidoes/horn-sound.mp3";
 
 const Faq = () => {
     const navigate = useNavigate();
     const [activeIndex, setActiveIndex] = useState(0);
+    const audioRef = useRef(null);
     const faqs = [
         {
             question: "How do I book a slot for car treatment?",
@@ -125,8 +127,23 @@ const Faq = () => {
                             </button>
                         </div>
                         <div className="faq-contact-image">
-                            <img src={cars} alt="car" />
+                            <img
+                                src={cars}
+                                alt="BROTHER'S GARAGE"
+                                onClick={() => {
+                                    if (audioRef.current) {
+                                        audioRef.current.currentTime = 0;
+                                        audioRef.current.play();
+                                    }
+                                }}
+                            />
+                            <audio ref={audioRef} src={hornSound} preload="auto" />
+                            <p className="footer-slogan">
+                                - At <span className="brand-highlight">BROTHER'S</span> we don’t just fix cars —
+                                <span className="trust-text"> we build trust.</span>
+                            </p>
                         </div>
+
                     </div>
                 </div>
             </div>

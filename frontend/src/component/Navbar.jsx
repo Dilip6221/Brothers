@@ -279,10 +279,10 @@ const Navbar = () => {
 
   const openServiceModal = () => {
     if (bsServiceModalRef.current) {
-  setServiceEnquery({ name: user?.name || "", phone: user?.phone || "", email: user?.email || "", city: "", carBrand: "", carModel: "", services: [], address: "", notes: "" });
+      setServiceEnquery({ name: user?.name || "", phone: user?.phone || "", email: user?.email || "", city: "", carBrand: "", carModel: "", services: [], address: "", notes: "" });
     }
-  bsServiceModalRef.current.show();
-};
+    bsServiceModalRef.current.show();
+  };
 
   const closeServiceModal = () => {
     if (bsServiceModalRef.current) {
@@ -429,7 +429,7 @@ const Navbar = () => {
         >
           <div className="offcanvas-header">
             {/* <h5>Menu</h5> */}
-             <a href="/" >
+            <a href="/" >
               <img src={loginLogo} alt="Logo" className="mobile-navbar-logo" />
             </a>
             <button type="button" className="btn-close mb-5 btn-close-white" data-bs-dismiss="offcanvas"></button>
@@ -668,7 +668,8 @@ const Navbar = () => {
                       options={carBrandOptions}
                       placeholder="Car Manufacturer*"
                       styles={reactSelectStyles}
-                                            value={carBrandOptions.find(
+                      maxMenuHeight={180}
+                      value={carBrandOptions.find(
                         opt => opt.value === serviceEnquery.carBrand
                       )}
                       onChange={handleBrandChange}
@@ -680,6 +681,7 @@ const Navbar = () => {
                       key={serviceEnquery.carBrand}
                       placeholder="Car Model*"
                       styles={reactSelectStyles}
+                      maxMenuHeight={180}
                       value={carModelOptions.find(
                         opt => opt.value === serviceEnquery.carModel
                       )}
@@ -697,6 +699,7 @@ const Navbar = () => {
                     <Select
                       isMulti
                       options={serviceOptions}
+                      maxMenuHeight={180}
                       placeholder="Required Service*"
                       value={serviceOptions.filter(opt =>
                         serviceEnquery.services.includes(opt.value)
