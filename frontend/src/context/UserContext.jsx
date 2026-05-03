@@ -5,7 +5,6 @@ import axios from "axios";
 // ✅ Global Axios Config
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000/api";
 axios.defaults.withCredentials = true; // required for secure cookie sessions
-
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
@@ -16,7 +15,7 @@ export const UserProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get("/user/get-user-data");
+      const res = await axios.get("/auth/user");
       if (res.data.success) {
         setUser(res.data.user);
       } else {
@@ -79,12 +78,12 @@ export const UserProvider = ({ children }) => {
       await axios.post("/user/logout");
       setUser(null);
       setToken(null);
-      navigate("/login");
+      navigate("/");
     } catch (err) {
       console.error("Logout failed:", err.message);
       setUser(null);
       setToken(null);
-      navigate("/login");
+      navigate("/");
     }
   };
   /* For export csv data  */
@@ -120,6 +119,7 @@ export const UserProvider = ({ children }) => {
     register,
     logout,
     downloadCSV,
+    fetchUser
   };
 
   return (

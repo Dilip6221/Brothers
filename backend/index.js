@@ -14,6 +14,8 @@ const GalleryRoute = require('./routes/GalleryRoute.js');
 const JobCardRoute = require('./routes/JobCardRoute.js');
 const AboutTimeLineRoute = require('./routes/AboutTimeLineRoute.js');
 const CarCompanyRoute = require('./routes/CarCompanyRoute.js');
+const authRoute = require('./routes/AuthRoute.js');
+
 const connectDB = require('./config/db.js');
 const cookieParser = require('cookie-parser');
 app.use(express.static('public'));
@@ -43,6 +45,7 @@ app.use('/api/jobcard', JobCardRoute);
 app.use('/api/about-timeline', AboutTimeLineRoute);
 app.use('/api/car-companies', CarCompanyRoute);
 app.use('/api/customer-reviews', CustomerReviewRoute);
+app.use('/api/auth', authRoute);
 
 app.get('/', (req, res) => {
     res.send('Welcome To BROTHERS');

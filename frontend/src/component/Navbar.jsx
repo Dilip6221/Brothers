@@ -1,18 +1,192 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import letsStartLogo from "../assets/images/loginimage.webp";
 import loginLogo from "../assets/images/brand.png";
 import { UserContext } from "../context/UserContext.jsx";
 import axios from "axios";
 import toast from "react-hot-toast";
 import * as bootstrap from "bootstrap";
 import Select from "react-select";
-// import "../css/header.css";
 
 const Navbar = () => {
-  const { user, logout, token } = useContext(UserContext);
+  const { user, logout, token, fetchUser } = useContext(UserContext);
   const [carBrandOptions, setCarBrandOptions] = useState([]);
   const [carModelOptions, setCarModelOptions] = useState([]);
   const [serviceOptions, setServiceOptions] = useState([]);
+  const [showLogin, setShowLogin] = useState(false);
+
+  const [loginStep, setLoginStep] = useState("PHONE");
+  const [mobile, setMobile] = useState("");
+  const [otp, setOtp] = useState(Array(6).fill(""));
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [timer, setTimer] = useState(60);
+  const [canResend, setCanResend] = useState(false);
+  const [resendCount, setResendCount] = useState(0);
+  const intervalRef = useRef(null);
+  const otpRefs = useRef([]);
+
+  const startTimer = () => {
+    setTimer(60);
+    setCanResend(false);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    intervalRef.current = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(intervalRef.current);
+          setCanResend(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleOtpChange = (e, index) => {
+    const value = e.target.value.replace(/\D/, "");
+
+    let newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+    if (value && e.target.nextSibling) {
+      e.target.nextSibling.focus();
+    }
+    if (newOtp.length === 6 && !newOtp.includes("")) {
+      verifyOtp(newOtp.join(""));
+    }
+  };
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace" && !otp[index] && e.target.previousSibling) {
+      e.target.previousSibling.focus();
+    }
+  };
+  const sendOtp = async () => { //send otp to user phone number
+    if (!mobile || mobile.length !== 10) {
+      return toast.error("Enter valid mobile number");
+    }
+    try {
+      setLoading(true);
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/send-otp`, {
+        phone: mobile
+      });
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setLoginStep("OTP");
+        startTimer();
+      } else {
+        toast.error(res.data.message || "Failed to send OTP");
+      }
+    } catch (err) {
+      console.error("Send OTP Error:", err);
+      toast.error(err.response?.data?.message || "Error sending OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handlePaste = (e) => { // Otp copy paste handler
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("text").replace(/\D/g, "");
+    if (pasteData.length === 6) {
+      const newOtp = pasteData.split("");
+      setOtp(newOtp);
+      const inputs = e.target.parentNode.querySelectorAll("input");
+      inputs[5].focus();
+      verifyOtp(pasteData);
+    }
+  };
+
+  useEffect(() => {  // Auto focus first OTP input when step changes to OTP
+  if (loginStep === "OTP") {
+    setTimeout(() => {
+      otpRefs.current[0]?.focus();
+    }, 100);
+  }
+}, [loginStep]);
+
+  const resendOtp = async () => { // Resend OTP handler with limit of 3 times
+    if (resendCount >= 3) {
+      return toast.error("Maximum resend limit reached");
+    }
+    try {
+      setLoading(true);
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/send-otp`,
+        { phone: mobile }
+      );
+      if (res.data.success) {
+        toast.success("OTP resent");
+        setResendCount(prev => prev + 1);
+        setCanResend(false);
+        startTimer();
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (err) {
+      toast.error("Error resending OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => { // Cleanup timer on unmount
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  const verifyOtp = async (otpValue) => { // Verify OTP handler for both manual input and paste
+    try {
+      setLoading(true);
+      const finalOtp = otpValue || otp.join("");
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/verify-otp`, { phone: mobile,  otp: finalOtp });
+      if (res.data.success) {
+        if (res.data.isNewUser) {
+          setLoginStep("PROFILE");
+        } else {
+          toast.success("Login successful");
+          await fetchUser();
+          setShowLogin(false);
+          setLoginStep("PHONE");
+          setMobile("");
+          setOtp(Array(6).fill(""));
+        }
+      } else {
+        toast.error(res.data.message || "OTP verification failed");
+      }
+    } catch (err) {
+      console.error("OTP Verification Error:", err);
+      toast.error(err.response?.data?.message || "Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const completeProfile = async () => { // Complete profile handler for new users after OTP verification
+    if (!name || !email) {
+      return toast.error("Please enter name and email");
+    }
+    try {
+      setLoading(true);
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/complete-profile`, { phone: mobile, name, email });
+      if (res.data.success) {
+        toast.success(res.data.message);
+        await fetchUser();
+        setShowLogin(false);
+        setLoginStep("PHONE");
+        setMobile("");
+        setOtp(Array(6).fill(""));
+      }
+    } catch (err) {
+      console.error("Complete Profile Error:", err);
+      toast.error(err.response?.data?.message || "Error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const modalRef = useRef(null);
   const bsModalRef = useRef(null);
@@ -265,7 +439,8 @@ const Navbar = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error);
+      console.error("Password Reset Error:", error);
+      toast.error("Something went wrong. Please try again.");
     }
   };
   useEffect(() => {
@@ -294,7 +469,7 @@ const Navbar = () => {
     const { name, value } = e.target;
     setServiceEnquery((prev) => ({ ...prev, [name]: value }));
   };
-  const handleEnquirySubmit = async (e) => {
+  const handleEnquirySubmit = async (e) => { // Submit service enquiry form
     e.preventDefault();
     try {
       const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/inquery/service-inquiry`, {
@@ -340,6 +515,9 @@ const Navbar = () => {
               <li className="nav-item">
                 <NavLink to="/" className="nav-link cool-link">Home</NavLink>
               </li>
+              <li className="nav-item">
+                <NavLink to="/online-services" className="nav-link cool-link">Online Services</NavLink>
+              </li>
 
               <li className="nav-item">
                 <NavLink to="/about" className="nav-link cool-link">About</NavLink>
@@ -364,12 +542,23 @@ const Navbar = () => {
               </li>
               {!user ? (
                 <li className="nav-item">
-                  <Link
+                  {/* <Link
                     to="/login"
                     className="btn btn-outline-warning btn-sm fw-semibold px-3"
                   >
                     <i className="bi bi-box-arrow-in-right me-1"></i> Login
-                  </Link>
+                  </Link> */}
+                  <button
+                    className="btn btn-outline-warning btn-sm fw-semibold px-3"
+                    onClick={() => {
+                      setShowLogin(true);
+                      setLoginStep("PHONE");
+                      setMobile("");
+                      setOtp(Array(6).fill(""));
+                    }}
+                  >
+                    <i className="bi bi-box-arrow-in-right me-1"></i> Login
+                  </button>
                 </li>
               ) : (
                 <li className="nav-item dropdown user-dropdown">
@@ -401,12 +590,12 @@ const Navbar = () => {
                       <i className="bi bi-person"></i> View Profile
                     </button>
 
-                    <button
+                    {/* <button
                       className="dropdown-item-custom"
                       onClick={openModal}
                     >
                       <i className="bi bi-key"></i> Reset Password
-                    </button>
+                    </button> */}
 
                     <button
                       className="dropdown-item-custom logout"
@@ -499,11 +688,17 @@ const Navbar = () => {
               </li>
 
               {!user ? (
-                <li className="nav-item mt-2">
-                  <Link to="/login" className="btn btn-outline-warning w-100">
-                    Login
-                  </Link>
-                </li>
+                // <li className="nav-item mt-2">
+                //   <Link to="/login" className="btn btn-outline-warning w-100">
+                //     Login
+                //   </Link>
+                // </li>
+                <button
+                  className="btn btn-outline-warning w-100"
+                  onClick={() => setShowLogin(true)}
+                >
+                  Login
+                </button>
               ) : (
                 <>
                   <li className="nav-item mt-2">
@@ -523,7 +718,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div
+      {/* <div
         className="modal fade"
         id="resetModal"
         tabIndex="-1"
@@ -587,7 +782,7 @@ const Navbar = () => {
             </form>
           </div>
         </div>
-      </div>
+      </div> */}
       <div
         className="modal fade"
         id="serviceEnquiryModal"
@@ -732,6 +927,115 @@ const Navbar = () => {
               </div>
             </form>
           </div>
+        </div>
+      </div>
+      {showLogin && (
+        <div className="login-overlay" onClick={() => setShowLogin(false)}></div>
+      )}
+      <div className={`login-drawer ${showLogin ? "open" : ""}`}>
+        <div className="drawer-content">
+          <button
+            className="close-btn"
+            onClick={() => setShowLogin(false)}
+          >
+            ✕
+          </button>
+          <img src={letsStartLogo} alt="Logo" className="login-image" />
+          <h4 className="login-title">Let’s get started</h4>
+          {loginStep === "PHONE" && (
+            <>
+              <div className="mobile-input-wrapper">
+                <span>+91</span>
+                <input
+                  type="number"
+                  placeholder="Enter Mobile Number"
+                  value={mobile}
+                  onChange={(e) => setMobile(e.target.value)}
+                />
+              </div>
+
+              <button
+                className="cont-btn w-100"
+                onClick={sendOtp}
+                disabled={loading}
+              >
+                {loading ? "Sending..." : "CONTINUE"}
+              </button>
+            </>
+          )}
+          {loginStep === "OTP" && (
+            <>
+              <div className="otp-container">
+                {otp.map((digit, index) => (
+                  <input
+                    key={index}
+                    type="text"
+                    maxLength="1"
+                    className="otp-box"
+                    value={digit}
+                    ref={(el) => (otpRefs.current[index] = el)} 
+                    onChange={(e) => handleOtpChange(e, index)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
+                    onPaste={handlePaste}
+                  />
+                ))}
+              </div>
+              <button
+                className="cont-btn w-100"
+                onClick={verifyOtp}
+                disabled={loading}
+              >
+                {loading ? "Verifying..." : "VERIFY OTP"}
+              </button>
+              <div style={{ textAlign: "center", marginTop: "10px" }}>
+                {!canResend ? (
+                  <p style={{ color: "#aaa" }}>
+                    Resend OTP in {timer}s
+                  </p>
+                ) : resendCount < 3 ? (
+                  <button
+                    onClick={resendOtp}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#ffc107",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Resend OTP
+                  </button>
+                ) : (
+                  <p style={{ color: "red" }}>
+                    Max resend limit reached
+                  </p>
+                )}
+              </div>
+            </>
+          )}
+          {loginStep === "PROFILE" && (
+            <>
+              <input
+                type="text"
+                className="profile-input"
+                placeholder="Enter Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <input
+                type="email"
+                className="profile-input"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <button
+                className="cont-btn w-100"
+                onClick={completeProfile}
+              >
+                COMPLETE PROFILE
+              </button>
+            </>
+          )}
         </div>
       </div>
     </>

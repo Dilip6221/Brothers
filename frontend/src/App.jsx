@@ -50,11 +50,13 @@ import AdminCustomerReview from './pages/Admin/customer-review/AdminCustomerRevi
 import AdminAboutTimeLine from './pages/Admin/about-time-line/AdminAboutTimeLine.jsx';
 import AdminCreateAboutTimeLine from './pages/Admin/about-time-line/AdminCreateAboutTimeLine.jsx';
 
+import OnlineServiceLayout from './pages/OnlineService/OnlineServiceLayout.jsx';  
+
 const App = () => {
   const location = useLocation();
   const { user, authLoading } = useContext(UserContext);
 
-  const hideNavbarRoutes = ["/login", "/forget-password", "/admin"];
+  const hideNavbarRoutes = ["/login", "/forget-password", "/admin","/online-services"];
   const shouldHideNavbar = hideNavbarRoutes.some((route) =>
     location.pathname.startsWith(route)
   );
@@ -71,12 +73,12 @@ const App = () => {
 
   //  Admin route but user not logged in
   if (isAdminRoute && !user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   //  Admin route but user is not ADMIN
   if (isAdminRoute && user?.role !== "ADMIN") {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return (
@@ -131,6 +133,10 @@ const App = () => {
         <Route path="/admin/about-timeline" element={<AdminAboutTimeLine />} />
         <Route path="/admin/about-timeline/create" element={<AdminCreateAboutTimeLine />} />
         <Route path="/admin/about-timeline/edit/:id" element={<AdminCreateAboutTimeLine />} />
+
+
+
+        <Route path="/online-services" element={<OnlineServiceLayout />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
       {!shouldHideNavbar && <WhatsappButton />}
