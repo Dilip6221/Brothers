@@ -11,11 +11,11 @@ userRoute.get("/get-user-data/",authUser, getUserData);
 userRoute.get("/get-android-user-data/",authForAndroid, getUserData);
 userRoute.post("/reset-password/",authUser, changePassword);
 userRoute.post("/logout/",authUser, logoutUser);
-userRoute.post("/admin/user-data", allUsers);
-userRoute.post("/admin/dashboard-stats", getDashboardDataCount);
-userRoute.post("/admin/user-export", exportUsersData);
-userRoute.post("/admin/update-status", changeUserStatus);
-userRoute.post("/admin/update-user-data", updateUserData);
-userRoute.get("/admin/get-user-job", getUsersForJob);  // This route userfull for crateing Car users that time
+userRoute.post("/admin/user-data",authUser, allUsers);
+userRoute.post("/admin/dashboard-stats",authUser, getDashboardDataCount);
+userRoute.post("/admin/user-export", authUser, exportUsersData);
+userRoute.post("/admin/update-status", authUser, changeUserStatus);
+userRoute.post("/admin/update-user-data", authUser, updateUserData);
+userRoute.get("/admin/get-user-job", authUser, getUsersForJob);  // This route userfull for crateing Car users that time
 
 module.exports = userRoute;
