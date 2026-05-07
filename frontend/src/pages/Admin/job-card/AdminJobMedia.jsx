@@ -25,12 +25,11 @@ const AdminJobMedia = () => {
 
     const fetchMedia = async () => {
         try {
-            const res = await axios.get(
-                `${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/job-cards/${id}/get-media`
-            );
+            const res = await axios.get(`jobcard/admin/job-cards/${id}/get-media`);
             setMedia(res.data.data || []);
-        } catch {
+        } catch (error) {
             toast.error("Failed to load media");
+            console.error("Fetch media error", error);
         }
     };
 
@@ -48,15 +47,16 @@ const AdminJobMedia = () => {
         try {
             setUploading(true);
             await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/job-cards/${id}/media`,
+                `jobcard/admin/job-cards/${id}/media`,
                 formData
             );
             toast.success("Uploaded");
             setFile(null);
             setStage("");
             fetchMedia();
-        } catch {
+        } catch (error) {
             toast.error("Upload failed");
+            console.error("Upload error", error);
         } finally {
             setUploading(false);
         }
@@ -65,7 +65,7 @@ const AdminJobMedia = () => {
     const deleteMedia = async (mediaId) => {
         if (!window.confirm("Delete media?")) return;
         await axios.delete(
-            `${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/job-cards/${id}/media/${mediaId}`
+            `jobcard/admin/job-cards/${id}/media/${mediaId}`
         );
         toast.success("Deleted");
         fetchMedia();

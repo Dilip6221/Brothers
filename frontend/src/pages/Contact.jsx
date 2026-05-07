@@ -70,7 +70,7 @@ const Contact = () => {
     useEffect(() => {
         const fetchCompanies = async () => {
             try {
-                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/car-companies/companies`);
+                const res = await axios.get("car-companies/companies");
                 const options = res.data.data.map(c => ({
                     value: c._id,
                     label: c.name
@@ -87,7 +87,7 @@ const Contact = () => {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/service/admin/services`);
+                const res = await axios.get("service/admin/services");
                 const options = res.data.data.map(c => ({
                     value: c.title,
                     label: c.title
@@ -111,7 +111,7 @@ const Contact = () => {
         setCarModelOptions([]);
         if (!companyId) return;
         try {
-            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/car-companies/${companyId}/car-models`);
+            const res = await axios.get(`car-companies/${companyId}/car-models`);
             const options = res.data.data.map(m => ({
                 value: m.name,
                 label: m.name
@@ -130,7 +130,7 @@ const Contact = () => {
     const handleEnquirySubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/inquery/service-inquiry`, {
+            const res = await axios.post("inquery/service-inquiry", {
                 name: serviceEnquery.name,
                 phone: serviceEnquery.phone,
                 email: serviceEnquery.email,

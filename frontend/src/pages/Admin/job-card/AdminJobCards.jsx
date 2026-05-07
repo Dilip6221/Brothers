@@ -10,7 +10,7 @@ const AdminJobCards = () => {
     const [search, setSearch] = useState("");
     const fetchJobs = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/get-job-cards`);
+            const res = await axios.get("jobcard/admin/get-job-cards");
             setJobs(res.data.data || []);
         } catch (error) {
             toast.error("Error fetching Job Cards");

@@ -9,7 +9,7 @@ const MyCarVault = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_BACKEND_URL}/jobcard/customer/my-cars`, {
+    axios.get("jobcard/customer/my-cars", {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {

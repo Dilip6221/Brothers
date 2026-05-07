@@ -13,8 +13,7 @@ const Gallery = () => {
   const fetchImages = async (category) => {
     const requestId = ++requestIdRef.current;
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/gallery/gallery`,
+      const res = await axios.get("gallery/gallery",
         {
           params: {
             service: category !== "ALL" ? category : undefined,
@@ -36,7 +35,7 @@ const Gallery = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/service/admin/services`);
+       const res = await axios.get("service/admin/services");
         if (res.data.success) {
           const dynamicCats = res.data.data.map(s => s.title);
           setCategories(["ALL", ...dynamicCats]);

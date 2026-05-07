@@ -69,7 +69,7 @@ const Navbar = () => {
     }
     try {
       setLoading(true);
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/send-otp`, {
+      const res = await axios.post("auth/send-otp", {
         phone: mobile
       });
       if (res.data.success) {
@@ -113,7 +113,7 @@ const Navbar = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/auth/send-otp`,
+        "auth/send-otp",
         { phone: mobile }
       );
       if (res.data.success) {
@@ -142,7 +142,7 @@ const Navbar = () => {
     try {
       setLoading(true);
       const finalOtp = otpValue || otp.join("");
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/verify-otp`, { phone: mobile,  otp: finalOtp });
+      const res = await axios.post("auth/verify-otp", { phone: mobile, otp: finalOtp });
       if (res.data.success) {
         if (res.data.isNewUser) {
           setLoginStep("PROFILE");
@@ -171,7 +171,7 @@ const Navbar = () => {
     }
     try {
       setLoading(true);
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/complete-profile`, { phone: mobile, name, email });
+      const res = await axios.post("auth/complete-profile", { phone: mobile, name, email });
       if (res.data.success) {
         toast.success(res.data.message);
         await fetchUser();
@@ -330,7 +330,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/car-companies/companies`);
+        const res = await axios.get("car-companies/companies");
         const options = res.data.data.map(c => ({
           value: c._id,
           label: c.name
@@ -347,7 +347,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/service/admin/services`);
+        const res = await axios.get("service/admin/services");
         const options = res.data.data.map(c => ({
           value: c.title,
           label: c.title
@@ -371,7 +371,7 @@ const Navbar = () => {
     setCarModelOptions([]);
     if (!companyId) return;
     try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/car-companies/${companyId}/car-models`);
+      const res = await axios.get(`car-companies/${companyId}/car-models`);
       const options = res.data.data.map(m => ({
         value: m.name,
         label: m.name
@@ -422,7 +422,7 @@ const Navbar = () => {
   const handleResetSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/reset-password`, {
+      const res = await axios.post("user/reset-password", {
         currentPassword: resetPassword.currentPassword,
         newPassword: resetPassword.newPassword,
         confirmPassword: resetPassword.confirmPassword,
@@ -472,7 +472,7 @@ const Navbar = () => {
   const handleEnquirySubmit = async (e) => { // Submit service enquiry form
     e.preventDefault();
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/inquery/service-inquiry`, {
+      const res = await axios.post("inquery/service-inquiry", {
         name: serviceEnquery.name,
         phone: serviceEnquery.phone,
         email: serviceEnquery.email,

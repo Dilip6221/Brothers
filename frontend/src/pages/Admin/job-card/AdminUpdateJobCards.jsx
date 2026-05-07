@@ -36,7 +36,7 @@ const AdminUpdateJobCard = () => {
   });
   const fetchJob = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/get-card/${id}`);
+      const res = await axios.get(`jobcard/admin/get-card/${id}`);
       if (res.data.success) {
         setJob(res.data.data);
         setForm({
@@ -48,6 +48,7 @@ const AdminUpdateJobCard = () => {
       }
     } catch (error) {
       toast.error("Failed to load job card");
+      console.error("Fetch job error", error);
     }
   };
 
@@ -64,13 +65,14 @@ const AdminUpdateJobCard = () => {
         progressPercent: STAGE_PROGRESS[form.stage],
         expectedDelivery: form.expectedDelivery
       };
-      const res = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/jobcard/${id}/progress`, payload);
+      const res = await axios.patch(`jobcard/admin/jobcard/${id}/progress`, payload);
       if (res.data.success) {
         toast.success("Job Updated");
         navigate("/admin/job-cards");
       }
     } catch (error) {
       toast.error("Update failed");
+      console.error("Update job error", error);
     }
   };
 

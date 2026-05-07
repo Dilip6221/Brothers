@@ -29,10 +29,7 @@ const AdminUserList = () => {
         e.preventDefault();
         try {
             if(modalMode == 'CREATE'){
-                const res = await axios.post(
-                    `${import.meta.env.VITE_BACKEND_URL}/user/register`,
-                    newUser
-                );
+                const res = await axios.post("user/register",newUser);
                 if (res.data.success) {
                     toast.success(res.data.message);
                     setShowCreateModal(false);
@@ -42,7 +39,7 @@ const AdminUserList = () => {
                     toast.error(res.data.message);
                 }
             }else{
-                const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/admin/update-user-data`,newUser)
+                const res = await axios.post("user/admin/update-user-data",newUser)
                 if(res.data.success){
                     toast.success(res.data.message)
                     setShowCreateModal(false);
@@ -59,7 +56,7 @@ const AdminUserList = () => {
     /* For Fetch all user and staff data */
     const fetchData = async () => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/admin/user-data`);
+            const res = await axios.post("user/admin/user-data");
             setUser(res.data.data);
         } catch (error) {
             toast.error("Error fetching Customer data");
@@ -104,7 +101,7 @@ const AdminUserList = () => {
         try {
             const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
             const res = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/user/admin/update-status`,
+                "user/admin/update-status",
                 { userId: id, status: newStatus }
             );
             if (res.data.success) {

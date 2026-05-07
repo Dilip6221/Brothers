@@ -24,7 +24,7 @@ const AdminCreateBlog = () => {
 
     const fetchBlog = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/blog/blogs/${id}`
+            const res = await axios.get(`blog/blogs/${id}`
             );
             if (res.data.success) {
                 const b = res.data.data;
@@ -67,7 +67,7 @@ const AdminCreateBlog = () => {
             if (form.thumbnail) {
                 formData.append("image", form.thumbnail);
             }
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/blog/admin/create-blog`,
+            const res = await axios.post(`blog/admin/create-blog`,
                 formData,
                 {
                     headers: {"Content-Type": "multipart/form-data"}

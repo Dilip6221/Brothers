@@ -13,10 +13,11 @@ const AdminDashboard = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/admin/dashboard-stats`);
+      const res = await axios.post(`user/admin/dashboard-stats`);
       setStats(res.data.data);
     } catch (e) {
       toast.error("Dashboard fetch error:", e);
+      console.error("Fetch dashboard stats error", e);
     } finally {
       setLoading(false);
     }

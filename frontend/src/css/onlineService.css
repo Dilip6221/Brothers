@@ -1,0 +1,161 @@
+:root {
+    --bg: black;
+    --card: #111;
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #e6e6e6;
+    --muted: #aaa;
+    --accent: #ffb400;
+}
+
+.header-section {
+    position: sticky;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    margin-top: 20px;
+}
+
+.service-container {
+    max-width: 1250px;
+    margin: auto;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+}
+
+.service-topbar {
+    height: 60px;
+}
+
+.service-topbar .service-container {
+    justify-content: space-between;
+}
+
+.service-logo {
+    height: 200px;
+    margin-top: -100px;
+    object-fit: contain;
+    position: absolute;
+    left: 120px;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    justify-content: right;
+}
+
+.city-select {
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text);
+    background: var(--card);
+    font-size: 14px;
+}
+
+/* SEARCH */
+.search-box {
+    display: flex;
+    align-items: center;
+    width: 420px;
+    background: var(--card);
+    border-radius: 25px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+}
+
+.search-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+}
+
+.search-box svg {
+    color: var(--muted);
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-left: 15px;
+}
+.right svg {
+    color: var(--text);
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.right svg:hover {
+    color: var(--accent);
+}
+.menubar {
+    border-top: 1px solid var(--border);
+}
+
+.menubar .service-container {
+    gap: 26px;
+    padding: 12px 16px;
+}
+
+.menubar a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    position: relative;
+}
+
+.menubar a:hover {
+    color: white;
+}
+
+.menubar a::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: 0.3s;
+}
+
+.menubar a:hover::after {
+    width: 100%;
+}
+
+/* MOBILE */
+.menu-btn {
+    display: none;
+}
+
+@media (max-width: 768px) {
+
+    .center {
+        display: none;
+    }
+
+    .menu-btn {
+        display: block;
+    }
+
+    .menubar {
+        display: none;
+        flex-direction: column;
+        background: #111;
+    }
+
+    .menubar.open {
+        display: block;
+    }
+
+    .menubar .service-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

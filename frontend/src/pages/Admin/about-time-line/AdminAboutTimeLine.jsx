@@ -10,10 +10,11 @@ const AdminAboutTimeLine = () => {
     const [search, setSearch] = useState("");
     const fetchData = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/about-timeline/about-timeline`);
+            const res = await axios.get("about-timeline/about-timeline");
             setTimeline(res.data.data);
         } catch (error) {
             toast.error("Error fetching timeline data");
+            console.error("Fetch timeline data error", error);
         }
     };
     useEffect(() => {
@@ -31,14 +32,15 @@ const AdminAboutTimeLine = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete?")) return;
         try {
-            const res = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/about-timeline/admin/delete-about-timeline/${id}`);
+            const res = await axios.delete(`about-timeline/admin/delete-about-timeline/${id}`);
             if (res.data.success) {
                 toast.success(res.data.message);
                 fetchData();
             } else {
                 toast.error(res.data.message);
             }
-        } catch {
+        } catch (error) {
+            console.error("Delete timeline error", error);
             toast.error("Delete failed");
         }
     };
@@ -46,7 +48,7 @@ const AdminAboutTimeLine = () => {
         if (!window.confirm("Delete this image?")) return;
 
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/about-timeline/admin/delete-timeline-image`, { timelineId, public_id });
+            const res = await axios.post(`about-timeline/admin/delete-timeline-image`, { timelineId, public_id });
             if (res.data.success) {
                 toast.success("Image deleted");
                 fetchData();
@@ -54,6 +56,7 @@ const AdminAboutTimeLine = () => {
                 toast.error(res.data.message);
             }
         } catch (error) {
+            console.error("Delete timeline image error", error);
             toast.error("Image delete failed");
         }
     };

@@ -25,7 +25,7 @@ const AdminCreateService = () => {
   // ================= FETCH FOR EDIT =================
   const fetchService = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/service/get-service/${id}`);
+      const res = await axios.get(`service/get-service/${id}`);
       if (res.data.success) {
         const s = res.data.data;
         setForm({
@@ -72,7 +72,7 @@ const AdminCreateService = () => {
         formData.append("id", id);
       }
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/service/admin/create`,
+        "service/admin/create",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

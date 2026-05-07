@@ -13,15 +13,14 @@ const CustomerReview = () => {
 
   const fetchReviews = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/customer-reviews/admin/all`
-      );
+      const res = await axios.get("customer-reviews/admin/all");
       if (res.data.success) {
         const approved = res.data.data.filter((r) => r.isApproved);
         setReviews(approved);
       }
     } catch (err) {
       toast.error("Error fetching reviews");
+      console.error("Fetch reviews error:", err);
     }
   };
 

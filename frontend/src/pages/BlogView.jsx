@@ -16,7 +16,7 @@ const BlogView = () => {
   const fetchBlog = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/blog/blogs/${slug}`);
+      const res = await axios.get(`blog/blogs/${slug}`);
       if (!res.data.success) {
         toast.error(res.data.message);
         setLoading(false);
@@ -26,6 +26,8 @@ const BlogView = () => {
       setBlog(res.data.data);
     } catch (err) {
       toast.error("Error fetching Blog data");
+      console.error("Fetch blog error:", err);
+      navigate("/blog");
     } finally {
       setLoading(false);
     }

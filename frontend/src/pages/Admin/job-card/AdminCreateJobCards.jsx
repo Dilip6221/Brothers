@@ -16,7 +16,7 @@ const AdminCreateJobCards = () => {
     customerNotes: "",
   });
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/admin/get-user-job`)
+    axios.get("user/admin/get-user-job")
       .then(res => setUsers(res.data.data));
   }, []);
 
@@ -25,14 +25,14 @@ const AdminCreateJobCards = () => {
     setForm({ ...form, userId, carId: "" });
     setCars([]);
     const res = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/user-cars/${userId}`
+      `jobcard/admin/user-cars/${userId}`
     );
     setCars(res.data.data);
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/job-card/create`, { ...form });
+      const res = await axios.post("jobcard/admin/job-card/create", { ...form });
       if (res.data.success) {
         toast.success(res.data.message);
         navigate("/admin/job-cards");

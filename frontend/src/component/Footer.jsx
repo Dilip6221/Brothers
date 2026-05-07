@@ -38,7 +38,7 @@ const Footer = () => {
     const handlerSubsciptionSub = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/subscribe/subscribe`, { email });
+        const res = await axios.post("subscribe/subscribe", { email });
             if (res.data.success) {
                 toast.success(res.data.message);
                 setEmail('');
@@ -48,12 +48,13 @@ const Footer = () => {
             }
         } catch (error) {
             toast.error(error.message);
+            console.error("Subscription error", error);
+            setEmail('');
         }
     }
     return (
         <>
             <footer className="footer-section text-light pt-4 pb-3" >
-
                 <div className="footer-top-border">
                     <div className="container" >
                         <div className="row gy-4">

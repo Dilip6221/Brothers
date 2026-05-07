@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 // import "../css/slider.css";
 import '../css/slider.css';
+import toast from "react-hot-toast";
 
 const ServiceSlider = () => {
 
@@ -12,25 +13,18 @@ const ServiceSlider = () => {
   const fetchServices = async () => {
     try {
 
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/service/admin/services`
-      );
-
+      const res = await axios.get("service/admin/services");
       if (res.data.success) {
-
-        // ACTIVE SERVICES FILTER
         const activeServices = res.data.data.filter(
           (s) => s.status === "ACTIVE"
         );
-
         setServices(activeServices);
-
         if (activeServices.length > 0) {
           setCurrentIndex(Math.floor(activeServices.length / 2));
         }
       }
-
     } catch (error) {
+      toast.error("Failed to load services. Please try again later.");
       console.log("Service fetch error", error);
     }
   };

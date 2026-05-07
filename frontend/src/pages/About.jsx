@@ -22,7 +22,7 @@ const About = () => {
   };
   const fetchTimeline = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/about-timeline/about-timeline`);
+      const res = await axios.get("about-timeline/about-timeline");
       if (res.data.success) {
         setTimeline(res.data.data);
       }

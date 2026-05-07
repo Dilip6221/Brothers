@@ -12,10 +12,11 @@ const AdminBlogs = () => {
 
     const fetchData = async () => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/blog/admin/blogs`);
+            const res = await axios.post(`blog/admin/blogs`);
             setBlogs(res.data.data);
         } catch (error) {
             toast.error("Error fetching blog data");
+            console.error("Fetch blog data error", error);
         }
     };
     useEffect(() => {
@@ -27,7 +28,7 @@ const AdminBlogs = () => {
     /* On change status */
     const handleStatusChange = async (blogId, newStatus) => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/blog/admin/update-status`,{ id: blogId,newStatus });
+            const res = await axios.post(`blog/admin/update-status`,{ id: blogId,newStatus });
             if (res.data.success) {
                 toast.success(res.data.message);
                 fetchData();
@@ -36,6 +37,7 @@ const AdminBlogs = () => {
             }
         } catch (err) {
             toast.error("Failed to update status");
+            console.error("Update blog status error", err);
         }
     };
 

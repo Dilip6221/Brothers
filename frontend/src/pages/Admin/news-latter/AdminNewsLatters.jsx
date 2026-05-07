@@ -12,7 +12,7 @@ const AdminNewsLatters = () => {
 
     const fetchData = async () => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/subscribe/admin/subscribe`);
+            const res = await axios.post("subscribe/admin/subscribe");
             setsubscription(res.data.data);
         } catch (error) {
             toast.error("Error fetching Subscription data");

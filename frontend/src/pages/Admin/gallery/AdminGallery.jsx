@@ -17,16 +17,17 @@ const AdminGallery = () => {
     const fetchData = async () => {
         try {
             const res = await axios.get(
-                `${import.meta.env.VITE_BACKEND_URL}/gallery/gallery`
+                `gallery/gallery`
             );
             setImages(res.data.data || []);
         } catch (error) {
             toast.error("Error fetching gallery data");
+            console.error("Fetch gallery data error", error);
         }
     };
     const fetchServices = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/service/admin/services`);
+            const res = await axios.get(`service/admin/services`);
             const options = res.data.data.map(c => ({
                 value: c.title,
                 label: c.title
@@ -40,7 +41,7 @@ const AdminGallery = () => {
     const deleteGalleryImage = (id) => async () => {
         if (!window.confirm("Are you sure you want to delete this image?")) return;
         try {
-            const res = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/gallery/admin/${id}`);
+            const res = await axios.delete(`gallery/admin/${id}`);
             if (res.data.success) {
                 toast.success(res.data.message);
                 fetchData();
@@ -49,6 +50,7 @@ const AdminGallery = () => {
             }
         } catch (error) {
             toast.error("Error deleting image");
+            console.error("Delete gallery image error", error);
         }
     };
 
@@ -64,7 +66,7 @@ const AdminGallery = () => {
         formData.append("file", newImage.file);
         try {
             const res = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/gallery/admin/upload`,
+                `gallery/admin/upload`,
                 formData,
                 {
                     headers: {
@@ -81,7 +83,7 @@ const AdminGallery = () => {
                 toast.error(res.data.message);
             }
         } catch (error) {
-            console.error(error);
+            console.error("Image upload error", error);
             toast.error("Image upload failed.");
         }
     };

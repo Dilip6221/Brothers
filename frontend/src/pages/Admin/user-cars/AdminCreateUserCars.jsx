@@ -31,14 +31,7 @@ const AdminCreateUserCars = () => {
         }
 
         try {
-            const res = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/user-cars/create`,
-                {
-                    ...form,
-                    year: Number(form.year) // IMPORTANT
-                }
-            );
-
+            const res = await axios.post("jobcard/admin/user-cars/create",{...form,year: Number(form.year)});
             if (res.data.success) {
                 toast.success(res.data.message);
                 navigate("/admin/user-cars");
@@ -52,7 +45,7 @@ const AdminCreateUserCars = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/admin/user-data`);
+            const res = await axios.post("/user/admin/user-data");
             setUsers(res.data.data || []);
         } catch (error) {
             toast.error("Error fetching User Cars data");

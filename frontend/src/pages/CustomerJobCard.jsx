@@ -19,16 +19,10 @@ const CustomerJobCard = () => {
 
     const fetchJobCard = async () => {
         try {
-            const res = await axios.get(
-                `${import.meta.env.VITE_BACKEND_URL}/jobcard/customer/job-card/${carId}`,
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
-            );
-
+            const res = await axios.get(`jobcard/customer/job-card/${carId}`,{headers: { Authorization: `Bearer ${token}` }});
             if (res.data.success) setJob(res.data.data);
-            // else toast.error(res.data.message);
-        } catch {
+        } catch (error) {
+            console.error("Fetch job card error:", error);
             toast.error("Failed to load job card");
         } finally {
             setLoading(false);

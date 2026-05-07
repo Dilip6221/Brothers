@@ -16,10 +16,11 @@ const AdminInquery = () => {
 
     const fetchData = async () => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/inquery/admin/admin-inquery-data`);
+            const res = await axios.post(`inquery/admin/admin-inquery-data`);
             setInqueries(res.data.data);
         } catch (error) {
             toast.error("Error fetching inquiry data");
+            console.error("Fetch inquiry data error", error);
         }
     };
   
@@ -56,7 +57,7 @@ const AdminInquery = () => {
     });;
     const viewInquiry = async (id) => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/inquery/admin/inquiry-details`, { id });
+            const res = await axios.post(`inquery/admin/inquiry-details`, { id });
             if (res.data.success) {
                 setSelectedInquiry(res.data.data);
                 setShowModal(true);
@@ -65,6 +66,7 @@ const AdminInquery = () => {
             }
         } catch (error) {
             toast.error("Something went wrong");
+            console.error("View inquiry error", error);
         }
     };
     return (

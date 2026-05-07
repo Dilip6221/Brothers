@@ -10,12 +10,13 @@ const AdminCustomerReview = () => {
 
   const fetchReviews = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/customer-reviews/admin/all`);
+      const res = await axios.get(`customer-reviews/admin/all`);
       if (res.data.success) {
         setReviews(res.data.data);
       }
     } catch (error) {
       toast.error("Error fetching Customer reviews");
+      console.error("Fetch customer reviews error", error);
     }
   };
   useEffect(() => {
@@ -24,13 +25,14 @@ const AdminCustomerReview = () => {
 
   const approveReview = async (id) => {
     try {
-      const res = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/customer-reviews/admin/approve/${id}`);
+      const res = await axios.put(`customer-reviews/admin/approve/${id}`);
       if (res.data.success) {
         toast.success(res.data.message);
         fetchReviews();
       }
     } catch (error) {
       toast.error("Error approving review");
+      console.error("Approve review error", error);
     }
   };
 

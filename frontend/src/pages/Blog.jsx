@@ -17,7 +17,7 @@ const Blog = () => {
 
     const fetchBlogs = async () => { // For fetching blog data from backend
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/blog/admin/blogs`);
+            const res = await axios.post("blog/admin/blogs");
             const publishedBlogs = res.data.data.filter(
                 (blog) => blog.status === "PUBLISHED"
             );
@@ -70,7 +70,7 @@ const Blog = () => {
             return;
         }
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/blog/like-toggle/${blogId}`, { userId: user._id });
+            const res = await axios.post(`blog/like-toggle/${blogId}`, { userId: user._id });
             if (!res.data.success) {
                 toast.error(res.data.message);
                 return;

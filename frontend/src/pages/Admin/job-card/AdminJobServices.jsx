@@ -15,10 +15,11 @@ const AdminJobServices = () => {
 
   const fetchServices = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/job-services/${jobId}`);
+      const res = await axios.get(`jobcard/admin/job-services/${jobId}`);
       setServices(res.data.data || []);
-    } catch {
+    } catch (error) {
       toast.error("Failed to load services");
+      console.error("Fetch services error", error);
     }
   };
   useEffect(() => {
@@ -34,13 +35,14 @@ const AdminJobServices = () => {
     }
     try {
       setLoading(true);
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/job-services/create`,{jobId,serviceName,price: Number(price),});
+      await axios.post(`jobcard/admin/job-services/create`,{jobId,serviceName,price: Number(price),});
       toast.success("Service added");
       setServiceName("");
       setPrice("");
       fetchServices();
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to add service");
+      console.error("Add service error", err);
     } finally {
       setLoading(false);
     }
@@ -48,7 +50,7 @@ const AdminJobServices = () => {
 
   const deleteService = async (id) => {
     if (!window.confirm("Remove this service?")) return;
-    await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/job-services/${id}`);
+    await axios.delete(`jobcard/admin/job-services/${id}`);
     toast.success("Service removed");
     fetchServices();
   };
