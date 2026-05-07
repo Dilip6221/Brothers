@@ -46,8 +46,8 @@ const AdminCreateJobCards = () => {
 
   return (
     <AdminLayout>
-      <div className="container py-4">
-        <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="container-fluid p-4">
+        <div className="d-flex justify-content-between align-items-center ">
           <h4 className="section-title">
             <span className="first-letter">C</span>reate Job Card
           </h4>

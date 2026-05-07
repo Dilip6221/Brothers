@@ -57,7 +57,7 @@ const AdminCreateUserCars = () => {
 
     return (
         <AdminLayout>
-            <div className="container py-4">
+            <div className="container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h4 className="section-title">
                         <span className="first-letter">C</span>
@@ -70,9 +70,14 @@ const AdminCreateUserCars = () => {
                 </div>
                 <form className="row g-3 bg-dark rounded text-white p-4" onSubmit={handleSubmit}>
                     <div className="col-md-4">
-                        <label className="form-label">Customer</label>
-                        <select onChange={(e) => setForm({ ...form, userId: e.target.value })} className="form-control bg-dark text-white">
-                            <option value="">Select Customer</option>
+                        <label className="form-label">Customer *</label>
+                        <select
+                            value={form.userId}
+                            onChange={(e) => setForm({ ...form, userId: e.target.value })}
+                            className="form-control bg-dark text-white"
+                            required
+                        >
+                            <option value="">Select Customer...</option>
                             {users.map(u => (
                                 <option key={u._id} value={u._id}>
                                     {u.name} ({u.email})
@@ -90,6 +95,7 @@ const AdminCreateUserCars = () => {
                             value={form.brand}
                             onChange={handleChange}
                             required
+                            placeholder="e.g. Toyota"
                         />
                     </div>
 
@@ -102,10 +108,11 @@ const AdminCreateUserCars = () => {
                             value={form.model}
                             onChange={handleChange}
                             required
+                            placeholder="e.g. Corolla"
                         />
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                         <label className="form-label">Year *</label>
                         <input
                             type="number"
@@ -113,11 +120,14 @@ const AdminCreateUserCars = () => {
                             className="form-control bg-dark text-white"
                             value={form.year}
                             onChange={handleChange}
+                            min={1900}
+                            max={new Date().getFullYear() + 1}
                             required
+                            placeholder="e.g. 2024"
                         />
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                         <label className="form-label">Color</label>
                         <input
                             type="text"
@@ -125,10 +135,11 @@ const AdminCreateUserCars = () => {
                             className="form-control bg-dark text-white"
                             value={form.color}
                             onChange={handleChange}
+                            placeholder="e.g. Red"
                         />
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                         <label className="form-label">Registration No *</label>
                         <input
                             type="text"
@@ -137,10 +148,11 @@ const AdminCreateUserCars = () => {
                             value={form.registrationNumber}
                             onChange={(e) => setForm({ ...form, registrationNumber: e.target.value.toUpperCase() })}
                             required
+                            placeholder="e.g. ABC-1234"
                         />
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                         <label className="form-label">VIN Number</label>
                         <input
                             type="text"
@@ -148,11 +160,16 @@ const AdminCreateUserCars = () => {
                             className="form-control bg-dark text-white"
                             value={form.vinNumber}
                             onChange={handleChange}
+                            placeholder="e.g. 1HGCM82633A004352"
                         />
                     </div>
 
-                    <div className="col-12">
-                        <button type="submit" className="btn btn-primary">
+                    <div className="col-12 d-flex justify-content-end gap-2">
+                        <button type="button" className="btn btn-outline-secondary" onClick={() => navigate('/admin/user-cars')}>
+                            Cancel
+                        </button>
+                        <button type="submit" className="btn btn-danger">
+                            <i className="bi bi-plus-circle me-1"></i>
                             Create Car
                         </button>
                     </div>

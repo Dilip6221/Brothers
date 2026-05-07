@@ -265,3 +265,16 @@
 .nav-item.open .fa-angle-down {
     transform: rotate(360deg);
 }
+
+
+.filter-box {
+  margin-bottom: 15px;
+}
+
+.filter-box select {
+  padding: 8px;
+  background: #111;
+  border: 1px solid #222;
+  color: #fff;
+  border-radius: 6px;
+}

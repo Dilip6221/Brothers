@@ -38,7 +38,7 @@ const AdminServiceList = () => {
     const handleUserStatus = async (id, currentStatus) => {
         try {
             const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/service/admin/update-status`,{ serviceId: id, status: newStatus });
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/service/admin/update-status`, { serviceId: id, status: newStatus });
             if (res.data.success) {
                 toast.success(res.data.message);
                 fetchData();
@@ -92,15 +92,16 @@ const AdminServiceList = () => {
                                             <td>{item.category}</td>
                                             <td>{item.duration}</td>
                                             <td>
-                                               <div className="form-check form-switch d-flex justify-content-center">
-                                                    <input
-                                                        className="form-check-input bg-dark border-light"
-                                                        type="checkbox"
-                                                        checked={item.status === "ACTIVE"}
-                                                        onChange={() => handleUserStatus(item._id, item.status)}
-                                                        
-                                                    />
-                                                </div>
+                                                <span
+                                                    className={`badge ${item.status === "ACTIVE"
+                                                        ? "bg-success"
+                                                        : "bg-danger"
+                                                        }`}
+                                                    style={{ cursor: "pointer" }}
+                                                    onClick={() => handleUserStatus(item._id, item.status)}
+                                                >
+                                                    {item.status}
+                                                </span>
                                             </td>
                                             <td className="text-center">
                                                 <i

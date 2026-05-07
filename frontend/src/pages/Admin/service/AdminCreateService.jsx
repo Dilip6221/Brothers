@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import AdminLayout from "../AdminLayout.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -21,6 +21,7 @@ const AdminCreateService = () => {
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState("");
+  const fileInputRef = useRef(null);
 
   // ================= FETCH FOR EDIT =================
   const fetchService = async () => {
@@ -93,7 +94,7 @@ const AdminCreateService = () => {
   return (
     <AdminLayout>
       
-      <div className="container py-4">
+      <div className="container ">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h4 className="section-title">
               <span className="first-letter">{isEdit ? "E" : "C"}</span>
@@ -114,6 +115,7 @@ const AdminCreateService = () => {
             <input
               type="text"
               className="form-control bg-dark text-white border-secondary"
+              placeholder="e.g. Full Service"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
               required
@@ -126,6 +128,7 @@ const AdminCreateService = () => {
             <input
               type="text"
               className="form-control bg-dark text-white border-secondary"
+              placeholder="e.g. Engine"
               value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
             />
@@ -136,7 +139,7 @@ const AdminCreateService = () => {
             <input
               type="text"
               className="form-control bg-dark text-white border-secondary"
-              placeholder="Eg: 3 Days"
+              placeholder="e.g. 3 Days"
               value={form.duration}
               onChange={(e) => setForm({ ...form, duration: e.target.value })}
             />
@@ -147,6 +150,7 @@ const AdminCreateService = () => {
             <label className="form-label">Short Description *</label>
             <textarea
               className="form-control bg-dark text-white border-secondary"
+              placeholder="A short summary shown on listing"
               rows="2"
               value={form.shortDescription}
               onChange={(e) =>
@@ -161,6 +165,7 @@ const AdminCreateService = () => {
             <label className="form-label">Full Description *</label>
             <textarea
               className="form-control bg-dark text-white border-secondary"
+              placeholder="Detailed description for the service"
               rows="2"
               value={form.description}
               onChange={(e) =>
@@ -176,6 +181,7 @@ const AdminCreateService = () => {
             <input
               type="text"
               className="form-control bg-dark text-white border-secondary"
+              placeholder="e.g. bi bi-tools or https://..."
               value={form.icon}
               onChange={(e) => setForm({ ...form, icon: e.target.value })}
             />
@@ -184,19 +190,25 @@ const AdminCreateService = () => {
          {/* STATUS */}
           <div className="col-md-4">
             <label className="form-label">Status</label>
-            <select
-              className="form-control bg-dark text-white border-secondary"
-              value={form.status}
-              onChange={(e) => setForm({ ...form, status: e.target.value })}
-            >
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="INACTIVE">INACTIVE</option>
-            </select>
+            <div className="position-relative">
+              <select
+                className="form-control bg-dark text-white border-secondary pe-5"
+                value={form.status}
+                onChange={(e) => setForm({ ...form, status: e.target.value })}
+              >
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="INACTIVE">INACTIVE</option>
+              </select>
+              <span className="position-absolute end-0 top-50 translate-middle-y pe-3 text-white-50" style={{pointerEvents: 'none'}}>
+                <i className="bi bi-chevron-down"></i>
+              </span>
+            </div>
           </div>
 
           <div className="col-md-4">
             <label className="form-label">Service Image</label>
             <input
+              ref={fileInputRef}
               type="file"
               className="form-control bg-dark text-white border-secondary"
               onChange={handleImageChange}
@@ -204,16 +216,32 @@ const AdminCreateService = () => {
           </div>
 
           {preview && (
-            <div className="col-md-6">
+            <div className="col-md-6 d-flex align-items-start gap-2">
               <img
                 src={preview}
                 alt="preview"
-                style={{ width: "200px", marginTop: "10px" }}
+                style={{ width: "200px", marginTop: "10px", borderRadius: 6 }}
               />
+              <div className="d-flex flex-column mt-2">
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary mb-2"
+                  onClick={() => {
+                    setImage(null);
+                    setPreview("");
+                    if (fileInputRef.current) fileInputRef.current.value = null;
+                  }}
+                >
+                  Remove Image
+                </button>
+                <a href={preview} target="_blank" rel="noreferrer" className="btn btn-sm btn-outline-light">Open Image</a>
+              </div>
             </div>
           )}
-          <div className="col-12">
-            <button type="submit" className="btn btn-primary">
+          <div className="col-12 d-flex justify-content-end gap-2">
+            <button type="button" className="btn btn-outline-secondary" onClick={() => navigate('/admin/services')}>Cancel</button>
+            <button type="submit" className="btn btn-danger">
+              <i className="bi bi-plus-circle me-2"></i>
               {isEdit ? "Update Service" : "Create Service"}
             </button>
           </div>

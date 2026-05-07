@@ -179,6 +179,8 @@ const Navbar = () => {
         setLoginStep("PHONE");
         setMobile("");
         setOtp(Array(6).fill(""));
+      }else{
+        toast.error(res.data.message || "Failed to complete profile");
       }
     } catch (err) {
       console.error("Complete Profile Error:", err);

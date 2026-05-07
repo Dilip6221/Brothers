@@ -15,6 +15,7 @@ const JobCardRoute = require('./routes/JobCardRoute.js');
 const AboutTimeLineRoute = require('./routes/AboutTimeLineRoute.js');
 const CarCompanyRoute = require('./routes/CarCompanyRoute.js');
 const authRoute = require('./routes/AuthRoute.js');
+const OnlineServiceRoute = require('./routes/OnlineServiceRoute.js');
 
 const connectDB = require('./config/db.js');
 const cookieParser = require('cookie-parser');
@@ -40,6 +41,7 @@ app.use('/api/inquery', serviceInquiryRoute);
 app.use('/api/subscribe', SubscribeRoute);
 app.use('/api/blog', BlogRoute);
 app.use('/api/service', ServiceRoute);
+app.use('/api/online-service', OnlineServiceRoute);
 app.use('/api/gallery', GalleryRoute);
 app.use('/api/jobcard', JobCardRoute);
 app.use('/api/about-timeline', AboutTimeLineRoute);

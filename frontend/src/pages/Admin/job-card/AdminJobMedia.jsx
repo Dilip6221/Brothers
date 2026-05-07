@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AdminLayout from "../AdminLayout.jsx";
@@ -22,6 +22,7 @@ const AdminJobMedia = () => {
     const [file, setFile] = useState(null);
     const [stage, setStage] = useState("");
     const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef(null);
 
     const fetchMedia = async () => {
         try {
@@ -53,6 +54,7 @@ const AdminJobMedia = () => {
             toast.success("Uploaded");
             setFile(null);
             setStage("");
+            if (fileInputRef.current) fileInputRef.current.value = null;
             fetchMedia();
         } catch (error) {
             toast.error("Upload failed");
@@ -73,7 +75,7 @@ const AdminJobMedia = () => {
 
     return (
         <AdminLayout>
-            <div className="container py-4">
+            <div className="container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h4 className="section-title">
                         <span className="first-letter">J</span>ob Media
@@ -90,16 +92,17 @@ const AdminJobMedia = () => {
                 {/* UPLOAD */}
                 <div className="card bg-dark p-3 mb-4">
                     <div className="row g-2">
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                             <input
+                                ref={fileInputRef}
                                 type="file"
-                                className="form-control"
+                                className="form-control text-white bg-dark"
                                 onChange={(e) => setFile(e.target.files[0])}
                             />
                         </div>
                         <div className="col-md-4">
                             <select
-                                className="form-control"
+                                className="form-control text-white bg-dark"
                                 value={stage}
                                 onChange={(e) => setStage(e.target.value)}
                             >
@@ -109,13 +112,24 @@ const AdminJobMedia = () => {
                                 ))}
                             </select>
                         </div>
-                        <div className="col-md-2">
+                        <div className="col-md-4 d-flex gap-2">
                             <button
-                                className="btn btn-success w-100"
+                                className="btn btn-danger btn-sm"
                                 onClick={uploadMedia}
                                 disabled={uploading}
                             >
                                 {uploading ? "Uploading..." : "Upload"}
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary"
+                                onClick={() => {
+                                    setFile(null);
+                                    setStage("");
+                                    if (fileInputRef.current) fileInputRef.current.value = null;
+                                }}
+                            >
+                                Clear
                             </button>
                         </div>
                     </div>
@@ -123,9 +137,8 @@ const AdminJobMedia = () => {
 
                 <div className="row g-3">
                     {media.length === 0 && (
-                        <p className="text-center text-white">No media</p>
+                        <p className="text-center text-white">No media Found</p>
                     )}
-
                     {media.map((m) => (
                         <div className="col-md-3 col-sm-6" key={m._id}>
                             <div className="job-media-card">

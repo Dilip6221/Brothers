@@ -51,6 +51,14 @@ import AdminAboutTimeLine from './pages/Admin/about-time-line/AdminAboutTimeLine
 import AdminCreateAboutTimeLine from './pages/Admin/about-time-line/AdminCreateAboutTimeLine.jsx';
 
 import OnlineServiceLayout from './pages/OnlineService/OnlineServiceLayout.jsx';  
+import AdminOnlineServiceCategory from './pages/OnlineService/admin/category/AdminOnlineServiceCategory.jsx';
+import AdminCreateOnlineServiceCategory from './pages/OnlineService/admin/category/AdminCreateOnlineServiceCategory.jsx';
+import AdminOnlineService from './pages/OnlineService/admin/service/AdminOnlineService.jsx';
+import AdminCreateOnlineService from './pages/OnlineService/admin/service/AdminCreateOnlineService.jsx';
+import AdminCreateOnlineServicePackages from './pages/OnlineService/admin/packges/AdminCreateOnlineServicePackages.jsx';
+import AdminOnlineServicePackages from './pages/OnlineService/admin/packges/AdminOnlineServicePackages.jsx';
+import AdminOnlineAddonService from './pages/OnlineService/admin/addon/AdminOnlineAddonService.jsx';
+import AdminCreateOnlineAddonService from './pages/OnlineService/admin/addon/AdminCreateOnlineAddonService.jsx';
 
 const App = () => {
   const location = useLocation();
@@ -133,8 +141,23 @@ const App = () => {
         <Route path="/admin/about-timeline" element={<AdminAboutTimeLine />} />
         <Route path="/admin/about-timeline/create" element={<AdminCreateAboutTimeLine />} />
         <Route path="/admin/about-timeline/edit/:id" element={<AdminCreateAboutTimeLine />} />
+        
+        <Route path="/admin/online-services-category" element={<AdminOnlineServiceCategory />} />
+        <Route path="/admin/online-services-category/create" element={<AdminCreateOnlineServiceCategory />} />
+        <Route path="/admin/online-services-category/edit/:id" element={<AdminCreateOnlineServiceCategory />} />
 
 
+        <Route path="/admin/online-services" element={<AdminOnlineService />} />
+        <Route path="/admin/online-services/create" element={<AdminCreateOnlineService />} />
+        <Route path="/admin/online-services/edit/:id" element={<AdminCreateOnlineService />} />
+
+        <Route path="/admin/online-services-packages" element={<AdminOnlineServicePackages />} />
+        <Route path="/admin/online-services-packages/create" element={<AdminCreateOnlineServicePackages />} />
+        <Route path="/admin/online-services-packages/edit/:id" element={<AdminCreateOnlineServicePackages />} />
+
+       <Route path="/admin/online-addon-services" element={<AdminOnlineAddonService />} />
+        <Route path="/admin/online-addon-services/create" element={<AdminCreateOnlineAddonService />} />
+        <Route path="/admin/online-addon-services/edit/:id" element={<AdminCreateOnlineAddonService />} />
 
         <Route path="/online-services" element={<OnlineServiceLayout />} />
       </Routes>

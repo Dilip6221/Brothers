@@ -3,10 +3,11 @@ const { Otp } = require('../model/Otp');
 const bcrypt = require('bcryptjs');
 const otpProvider = require('../config/otpProvider');
 const jwt = require('jsonwebtoken');
+const { sendWelcomeMail } = require('../mail/UserMail');
 
 
 const generateToken = (userId) => {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '1y' });
+    return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
 const generateOtp = () => {
@@ -113,7 +114,8 @@ const verifyOtp = async (req, res) => {
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: false,
-                sameSite: "lax",
+                sameSite: process.env.NODE_ENV === "PRODUCTION" ? "none" : "lax",
+                maxAge: 30 * 24 * 60 * 60 * 1000,
             });
             user.lastLoginAt = new Date();
             user.loginCount += 1;
@@ -129,17 +131,41 @@ const verifyOtp = async (req, res) => {
 const completeProfile = async (req, res) => {
     try {
         const { phone, name, email } = req.body;
-        let user = await User.findOne({ phone });
+        if (!name || !email) {
+            return res.json({success: false, message: "Name and email are required"});
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.json({success: false,message: "Invalid email format"});
+        }
+        const normalizedEmail = email.toLowerCase().trim();
+        const existingUsers = await User.find({
+            $or: [
+                { phone },
+                { email: normalizedEmail }
+            ]
+        });
+
+        let user = null;
+        for (const u of existingUsers) {
+            if (u.phone === phone) {
+                user = u;
+            }
+            if (u.email === normalizedEmail &&u.phone !== phone) {
+                return res.json({success: false,message: "User with this email already exists"});
+            }
+        }
+
         if (!user) {
             user = await User.create({
                 phone,
                 name,
-                email,
+                email: normalizedEmail,
                 isProfileComplete: true
             });
         } else {
             user.name = name;
-            user.email = email;
+            user.email = normalizedEmail;
             user.isProfileComplete = true;
             await user.save();
         }
@@ -148,12 +174,18 @@ const completeProfile = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: false,
-            sameSite: "lax",
+            sameSite: process.env.NODE_ENV === "PRODUCTION" ? "none" : "lax",
+            maxAge: 30 * 24 * 60 * 60 * 1000,
         });
-        res.json({success: true,message: "Thank You for registering",user});
+        sendWelcomeMail(user).catch(err =>
+            console.error("Mail Error:", err)
+        );
+        return res.json({success: true,message: "Thank You for registering",user});
     } catch (err) {
-        console.error("Complete Profile Error:", err);
-        res.json({ success: false, error: err.message });
+        if (err.code === 11000) {
+            return res.json({success: false,message: "Email already exists"});
+        }
+        return res.json({success: false,error: err.message});
     }
 };
 const getUser = async (req, res) => {

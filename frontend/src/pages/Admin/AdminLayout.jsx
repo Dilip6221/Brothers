@@ -1,4 +1,4 @@
-import { React, useContext, useState,useEffect } from "react";
+import { React, useContext, useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import "../../css/style.css";
@@ -23,12 +23,16 @@ const AdminLayout = ({ children }) => {
     location.pathname.includes("customer-reviews") ||
     location.pathname.includes("about-timeline");
 
+  const isOnlineServiceActive =
+    location.pathname.includes("online-services-category") ||
+    location.pathname.includes("online-services") ||
+    location.pathname.includes("online-services-packages") ||
+    location.pathname.includes("online-addon-services");
   return (
     <>
       <div className="container-fluid position-relative d-flex p-0">
 
-        {/* ------------ SIDEBAR ------------ */}
-        <div className="sidebar pe-4 pb-3 bg-dark">
+        <div className="sidebar pe-4 pb-3 bg-dark" style={{ width: "17%" }}>
           <nav className="navbar navbar-dark">
             <NavLink to="/admin/dashboard" className="navbar-brand mx-4 mb-3">
 
@@ -65,6 +69,47 @@ const AdminLayout = ({ children }) => {
               >
                 <i className="bi bi-tools me-2"></i>Services
               </NavLink>
+              <div
+                className={`nav-item ${openMenu === "onlineService" || isOnlineServiceActive ? "open" : ""
+                  }`}
+              >
+                <div
+                  className="nav-link submenu-toggle"
+                  onClick={() => toggleMenu("onlineService")}
+                >
+                  <i className="bi bi-card-checklist me-2"></i>
+                  Online Service
+                  <i className="fa fa-angle-down  float-end"></i>
+                </div>
+
+                <div className="submenu">
+                  <NavLink
+                    to="/admin/online-services-category"
+                    className="dropdown-item"
+                  >
+                    Services Category
+                  </NavLink>
+                  <NavLink
+                    to="/admin/online-services"
+                    className="dropdown-item"
+                  >
+                    Services
+                  </NavLink>
+                  <NavLink
+                    to="/admin/online-services-packages"
+                    className="dropdown-item"
+                  >
+                    Service Packges
+                  </NavLink>
+                  <NavLink
+                    to="/admin/online-addon-services"
+                    className="dropdown-item"
+                  >
+                    Addon Service
+                  </NavLink>
+                </div>
+              </div>
+
               <NavLink
                 to="/admin/user-cars"
                 className={({ isActive }) =>
@@ -81,24 +126,6 @@ const AdminLayout = ({ children }) => {
               >
                 <i className="bi bi-card-checklist me-2"></i>Job Cards
               </NavLink>
-
-              {/* <NavLink
-                to="/admin/inquery"
-                onClick={() => window.dispatchEvent(new Event("inquieryClick"))}
-                className={({ isActive }) =>
-                  `nav-item nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                <i className="bi bi-clipboard-check-fill me-2"></i>Inquiry
-              </NavLink> */}
-              {/* <NavLink
-                to="/admin/subscribe"
-                className={({ isActive }) =>
-                  `nav-item nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                <i className="bi bi-envelope-arrow-up-fill me-2"></i>Newsletters
-              </NavLink> */}
               <div
                 className={`nav-item ${openMenu === "others" || isOthersActive ? "open" : ""
                   }`}
@@ -138,40 +165,10 @@ const AdminLayout = ({ children }) => {
 
                 </div>
               </div>
-
-              {/* <NavLink to="/admin/blogs" onClick={() => window.dispatchEvent(new Event("ourBlogClick"))} className={({ isActive }) => `nav-item nav-link ${isActive ? "active" : ""}`}>
-                <i className="fa fa-keyboard me-2"></i>Our Blogs
-              </NavLink> */}
-              {/* <NavLink
-                to="/admin/gallery"
-                className={({ isActive }) =>
-                  `nav-item nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                <i className="bi bi-images me-2"></i>Gallery
-              </NavLink> */}
-              {/* <NavLink
-                to="/admin/customer-reviews"
-                className={({ isActive }) =>
-                  `nav-item nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                <i className="bi bi-chat-dots me-2"></i>Reviews
-              </NavLink> */}
-              {/* <NavLink
-                to="/admin/about-timeline"
-                className={({ isActive }) =>
-                  `nav-item nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                <i className="bi bi-clock-history me-2"></i>About Timeline
-              </NavLink> */}
-
             </div>
           </nav>
         </div>
 
-        {/* ------------ MAIN CONTENT ------------ */}
         <div className="content">
 
           {/* TOP NAV */}

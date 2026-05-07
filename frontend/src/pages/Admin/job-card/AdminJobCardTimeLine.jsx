@@ -13,7 +13,7 @@ const AdminJobCardTimeLine = () => {
     useEffect(() => {
         const fetchJob = async () => {
             try {
-                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/jobcard/admin/get-card/${id}`);
+                const res = await axios.get(`jobcard/admin/get-card/${id}`);
                 if (res.data.success) {
                     setJob(res.data.data);
                 } else {

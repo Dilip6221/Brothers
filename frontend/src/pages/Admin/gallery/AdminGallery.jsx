@@ -182,14 +182,12 @@ const AdminGallery = () => {
                                 ></button>
                             </div>
 
-                            {/* Body */}
-                            <div className="modal-body">
-
+                            <div className="modal-body p-3 border-secondary">
                                 <div className="mb-3">
-                                    <label>Title</label>
+                                    <label>Enter Title*</label>
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="form-control mt-2 bg-dark text-white"
                                         value={newImage.title}
                                         onChange={(e) =>
                                             setNewImage({ ...newImage, title: e.target.value })
@@ -197,10 +195,10 @@ const AdminGallery = () => {
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label>Service</label>
+                                    <label>Select Service*</label>
                                     <select
                                         name="service"
-                                        className="form-control "
+                                        className="form-control mt-2 bg-dark text-white"
                                         value={newImage.service || ""}
                                         onChange={(e) =>
                                             setNewImage(prev => ({
@@ -209,7 +207,7 @@ const AdminGallery = () => {
                                             }))
                                         }
                                     >
-                                        <option value="">Select Service*</option>
+                                        <option value="">Select Service</option>
                                         {serviceOptions.map((opt, index) => (
                                             <option key={index} value={opt.value}>
                                                 {opt.label}
@@ -218,10 +216,10 @@ const AdminGallery = () => {
                                     </select>
                                 </div>
                                 <div className="mb-3">
-                                    <label>Upload Image</label>
+                                    <label>Upload Image*</label>
                                     <input
                                         type="file"
-                                        className="form-control"
+                                        className="form-control mt-2 bg-dark text-white"
                                         onChange={(e) =>
                                             setNewImage({ ...newImage, file: e.target.files[0] })
                                         }

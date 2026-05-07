@@ -57,7 +57,7 @@ const AdminJobServices = () => {
   const total = services.reduce((sum, s) => sum + Number(s.price), 0);
   return (
     <AdminLayout>
-      <div className="container py-4">
+      <div className="container ">
         <div className="d-flex justify-content-between align-items-center mb-4">
             <h4 className="section-title">
                 <span className="first-letter">M</span>anage Services

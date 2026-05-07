@@ -28,23 +28,23 @@ const AdminUserList = () => {
     const handleCreateUser = async (e) => {
         e.preventDefault();
         try {
-            if(modalMode == 'CREATE'){
-                const res = await axios.post("user/register",newUser);
+            if (modalMode == 'CREATE') {
+                const res = await axios.post("user/register", newUser);
                 if (res.data.success) {
                     toast.success(res.data.message);
                     setShowCreateModal(false);
                     fetchData();
-                    setNewUser({name: "",email: "",phone: "",password: "",role: "USER"});
+                    setNewUser({ name: "", email: "", phone: "", password: "", role: "USER" });
                 } else {
                     toast.error(res.data.message);
                 }
-            }else{
-                const res = await axios.post("user/admin/update-user-data",newUser)
-                if(res.data.success){
+            } else {
+                const res = await axios.post("user/admin/update-user-data", newUser)
+                if (res.data.success) {
                     toast.success(res.data.message)
                     setShowCreateModal(false);
                     fetchData();
-                }else{
+                } else {
                     toast.error(res.data.message);
                 }
             }
@@ -160,7 +160,7 @@ const AdminUserList = () => {
                         </ul>
 
                         {/* RIGHT BUTTON */}
-                        <button className="btn btn-outline-danger d-flex align-items-center gap-2 px-3" onClick={() => {setShowCreateModal(true); setModalMode('CREATE');setNewUser({name: "",email: "",phone: "",password: "",role: "USER"});}}>
+                        <button className="btn btn-outline-danger d-flex align-items-center gap-2 px-3" onClick={() => { setShowCreateModal(true); setModalMode('CREATE'); setNewUser({ name: "", email: "", phone: "", password: "", role: "USER" }); }}>
                             <i className="bi bi-plus-circle"></i>
                             Create
                         </button>
@@ -177,15 +177,16 @@ const AdminUserList = () => {
                             <button
                                 className="btn btn-outline-danger d-flex align-items-center p-2"
                                 onClick={() => downloadCSV("/user/admin/user-export", `${filter.toLowerCase()}-Team`, { filter })}
+                                title="Export CSV"
                             >
                                 <i className="fa fa-download"></i>
                             </button>
-                            <div className="input-group" style={{ width: "200px" }}>
+                            <div className="input-group" style={{ width: "260px" }}>
                                 <input
                                     type="search"
                                     className="form-control bg-dark text-white border-white"
                                     name="text"
-                                    placeholder="Search..."
+                                    placeholder="Search by name, email, phone..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                 />
@@ -194,8 +195,8 @@ const AdminUserList = () => {
                     </h4>
                     <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
                         <table className="table table-dark table-hover table-bordered align-middle">
-                            <thead className="table-secondary text-dark sticky-top">
-                                <tr>
+                            <thead className="sticky-top">
+                                <tr className="table-secondary text-dark">
                                     <th>#</th>
                                     <th>Full Name</th>
                                     <th>Email</th>
@@ -233,15 +234,16 @@ const AdminUserList = () => {
                                                 )}
                                             </td>
                                             <td>
-                                               <div className="form-check form-switch d-flex justify-content-center">
-                                                    <input
-                                                        className="form-check-input bg-dark border-light"
-                                                        type="checkbox"
-                                                        checked={item.status === "ACTIVE"}
-                                                        onChange={() => handleUserStatus(item._id, item.status)}
-                                                        
-                                                    />
-                                                </div>
+                                                <span
+                                                    className={`badge ${item.status === "ACTIVE"
+                                                        ? "bg-success"
+                                                        : "bg-danger"
+                                                        }`}
+                                                    style={{ cursor: "pointer" }}
+                                                    onClick={() => handleUserStatus(item._id, item.status)}
+                                                >
+                                                    {item.status}
+                                                </span>
                                             </td>
                                             <td className="text-center">
                                                 <i
@@ -257,7 +259,7 @@ const AdminUserList = () => {
                                                         cursor: "pointer",
                                                         fontSize: "18px",
                                                     }}
-                                                    onClick={() => {setShowCreateModal(true); setModalMode('EDIT');setNewUser({name: item.name,email: item.email,phone:item.phone,role: item.role, _id: item._id});}}
+                                                    onClick={() => { setShowCreateModal(true); setModalMode('EDIT'); setNewUser({ name: item.name, email: item.email, phone: item.phone, role: item.role, _id: item._id }); }}
 
                                                 ></i>
                                             </td>
@@ -300,7 +302,8 @@ const AdminUserList = () => {
                                     <label>Name</label>
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="form-control bg-dark text-white"
+                                        placeholder="Full name"
                                         value={newUser.name}
                                         onChange={(e) =>
                                             setNewUser({ ...newUser, name: e.target.value })
@@ -312,7 +315,8 @@ const AdminUserList = () => {
                                     <label>Email</label>
                                     <input
                                         type="email"
-                                        className="form-control"
+                                        className="form-control bg-dark text-white"
+                                        placeholder="user@example.com"
                                         value={newUser.email}
                                         onChange={(e) =>
                                             setNewUser({ ...newUser, email: e.target.value })
@@ -324,7 +328,8 @@ const AdminUserList = () => {
                                         <label>Password</label>
                                         <input
                                             type="password"
-                                            className="form-control"
+                                            className="form-control bg-dark text-white"
+                                            placeholder="Choose a secure password"
                                             value={newUser.password}
                                             onChange={(e) =>
                                                 setNewUser({ ...newUser, password: e.target.value })
@@ -336,7 +341,8 @@ const AdminUserList = () => {
                                     <label>Phone Number</label>
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="form-control bg-dark text-white"
+                                        placeholder="e.g. +1234567890"
                                         value={newUser.phone}
                                         onChange={(e) =>
                                             setNewUser({ ...newUser, phone: e.target.value })
@@ -346,21 +352,27 @@ const AdminUserList = () => {
 
                                 <div className="mb-3">
                                     <label>User Role</label>
-                                    <select
-                                        className="form-select"
-                                        value={newUser.role}
-                                        onChange={(e) =>
-                                            setNewUser({ ...newUser, role: e.target.value })
-                                        }
-                                    >
-                                        <option value="USER">USER</option>
-                                        <option value="STAFF">STAFF</option>
-                                    </select>
+                                    <div className="position-relative">
+                                        <select
+                                            className="form-control bg-dark text-white pe-5"
+                                            value={newUser.role}
+                                            onChange={(e) =>
+                                                setNewUser({ ...newUser, role: e.target.value })
+                                            }
+                                        >
+                                            <option value="USER">USER</option>
+                                            <option value="STAFF">STAFF</option>
+                                        </select>
+                                        <span className="position-absolute end-0 top-50 translate-middle-y pe-3 text-white-50" style={{ pointerEvents: 'none' }}>
+                                            <i className="bi bi-chevron-down"></i>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Footer */}
                             <div className="modal-footer border-secondary">
+                                <button className="btn btn-outline-secondary" onClick={() => setShowCreateModal(false)}>Cancel</button>
                                 <button className="btn btn-danger" onClick={handleCreateUser}> {modalMode === "CREATE" ? "Save" : "Update"}</button>
                             </div>
                         </div>
