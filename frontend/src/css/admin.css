@@ -206,6 +206,17 @@
     font-size: 11px;
     color: #888;
 }
+.admin-logo {
+    width: 180px;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    transition: 0.3s ease;
+}
+
+.admin-logo:hover {
+    transform: scale(1.03);
+}
 
 /* NOTE */
 .timeline-note {

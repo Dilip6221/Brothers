@@ -99,7 +99,7 @@ const Paint = () => {
       <section className="service-section">
         <div className="container">
           <h2 className="section-heading text-center mb-4">
-            Why Choose BROTHER'S?
+            Why Choose RYDAX?
           </h2>
 
           <div className="row g-4">

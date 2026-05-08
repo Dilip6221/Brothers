@@ -27,11 +27,11 @@ body:not(.admin-page) {
   padding-top: 90px;
 }
 .navbar-logo {
-  height: 200px;
-  margin-top: -100px;
+  height: 185px;
+  margin-top: -80px;
   object-fit: contain;
   position: absolute;
-  left: 120px;
+  left: 140px;
 }
 
 /* MOBILE OFFCANVAS LOGO */
@@ -58,9 +58,9 @@ body:not(.admin-page) {
   }
 }
 .navbar-wrapper {
-  height: 80px;
+  height: 85px;
   background: #000;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 0, 0, 0.226);
   display: flex;
   align-items: center;
 }

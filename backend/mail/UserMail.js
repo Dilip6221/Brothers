@@ -4,15 +4,15 @@ const { transporter } = require('../model/User.js');
 const sendWelcomeMail = async (user) => {
   try {
     await transporter.sendMail({
-      from: `"BROTHER'S" <${process.env.SMTP_USER}>`,
+      from: `"RYDAX Studio" <${process.env.SMTP_USER}>`,
       to: user.email,
-      subject: "🚀 Welcome to Brother's Garage!",
+      subject: "🚀 Welcome to RYDAX Studio!",
       html: `
         <div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px;">
           <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
             <div style="background: linear-gradient(90deg, #ff4b2b, #72545b); padding: 20px; text-align: center; color: #fff;">
-              <img src="https://res.cloudinary.com/dagsmbnaa/image/upload/v1763031828/brand_cuxsip.png" alt="BROTHER'S" style="width: 120px;" />
-              <p style="margin: 5px 0 0;">At BROTHER'S, We Don’t Just Fix Cars – We Build Trust</p>
+              <img src="https://res.cloudinary.com/dagsmbnaa/image/upload/v1763031828/brand_cuxsip.png" alt="RYDAX Studio" style="width: 120px;" />
+              <p style="margin: 5px 0 0;">At RYDAX Studio, We Don’t Just Fix Cars – We Build Trust</p>
             </div>
             <div style="padding: 20px; color: #333;">
               <p>Welcome to <strong>Our Studio</strong>! 🎉</p>
@@ -29,7 +29,7 @@ const sendWelcomeMail = async (user) => {
               </p>
             </div>
             <div style="background: #eee; padding: 15px; text-align: center; font-size: 12px; color: #555;">
-              © ${new Date().getFullYear()} BROTHER'S GARAGE. All rights reserved.
+              © ${new Date().getFullYear()} RYDAX Studio. All rights reserved.
             </div>
           </div>
         </div>

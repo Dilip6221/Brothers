@@ -60,8 +60,9 @@ const AdminOnlineService = () => {
   const toggleStatus = async (service) => {
     try {
       const newStatus = service.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
-      const res = await axios.put(`online-service/admin/online-service/${service._id}`, { status: newStatus });
-      if (res.data.success) toast.success("Status updated");
+      const res = await axios.put(`online-service/admin/online-service-update/${service._id}`, { status: newStatus });
+      if (res.data.success) toast.success(res.data.message || "Status updated");
+      else toast.error(res.data.message || "Failed to update status");
       fetchServices();
     } catch (err) {
       console.error(err);

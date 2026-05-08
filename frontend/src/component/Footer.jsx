@@ -4,6 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import "../css/footer.css";
 import { NavLink } from "react-router-dom";
+import loginLogo from "../assets/images/rydax.png";
 
 const Footer = () => {
     const [email, setEmail] = useState("");
@@ -60,11 +61,9 @@ const Footer = () => {
                         <div className="row gy-4">
                             <div className="col-lg-3 col-md-6 col-12 footer-brand-box">
 
-                                {/* Brand */}
-                                <h1 className="footer-brand">
-                                    <span className="brand-red">B</span>ROTHER'S
-                                </h1>
-                                <div className="footer-line"></div>
+                                <a href="/" className="navbar-brand">
+                                    <img src={loginLogo} alt="Logo" className="footer-logo" />
+                                </a>
                                 <div className="footer-social">
                                     <a href="#" className="social-icon"><i className="bi bi-facebook"></i></a>
                                     <a href="#" className="social-icon"><i className="bi bi-instagram"></i></a>
@@ -74,7 +73,7 @@ const Footer = () => {
 
                                 <p className="footer-slogan">
                                     <i className="bi bi-wrench-adjustable text-danger me-2"></i>
-                                    At <span className="brand-highlight">BROTHER'S</span> we don’t just fix cars —
+                                    At <span className="brand-highlight">RYDAX</span> we don’t just fix cars —
                                     <span className="trust-text"> we build trust.</span>
                                 </p>
 
@@ -183,7 +182,7 @@ const Footer = () => {
 
                                 <div className="col-lg-4 col-md-12 text-center">
                                     Copyright © {new Date().getFullYear()}
-                                    <span className="text-warning"> BROTHER'S </span>
+                                    <span className="text-warning"> RYDAX </span>
                                     . All Rights Reserved.
                                 </div>
 

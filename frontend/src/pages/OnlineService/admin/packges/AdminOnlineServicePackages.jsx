@@ -16,7 +16,7 @@ const AdminOnlineServicePackages = () => {
   // FETCH SERVICES
   const fetchServices = async () => {
     try {
-      const res = await axios.get("online-service/admin/list-online-service");
+      const res = await axios.get(`online-service/admin/list-online-service`);
       setServices(res.data.data);
     } catch (err) {
       toast.error("Failed to load services");
@@ -29,7 +29,6 @@ const AdminOnlineServicePackages = () => {
       setLoading(true);
       let url = `online-service/admin/package`;
       if (serviceId) url += `?serviceId=${serviceId}`;
-
       const res = await axios.get(url);
       setPackages(res.data.data);
 
@@ -51,7 +50,6 @@ const AdminOnlineServicePackages = () => {
   // DELETE
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this package?")) return;
-
     try {
       await axios.delete(`online-service/admin/package-delete/${id}`);
       toast.success("Deleted");
@@ -61,14 +59,15 @@ const AdminOnlineServicePackages = () => {
     }
   };
 
-  // STATUS TOGGLE
   const toggleStatus = async (pkg) => {
     try {
       const newStatus = pkg.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
-      await axios.put(`online-service/admin/package-update/${pkg._id}`, {
+      const res = await axios.put(`online-service/admin/package-update/${pkg._id}`, {
         ...pkg,
         status: newStatus
       });
+      if (res.data.success) toast.success(res.data.message || "Status updated");
+      else toast.error(res.data.message || "Failed to update status");
       fetchPackages();
     } catch {
       toast.error("Failed to update status");

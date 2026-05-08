@@ -50,7 +50,7 @@ app.use('/api/customer-reviews', CustomerReviewRoute);
 app.use('/api/auth', authRoute);
 
 app.get('/', (req, res) => {
-    res.send('Welcome To BROTHERS');
+    res.send('Welcome To RYDAX Studio');
 });
 
 /* Port running */

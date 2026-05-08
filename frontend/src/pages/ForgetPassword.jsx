@@ -81,7 +81,7 @@ const ForgetPassword = () => {
               }}
             >
               <i className="bi bi-wrench-adjustable me-2 text-danger"></i>
-              At <span style={{ color: "#ff3b3b", fontSize: "15px" }}>BROTHER'S</span>,
+              At <span style={{ color: "#ff3b3b", fontSize: "15px" }}>RYDAX</span>,
               We Don’t Just Fix Cars – We Build Trust
             </div>
           </div>

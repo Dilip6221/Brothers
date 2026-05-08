@@ -129,7 +129,7 @@ const Faq = () => {
                         <div className="faq-contact-image">
                             <img
                                 src={cars}
-                                alt="BROTHER'S GARAGE"
+                                alt="RYDAX Studio"
                                 onClick={() => {
                                     if (audioRef.current) {
                                         audioRef.current.currentTime = 0;
@@ -139,7 +139,7 @@ const Faq = () => {
                             />
                             <audio ref={audioRef} src={hornSound} preload="auto" />
                             <p className="footer-slogan">
-                                - At <span className="brand-highlight">BROTHER'S</span> we don’t just fix cars —
+                                - At <span className="brand-highlight">RYDAX</span> we don’t just fix cars —
                                 <span className="trust-text"> we build trust.</span>
                             </p>
                         </div>

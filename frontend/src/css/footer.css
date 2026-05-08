@@ -202,7 +202,13 @@ font-weight:600;
 .footer-social {
     display: flex;
     gap: 12px;
-    margin-top: 8px;
+}
+.footer-logo {
+    width: 240px;
+}
+
+.footer-logo,.navbar-logo:hover {
+    transform: scale(1.03);
 }
 
 .social-icon {
@@ -229,7 +235,6 @@ font-weight:600;
 /* responsive */
 
 @media(max-width:992px) {
-
     .footer-brand-box {
         text-align: center;
         align-items: center;
@@ -238,9 +243,9 @@ font-weight:600;
     .footer-slogan {
         max-width: 100%;
     }
-
     .footer-social {
         justify-content: center;
+        margin-top: -50px;
     }
 
 }

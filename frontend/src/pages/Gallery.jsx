@@ -143,11 +143,11 @@ const Gallery = () => {
               >
                 <img
                   src={item.imageUrl}
-                  alt={item.title || "BROTHER'S"}
+                  alt={item.title || "RYDAX Studion"}
                   loading="lazy"
                 />
                 <div className="premium-overlay">
-                  <h5>{item.title || "BROTHER'S"}</h5>
+                  <h5>{item.title || "RYDAX Studio"}</h5>
                   <p>{item.service}</p>
                 </div>
               </div>

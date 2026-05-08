@@ -21,6 +21,28 @@ const authUser = async (req, res, next) => {
   }
 };
 
+const authAdminRole = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) return res.json({ success: false, message: "User not authenticated" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) return res.json({ success: false, message: "User not found" });
+    if (user.role !== "ADMIN") {
+      return res.json({ success: false, message: "Access denied - Admins only" });
+    }
+    req.user = user;
+    next();
+  } catch (err) {
+    return res.json({
+      success: false,
+      message: "Unauthorized - Invalid or expired token",
+    });
+  }
+};
+
 // ✅ OPTIONAL AUTH (no token required)
 const authOptional = async (req, res, next) => {
   try {
@@ -62,4 +84,4 @@ const authForAndroid = async (req, res, next) => {
   }
 };
 
-module.exports = {authUser,authOptional,authForAndroid};
+module.exports = {authUser,authAdminRole,authOptional,authForAndroid};

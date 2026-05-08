@@ -119,6 +119,7 @@ const verifyOtp = async (req, res) => {
             });
             user.lastLoginAt = new Date();
             user.loginCount += 1;
+            user.status = "ACTIVE";
             await user.save();
             return res.json({success: true,isNewUser: false});
         }
@@ -130,7 +131,7 @@ const verifyOtp = async (req, res) => {
 };
 const completeProfile = async (req, res) => {
     try {
-        const { phone, name, email } = req.body;
+        const { phone, name, email,role,isAdminCreate } = req.body;
         if (!name || !email) {
             return res.json({success: false, message: "Name and email are required"});
         }
@@ -160,6 +161,7 @@ const completeProfile = async (req, res) => {
             user = await User.create({
                 phone,
                 name,
+                role: role || "USER",
                 email: normalizedEmail,
                 isProfileComplete: true
             });
@@ -169,14 +171,16 @@ const completeProfile = async (req, res) => {
             user.isProfileComplete = true;
             await user.save();
         }
-        const token = generateToken(user._id);
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: process.env.NODE_ENV === "PRODUCTION" ? "none" : "lax",
-            maxAge: 30 * 24 * 60 * 60 * 1000,
-        });
+        if (!isAdminCreate) {
+            const token = generateToken(user._id);
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: false,
+                sameSite: process.env.NODE_ENV === "PRODUCTION" ? "none" : "lax",
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+            });
+        }
         sendWelcomeMail(user).catch(err =>
             console.error("Mail Error:", err)
         );

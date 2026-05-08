@@ -45,10 +45,14 @@ const AdminOnlineAddonService = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this addon?")) return;
     try {
-      await axios.delete(
+      const res = await axios.delete(
         `online-service/admin/addon-delete/${id}`
       );
-      toast.success("Deleted");
+      if (res.data.success) {
+        toast.success(res.data.message || "Deleted");
+      } else {
+        toast.error(res.data.message || "Delete failed");
+      }
       fetchAddons();
     } catch {
       toast.error("Delete failed");
@@ -59,10 +63,12 @@ const AdminOnlineAddonService = () => {
     try {
       const newStatus =
         addon.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
-      await axios.put(
+      const res = await axios.put(
         `online-service/admin/addon-update/${addon._id}`,
         { ...addon, status: newStatus }
       );
+      if (res.data.success) toast.success(res.data.message || "Status updated");
+      else toast.error(res.data.message || "Failed to update status");
       fetchAddons();
     } catch {
       toast.error("Status update failed");

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../css/onlineService.css";
-import logo from "../../assets/images/brand.png";
+import logo from "../../assets/images/rydax.png";
 import { FaSearch, FaUser, FaShoppingBag, FaBars } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 

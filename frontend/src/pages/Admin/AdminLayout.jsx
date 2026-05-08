@@ -3,6 +3,8 @@ import { NavLink, useLocation } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import "../../css/style.css";
 import "../../css/admin.css";
+import loginLogo from "../../assets/images/rydax.png";
+
 
 const AdminLayout = ({ children }) => {
   const { user, logout } = useContext(UserContext);
@@ -34,12 +36,8 @@ const AdminLayout = ({ children }) => {
 
         <div className="sidebar pe-4 pb-3 bg-dark" style={{ width: "17%" }}>
           <nav className="navbar navbar-dark">
-            <NavLink to="/admin/dashboard" className="navbar-brand mx-4 mb-3">
-
-              <h3 className="section-title mb-1 mt-1">
-                <span className="first-letter">B</span>
-                ROTHER'S
-              </h3>
+            <NavLink to="/admin/dashboard" className="w-100 d-flex justify-content-center align-items-center ">
+                  <img src={loginLogo} alt="Logo" className="admin-logo" />
             </NavLink>
             <div className="navbar-nav w-100">
               <NavLink

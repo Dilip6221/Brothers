@@ -3,10 +3,10 @@ const router = express.Router();
 
 const { uploadGalleryImage, getGalleryImages, deleteGalleryImage} = require("../controller/GalleryController");
 const { upload } = require("../middleware/multer");
-const { authUser } = require('../middleware/auth');
+const { authUser, authAdminRole} = require('../middleware/auth');
 
-router.post("/admin/upload", authUser, upload.single("file"), uploadGalleryImage);
+router.post("/admin/upload", authAdminRole, upload.single("file"), uploadGalleryImage);
 router.get("/gallery", getGalleryImages);
-router.delete("/admin/:id", authUser, deleteGalleryImage);
+router.delete("/admin/:id", authAdminRole, deleteGalleryImage);
 
 module.exports = router;

@@ -20,7 +20,6 @@ const AdminUserList = () => {
         name: "",
         email: "",
         phone: "",
-        password: "",
         role: "USER"
     });
 
@@ -29,12 +28,16 @@ const AdminUserList = () => {
         e.preventDefault();
         try {
             if (modalMode == 'CREATE') {
-                const res = await axios.post("user/register", newUser);
+                const payload = {
+                    ...newUser,
+                    isAdminCreate: true
+                };
+                const res = await axios.post("auth/complete-profile", payload);
                 if (res.data.success) {
                     toast.success(res.data.message);
                     setShowCreateModal(false);
                     fetchData();
-                    setNewUser({ name: "", email: "", phone: "", password: "", role: "USER" });
+                    setNewUser({ name: "", email: "", phone: "", role: "USER" });
                 } else {
                     toast.error(res.data.message);
                 }
@@ -50,6 +53,7 @@ const AdminUserList = () => {
             }
         } catch (error) {
             toast.error("Creation failed.");
+            console.error("Create user error: ", error);
         }
     };
 
@@ -160,7 +164,7 @@ const AdminUserList = () => {
                         </ul>
 
                         {/* RIGHT BUTTON */}
-                        <button className="btn btn-outline-danger d-flex align-items-center gap-2 px-3" onClick={() => { setShowCreateModal(true); setModalMode('CREATE'); setNewUser({ name: "", email: "", phone: "", password: "", role: "USER" }); }}>
+                        <button className="btn btn-outline-danger d-flex align-items-center gap-2 px-3" onClick={() => { setShowCreateModal(true); setModalMode('CREATE'); setNewUser({ name: "", email: "", phone: "", role: "USER" }); }}>
                             <i className="bi bi-plus-circle"></i>
                             Create
                         </button>
@@ -186,7 +190,7 @@ const AdminUserList = () => {
                                     type="search"
                                     className="form-control bg-dark text-white border-white"
                                     name="text"
-                                    placeholder="Search by name, email, phone..."
+                                    placeholder="Search..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                 />
@@ -253,15 +257,17 @@ const AdminUserList = () => {
                                                         fontSize: "18px",
                                                     }}
                                                 ></i>
-                                                <i
-                                                    className="fa-solid fa-pen-to-square text-warning"
-                                                    style={{
-                                                        cursor: "pointer",
-                                                        fontSize: "18px",
+                                                {item.role !== "ADMIN" && (
+                                                    <i
+                                                        className="fa-solid fa-pen-to-square text-warning"
+                                                        style={{
+                                                            cursor: "pointer",
+                                                            fontSize: "18px",
                                                     }}
                                                     onClick={() => { setShowCreateModal(true); setModalMode('EDIT'); setNewUser({ name: item.name, email: item.email, phone: item.phone, role: item.role, _id: item._id }); }}
 
-                                                ></i>
+                                                    ></i>
+                                                )}
                                             </td>
                                         </tr>
                                     ))
@@ -323,20 +329,6 @@ const AdminUserList = () => {
                                         }
                                     />
                                 </div>
-                                {modalMode == 'CREATE' &&
-                                    <div className="mb-3">
-                                        <label>Password</label>
-                                        <input
-                                            type="password"
-                                            className="form-control bg-dark text-white"
-                                            placeholder="Choose a secure password"
-                                            value={newUser.password}
-                                            onChange={(e) =>
-                                                setNewUser({ ...newUser, password: e.target.value })
-                                            }
-                                        />
-                                    </div>
-                                }
                                 <div className="mb-3">
                                     <label>Phone Number</label>
                                     <input

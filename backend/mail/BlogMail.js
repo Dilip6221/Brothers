@@ -3,7 +3,7 @@ const { transporter } = require('../model/User.js');
 const sendSubscribeMail = async (email, blog) => {
   try {
     await transporter.sendMail({
-      from: `"BROTHER'S GARAGE" <${process.env.SMTP_USER}>`,
+      from: `"RYDAX Studio" <${process.env.SMTP_USER}>`,
       to: email,
       subject: `📝 New Blog Published: ${blog.title}`,
       html: `
@@ -13,7 +13,7 @@ const sendSubscribeMail = async (email, blog) => {
           <!-- Header -->
           <div style="background: linear-gradient(90deg, #ff4b2b, #6a414b); padding: 25px; text-align: center; color: #fff;">
             <img src="https://res.cloudinary.com/dagsmbnaa/image/upload/v1763031828/brand_cuxsip.png" 
-                 alt="BROTHER'S" 
+                 alt="RYDAX Studio" 
                  style="width: 120px; margin-bottom: 10px;" />
             <h2 style="margin: 0; font-size: 22px;">🚀 New Blog Just Arrived!</h2>
           </div>
@@ -42,13 +42,13 @@ const sendSubscribeMail = async (email, blog) => {
             </a>
 
             <p style="margin-top: 25px; font-size: 12px; color: #aaa;">
-              You are receiving this email because you subscribed to BROTHER'S GARAGE blog updates.
+              You are receiving this email because you subscribed to RYDAX Studio blog updates.
             </p>
           </div>
 
           <!-- Footer -->
           <div style="background: #eee; padding: 18px; text-align: center; font-size: 12px; color: #555;">
-            © ${new Date().getFullYear()} BROTHER'S GARAGE — All Rights Reserved.
+            © ${new Date().getFullYear()} RYDAX Studio — All Rights Reserved.
           </div>
 
         </div>

@@ -3,7 +3,7 @@ const { transporter } = require('../model/User.js');
 const sendInqueryMail = async (user) => {
   try {
     await transporter.sendMail({
-      from: `"BROTHER'S" <${process.env.SMTP_USER}>`,
+      from: `"RYDAX Studio" <${process.env.SMTP_USER}>`,
       to: process.env.SMTP_USER,
       subject: "New Customer Inquiry Received!",
       html: `
@@ -62,7 +62,7 @@ const sendInqueryMail = async (user) => {
 
           <!-- FOOTER -->
           <div style="background:#eee; padding:15px; text-align:center; font-size:12px; color:#555;">
-            © ${new Date().getFullYear()} BROTHER'S. All rights reserved.
+            © ${new Date().getFullYear()} RYDAX Studio. All rights reserved.
           </div>
 
         </div>

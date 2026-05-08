@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import letsStartLogo from "../assets/images/loginimage.webp";
-import loginLogo from "../assets/images/brand.png";
+import loginLogo from "../assets/images/rydax.png";
 import { UserContext } from "../context/UserContext.jsx";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -350,6 +350,7 @@ const Navbar = () => {
     const fetchServices = async () => {
       try {
         const res = await axios.get("service/admin/services");
+        console.log("Fetched Services:", res.data.data);return false;
         const options = res.data.data.map(c => ({
           value: c.title,
           label: c.title
@@ -500,7 +501,7 @@ const Navbar = () => {
     <>
       <div className="navbar-wrapper fixed-top">
         <div className="container d-flex align-items-center justify-content-between">
-          <a href="/" className="navbar-brand">
+          <a href="/">
             <img src={loginLogo} alt="Logo" className="navbar-logo" />
           </a>
           <button

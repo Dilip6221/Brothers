@@ -164,7 +164,7 @@ const Blog = () => {
                                                 </span>
                                                 <span>
                                                     <i className="bi bi-person"></i>{" "}
-                                                    BROTHER'S
+                                                    RYDAX
                                                 </span>
                                             </div>
 

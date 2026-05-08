@@ -59,7 +59,7 @@ const About = () => {
     <div className="bg-black text-white">
       <div className="py-5 text-center">
         <span className="about-badge">
-          About BROTHER'S
+          About RYDAX
         </span>
 
         <div className="container text-center">
