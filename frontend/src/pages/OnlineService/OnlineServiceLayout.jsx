@@ -14,10 +14,9 @@ const OnlineServiceLayout = () => {
     <header className="header-section">
       <div className="service-topbar">
         <div className="service-container">
-          <div className="left">
-            <img src={logo} alt="logo" className="service-logo" />
-          </div>
-
+          <NavLink to="/">
+            <img src={logo} alt="RYDAX LOGO" className="navbar-logo" />
+          </NavLink>
           {/* SEARCH AREA */}
           <div className="center">
             <div className="city-select">

@@ -61,9 +61,9 @@ const Footer = () => {
                         <div className="row gy-4">
                             <div className="col-lg-3 col-md-6 col-12 footer-brand-box">
 
-                                <a href="/" className="navbar-brand">
+                                <NavLink to="/">
                                     <img src={loginLogo} alt="Logo" className="footer-logo" />
-                                </a>
+                                </NavLink>
                                 <div className="footer-social">
                                     <a href="#" className="social-icon"><i className="bi bi-facebook"></i></a>
                                     <a href="#" className="social-icon"><i className="bi bi-instagram"></i></a>

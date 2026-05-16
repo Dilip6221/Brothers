@@ -27,8 +27,8 @@ body:not(.admin-page) {
   padding-top: 90px;
 }
 .navbar-logo {
-  height: 185px;
-  margin-top: -80px;
+  height: 195px;
+  margin-top: -95px;
   object-fit: contain;
   position: absolute;
   left: 140px;

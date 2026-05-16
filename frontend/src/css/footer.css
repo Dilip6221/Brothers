@@ -95,11 +95,9 @@
 /* responsive */
 
 @media(max-width:768px) {
-
     .newsletter-form {
         flex-direction: column;
     }
-
     .newsletter-form button {
         width: 100%;
     }
@@ -205,11 +203,10 @@ font-weight:600;
 }
 .footer-logo {
     width: 240px;
+    margin-bottom: -10px;
+    margin-top: -30px;
 }
 
-.footer-logo,.navbar-logo:hover {
-    transform: scale(1.03);
-}
 
 .social-icon {
     width: 38px;

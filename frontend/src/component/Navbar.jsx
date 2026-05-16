@@ -501,9 +501,9 @@ const Navbar = () => {
     <>
       <div className="navbar-wrapper fixed-top">
         <div className="container d-flex align-items-center justify-content-between">
-          <a href="/">
+          <NavLink to="/">
             <img src={loginLogo} alt="Logo" className="navbar-logo" />
-          </a>
+          </NavLink>
           <button
             className="mobile-menu-btn d-lg-none"
             type="button"
