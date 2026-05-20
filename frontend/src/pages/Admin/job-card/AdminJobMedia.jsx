@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AdminLayout from "../AdminLayout.jsx";
 import toast from "react-hot-toast";
+import { validateForm } from "../../../utils/formValidation.js";
+import { jobMediaValidationRules } from "../../../utils/validationRules.js";
 
 const STAGES = [
     "CHECK_IN",
@@ -23,6 +25,7 @@ const AdminJobMedia = () => {
     const [stage, setStage] = useState("");
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef(null);
+    const stageRef = useRef(null);
 
     const fetchMedia = async () => {
         try {
@@ -39,8 +42,13 @@ const AdminJobMedia = () => {
     }, [id]);
 
     const uploadMedia = async () => {
-        if (!file) return toast.error("Select file");
-        if (!stage) return toast.error("Select stage");
+        const isValid = validateForm({
+            values: { file, stage },
+            validationRules: jobMediaValidationRules,
+            inputRefs: { file: fileInputRef, stage: stageRef },
+        });
+        if (!isValid) return;
+
         const formData = new FormData();
         formData.append("media", file);
         formData.append("stage", stage);
@@ -105,6 +113,7 @@ const AdminJobMedia = () => {
                                 className="form-control text-white bg-dark"
                                 value={stage}
                                 onChange={(e) => setStage(e.target.value)}
+                                ref={stageRef}
                             >
                                 <option value="">Select Stage</option>
                                 {STAGES.map(s => (

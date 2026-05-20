@@ -25,9 +25,6 @@ router.post("/admin/user-cars/create",createUserCar ); */
 const createUserCar = async (req, res) => {
   try {
     const { userId, brand, model, year, color, registrationNumber, vinNumber } = req.body;
-    if (!userId || !brand || !model || !year || !registrationNumber) {
-      return res.json({ success: false, message: "Required fields missing" });
-    }
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.json({ success: false, message: "Invalid User ID" });
     }
@@ -135,9 +132,6 @@ const generateJobCode = async () => {
 const createJobCard = async (req, res) => {
   try {
     const { userId, carId, expectedDelivery, customerNotes } = req.body;
-    if (!userId || !carId || !expectedDelivery) {
-      return res.json({ success: false, message: "All fields are required" });
-    }
     const user = await User.findById(userId);
     if (!user) {
       return res.json({ success: false, message: "Invalid user" });
@@ -251,9 +245,6 @@ const uploadJobMedia = async (req, res) => {
   try {
     const { jobId } = req.params;
     const { stage } = req.body;
-    if (!stage) {
-      return res.json({ success: false, message: "Stage is required" });
-    }
     if (!req.file) {
       return res.json({ success: false, message: "No file uploaded" });
     }

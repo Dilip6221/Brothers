@@ -6,8 +6,9 @@ const jwt = require('jsonwebtoken');
 const { sendWelcomeMail } = require('../mail/UserMail');
 
 
-const generateToken = (userId) => {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '30d' });
+const generateToken = (user) => {
+    const expiresIn = user.role === "ADMIN" ? "1h" : "30d";
+    return jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn });
 };
 
 const generateOtp = () => {
@@ -110,12 +111,13 @@ const verifyOtp = async (req, res) => {
         await otpDoc.save();
         let user = await User.findOne({ phone });
         if (user && user.isProfileComplete) {
-            const token = generateToken(user._id);
+            const token = generateToken(user);
+            const isAdmin = user.role === "ADMIN";
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: false,
                 sameSite: process.env.NODE_ENV === "PRODUCTION" ? "none" : "lax",
-                maxAge: 30 * 24 * 60 * 60 * 1000,
+                maxAge: isAdmin ? 1 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000,
             });
             user.lastLoginAt = new Date();
             user.loginCount += 1;
@@ -132,13 +134,13 @@ const verifyOtp = async (req, res) => {
 const completeProfile = async (req, res) => {
     try {
         const { phone, name, email,role,isAdminCreate } = req.body;
-        if (!name || !email) {
-            return res.json({success: false, message: "Name and email are required"});
-        }
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return res.json({success: false,message: "Invalid email format"});
-        }
+        // if (!name || !email) {
+        //     return res.json({success: false, message: "Name and email are required"});
+        // }
+        // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // if (!emailRegex.test(email)) {
+        //     return res.json({success: false,message: "Invalid email format"});
+        // }
         const normalizedEmail = email.toLowerCase().trim();
         const existingUsers = await User.find({
             $or: [
@@ -173,12 +175,13 @@ const completeProfile = async (req, res) => {
         }
 
         if (!isAdminCreate) {
-            const token = generateToken(user._id);
+            const token = generateToken(user);
+            const isAdmin = user.role === "ADMIN";
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: false,
                 sameSite: process.env.NODE_ENV === "PRODUCTION" ? "none" : "lax",
-                maxAge: 30 * 24 * 60 * 60 * 1000,
+                maxAge: isAdmin ? 1 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000,
             });
         }
         sendWelcomeMail(user).catch(err =>

@@ -3,6 +3,8 @@ import AdminLayout from "../AdminLayout.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { validateForm } from "../../../utils/formValidation.js";
+import { serviceCreateValidationRules } from "../../../utils/validationRules.js";
 
 const AdminCreateService = () => {
   const { id } = useParams();
@@ -22,6 +24,10 @@ const AdminCreateService = () => {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState("");
   const fileInputRef = useRef(null);
+  const titleRef = useRef(null);
+  const shortDescRef = useRef(null);
+  const descRef = useRef(null);
+  const statusRef = useRef(null);
 
   // ================= FETCH FOR EDIT =================
   const fetchService = async () => {
@@ -42,7 +48,8 @@ const AdminCreateService = () => {
           setPreview(s.image.url);
         }
       }
-    } catch {
+    } catch (err) {
+      console.error("Fetch service error", err);
       toast.error("Failed to load service");
     }
   };
@@ -61,6 +68,12 @@ const AdminCreateService = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const isValid = validateForm({
+      values: { ...form, image },
+      validationRules: serviceCreateValidationRules,
+      inputRefs: { title: titleRef, shortDescription: shortDescRef, description: descRef, status: statusRef, image: fileInputRef },
+    });
+    if (!isValid) return;
     try {
       const formData = new FormData();
       Object.keys(form).forEach((key) => {
@@ -86,7 +99,8 @@ const AdminCreateService = () => {
       } else {
         toast.error(res.data.message);
       }
-    } catch {
+    } catch (err) {
+      console.error("Save service error", err);
       toast.error("Failed to save service");
     }
   };
@@ -118,7 +132,7 @@ const AdminCreateService = () => {
               placeholder="e.g. Full Service"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
-              required
+              ref={titleRef}
             />
           </div>
 
@@ -153,10 +167,8 @@ const AdminCreateService = () => {
               placeholder="A short summary shown on listing"
               rows="2"
               value={form.shortDescription}
-              onChange={(e) =>
-                setForm({ ...form, shortDescription: e.target.value })
-              }
-              required
+              onChange={(e) => setForm({ ...form, shortDescription: e.target.value })}
+              ref={shortDescRef}
             />
           </div>
 
@@ -168,10 +180,8 @@ const AdminCreateService = () => {
               placeholder="Detailed description for the service"
               rows="2"
               value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
-              required
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              ref={descRef}
             />
           </div>
 
@@ -195,6 +205,7 @@ const AdminCreateService = () => {
                 className="form-control bg-dark text-white border-secondary pe-5"
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value })}
+                ref={statusRef}
               >
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="INACTIVE">INACTIVE</option>

@@ -12,9 +12,6 @@ const slugify = require('slugify');
 const createService = async (req, res) => {
   try {
     const {id, title, shortDescription, description, icon, category, duration, status } = req.body;
-    if (!title || !shortDescription || !description) {
-      return res.json({ success: false, message: 'Required fields missing' });
-    }
     const slug = slugify(title, { lower: true, strict: true });
     const existingSlug = await Services.findOne({ slug, _id: { $ne: id } });
     if (existingSlug) {

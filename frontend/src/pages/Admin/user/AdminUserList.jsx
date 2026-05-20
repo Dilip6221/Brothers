@@ -1,9 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef} from "react";
 import AdminLayout from "../AdminLayout.jsx";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import { UserContext } from "../../../context/UserContext.jsx";
+import { validateForm } from "../../../utils/formValidation.js";
+import { userCreateValidationRules } from "../../../utils/validationRules.js";
 
 const AdminUserList = () => {
     const { downloadCSV } = useContext(UserContext);
@@ -22,12 +24,25 @@ const AdminUserList = () => {
         phone: "",
         role: "USER"
     });
+    const createUserRef = {
+        name: useRef(),
+        email: useRef(),
+        phone: useRef(),
+        role: useRef(),
+    };
 
     /* For create new user aur staff */
     const handleCreateUser = async (e) => {
         e.preventDefault();
+        const isValid = validateForm({
+            values: newUser,
+            validationRules: userCreateValidationRules,
+            inputRefs: createUserRef
+        });
+        if (!isValid) return;
+
         try {
-            if (modalMode == 'CREATE') {
+            if (modalMode === 'CREATE') {
                 const payload = {
                     ...newUser,
                     isAdminCreate: true
@@ -63,6 +78,7 @@ const AdminUserList = () => {
             const res = await axios.post("user/admin/user-data");
             setUser(res.data.data);
         } catch (error) {
+            console.error("Fetch user data error: ", error);
             toast.error("Error fetching Customer data");
         }
     };
@@ -115,6 +131,7 @@ const AdminUserList = () => {
             }
         } catch (error) {
             toast.error("Status update failed");
+            console.error("Status update error: ", error);
         }
     }
 
@@ -244,7 +261,11 @@ const AdminUserList = () => {
                                                         : "bg-danger"
                                                         }`}
                                                     style={{ cursor: "pointer" }}
-                                                    onClick={() => handleUserStatus(item._id, item.status)}
+                                                   onClick={() => {
+                                                        if (item.role !== "ADMIN") {
+                                                            handleUserStatus(item._id, item.status);
+                                                        }
+                                                    }}
                                                 >
                                                     {item.status}
                                                 </span>
@@ -288,8 +309,6 @@ const AdminUserList = () => {
                 >
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content bg-dark text-white border-secondary">
-
-                            {/* Header */}
                             <div className="modal-header border-secondary">
                                 <h5 className="modal-title">
                                     <i className="bi bi-person-plus me-2 text-info"></i>
@@ -303,7 +322,6 @@ const AdminUserList = () => {
 
                             {/* Body */}
                             <div className="modal-body">
-
                                 <div className="mb-3">
                                     <label>Name</label>
                                     <input
@@ -314,6 +332,7 @@ const AdminUserList = () => {
                                         onChange={(e) =>
                                             setNewUser({ ...newUser, name: e.target.value })
                                         }
+                                        ref={createUserRef.name}
                                     />
                                 </div>
 
@@ -327,6 +346,7 @@ const AdminUserList = () => {
                                         onChange={(e) =>
                                             setNewUser({ ...newUser, email: e.target.value })
                                         }
+                                        ref={createUserRef.email}
                                     />
                                 </div>
                                 <div className="mb-3">
@@ -339,6 +359,7 @@ const AdminUserList = () => {
                                         onChange={(e) =>
                                             setNewUser({ ...newUser, phone: e.target.value })
                                         }
+                                        ref={createUserRef.phone}
                                     />
                                 </div>
 
@@ -351,6 +372,7 @@ const AdminUserList = () => {
                                             onChange={(e) =>
                                                 setNewUser({ ...newUser, role: e.target.value })
                                             }
+                                            ref={createUserRef.role}
                                         >
                                             <option value="USER">USER</option>
                                             <option value="STAFF">STAFF</option>

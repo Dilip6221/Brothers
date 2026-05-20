@@ -1,9 +1,11 @@
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AdminLayout from "../AdminLayout.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import TextEditor from "../../../component/Admin/TextEditor.jsx";
+import { validateForm } from "../../../utils/formValidation.js";
+import { blogCreateValidationRules } from "../../../utils/validationRules.js";
 
 const AdminCreateBlog = () => {
     const navigate = useNavigate();
@@ -21,6 +23,10 @@ const AdminCreateBlog = () => {
     });
 
     const [preview, setPreview] = useState("");
+    const titleRef = useRef(null);
+    const categoryRef = useRef(null);
+    const thumbnailRef = useRef(null);
+    const contentRef = useRef(null);
 
     const fetchBlog = async () => {
         try {
@@ -49,6 +55,17 @@ const AdminCreateBlog = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        // make thumbnail required only when creating a new blog
+        const rules = { ...blogCreateValidationRules };
+        if (isEdit) rules.thumbnail = { required: false };
+
+        const isValid = validateForm({
+            values: { title: form.title, category: form.category, content: form.content, thumbnail: form.thumbnail },
+            validationRules: rules,
+            inputRefs: { title: titleRef, category: categoryRef, content: contentRef, thumbnail: thumbnailRef },
+        });
+        if (!isValid) return;
+
         try {
             const formData = new FormData();
             formData.append("title", form.title);
@@ -106,11 +123,10 @@ const AdminCreateBlog = () => {
                         <input
                             type="text"
                             className="form-control bg-dark text-white border-secondary"
-                            placeholder="Title"
+                            placeholder="Title*"
                             value={form.title}
-                            onChange={(e) =>
-                                setForm({ ...form, title: e.target.value })
-                            }
+                            onChange={(e) => setForm({ ...form, title: e.target.value })}
+                            ref={titleRef}
                         />
                     </div>
 
@@ -121,9 +137,8 @@ const AdminCreateBlog = () => {
                             className="form-control bg-dark text-white border-secondary"
                             placeholder="Category"
                             value={form.category}
-                            onChange={(e) =>
-                                setForm({ ...form, category: e.target.value })
-                            }
+                            onChange={(e) => setForm({ ...form, category: e.target.value })}
+                            ref={categoryRef}
                         />
                     </div>
 
@@ -177,10 +192,9 @@ const AdminCreateBlog = () => {
                             onChange={(e) => {
                                 const file = e.target.files[0];
                                 setForm({ ...form, thumbnail: file });
-                                if (file) {
-                                    setPreview(URL.createObjectURL(file));
-                                }
+                                if (file) setPreview(URL.createObjectURL(file));
                             }}
+                            ref={thumbnailRef}
                         />
                         {preview && (
                             <img
@@ -202,6 +216,7 @@ const AdminCreateBlog = () => {
                                 padding: "10px",
                                 background: "#0f0f0f"
                             }}
+                            ref={contentRef}
                         >
                             <TextEditor
                                 value={form.content}

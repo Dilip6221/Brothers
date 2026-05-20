@@ -7,6 +7,57 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import * as bootstrap from "bootstrap";
 import Select from "react-select";
+import { validateForm } from "../utils/formValidation.js";
+import { otpValidationRules, completeProfileValidationRules, submitInquiryValidationRules } from "../utils/validationRules.js";
+
+
+
+// Common React Select Styles (Single + Multi)
+const reactSelectStyles = {
+  control: (base, state) => ({
+    ...base,
+    background: "rgba(255,255,255,0.08)",
+    border: "1px solid rgba(255,255,255,0.2)",
+    boxShadow: "none",
+    cursor: "pointer",
+    "&:hover": {
+      border: "1px solid rgba(255,255,255,0.2)",
+    }
+  }),
+  singleValue: (base) => ({
+    ...base,
+    color: "white",
+  }),
+  menu: (base) => ({
+    ...base,
+    background: "#222",
+    borderRadius: "6px",
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isSelected
+      ? "#254c87"
+      : state.isFocused
+        ? "#444"
+        : "#222",
+    color: "white",
+    cursor: "pointer",
+  }),
+  placeholder: (base) => ({
+    ...base,
+    color: "#ccc",
+  }),
+
+  indicatorSeparator: () => ({ display: "none" }),
+  dropdownIndicator: (base) => ({
+    ...base,
+    color: "#ccc",
+  }),
+  multiValueRemove: (base) => ({
+    ...base,
+    color: "black",
+  }),
+};
 
 const Navbar = () => {
   const { user, logout, token, fetchUser } = useContext(UserContext);
@@ -63,10 +114,19 @@ const Navbar = () => {
       e.target.previousSibling.focus();
     }
   };
+
+  const mobileInputRefs = {
+    mobile: useRef(),
+  };
   const sendOtp = async () => { //send otp to user phone number
-    if (!mobile || mobile.length !== 10) {
-      return toast.error("Enter valid mobile number");
-    }
+    const isValid = validateForm({
+      values: {
+        mobile
+      },
+      validationRules: otpValidationRules,
+      inputRefs: mobileInputRefs
+    });
+    if (!isValid) return;
     try {
       setLoading(true);
       const res = await axios.post("auth/send-otp", {
@@ -99,12 +159,12 @@ const Navbar = () => {
   };
 
   useEffect(() => {  // Auto focus first OTP input when step changes to OTP
-  if (loginStep === "OTP") {
-    setTimeout(() => {
-      otpRefs.current[0]?.focus();
-    }, 100);
-  }
-}, [loginStep]);
+    if (loginStep === "OTP") {
+      setTimeout(() => {
+        otpRefs.current[0]?.focus();
+      }, 100);
+    }
+  }, [loginStep]);
 
   const resendOtp = async () => { // Resend OTP handler with limit of 3 times
     if (resendCount >= 3) {
@@ -121,6 +181,7 @@ const Navbar = () => {
         setResendCount(prev => prev + 1);
         setCanResend(false);
         startTimer();
+        setOtp(Array(6).fill(""));
       } else {
         toast.error(res.data.message);
       }
@@ -146,6 +207,8 @@ const Navbar = () => {
       if (res.data.success) {
         if (res.data.isNewUser) {
           setLoginStep("PROFILE");
+          setName("");
+          setEmail("");
         } else {
           toast.success("Login successful");
           await fetchUser();
@@ -165,10 +228,20 @@ const Navbar = () => {
     }
   };
 
+  const completProfileInputRefs = {
+    name: useRef(),
+    email: useRef(),
+  };
   const completeProfile = async () => { // Complete profile handler for new users after OTP verification
-    if (!name || !email) {
-      return toast.error("Please enter name and email");
-    }
+    const isValid = validateForm({
+      values: {
+        name,
+        email
+      },
+      validationRules: completeProfileValidationRules,
+      inputRefs: completProfileInputRefs
+    });
+    if (!isValid) return;
     try {
       setLoading(true);
       const res = await axios.post("auth/complete-profile", { phone: mobile, name, email });
@@ -179,7 +252,7 @@ const Navbar = () => {
         setLoginStep("PHONE");
         setMobile("");
         setOtp(Array(6).fill(""));
-      }else{
+      } else {
         toast.error(res.data.message || "Failed to complete profile");
       }
     } catch (err) {
@@ -218,52 +291,7 @@ const Navbar = () => {
       bsOffcanvasRef.current.hide();
     }
   }, [location.pathname]);
-  // Common React Select Styles (Single + Multi)
-  const reactSelectStyles = {
-    control: (base, state) => ({
-      ...base,
-      background: "rgba(255,255,255,0.08)",
-      border: "1px solid rgba(255,255,255,0.2)",
-      boxShadow: "none",
-      cursor: "pointer",
-      "&:hover": {
-        border: "1px solid rgba(255,255,255,0.2)",
-      }
-    }),
-    singleValue: (base) => ({
-      ...base,
-      color: "white",
-    }),
-    menu: (base) => ({
-      ...base,
-      background: "#222",
-      borderRadius: "6px",
-    }),
-    option: (base, state) => ({
-      ...base,
-      backgroundColor: state.isSelected
-        ? "#254c87"
-        : state.isFocused
-          ? "#444"
-          : "#222",
-      color: "white",
-      cursor: "pointer",
-    }),
-    placeholder: (base) => ({
-      ...base,
-      color: "#ccc",
-    }),
 
-    indicatorSeparator: () => ({ display: "none" }),
-    dropdownIndicator: (base) => ({
-      ...base,
-      color: "#ccc",
-    }),
-    multiValueRemove: (base) => ({
-      ...base,
-      color: "black",
-    }),
-  };
 
   /* For Service and More Dropdowns */
   const ROUTE_GROUPS = {
@@ -328,47 +356,43 @@ const Navbar = () => {
     notes: ""
   });
 
-
+  const fetchServices = async () => {
+    try {
+      const res = await axios.get("service/admin/services");
+      const options = res.data.data.map(c => ({
+        value: c.title,
+        label: c.title
+      }));
+      setServiceOptions(options);
+    } catch (err) {
+      console.error("Frontend Error Fetching Services:", err);
+      toast.error(err.message || "Failed to load services");
+    }
+  };
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get("car-companies/companies");
+      const options = res.data.data.map(c => ({
+        value: c._id,
+        label: c.name
+      }));
+      setCarBrandOptions(options);
+    } catch (err) {
+      console.error("Frontend Error Fetching Companies:", err);
+      toast.error(err.message || "Failed to load car companies");
+    }
+  };
   useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        const res = await axios.get("car-companies/companies");
-        const options = res.data.data.map(c => ({
-          value: c._id,
-          label: c.name
-        }));
-        setCarBrandOptions(options);
-      } catch (err) {
-        console.error("Frontend Error Fetching Companies:", err);
-        toast.error(err.message || "Failed to load car companies");
-      }
-    };
     fetchCompanies();
-  }, []);
-
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const res = await axios.get("service/admin/services");
-        console.log("Fetched Services:", res.data.data);return false;
-        const options = res.data.data.map(c => ({
-          value: c.title,
-          label: c.title
-        }));
-        setServiceOptions(options);
-      } catch (err) {
-        console.error("Frontend Error Fetching Services:", err);
-        toast.error(err.message || "Failed to load services");
-      }
-    };
     fetchServices();
   }, []);
+
 
   const handleBrandChange = async (selected) => {
     const companyId = selected?.value || "";
     setServiceEnquery(prev => ({
       ...prev,
-      carBrand: selected?.label || "",
+      carBrand: selected?.value || "",
       carModel: ""
     }));
     setCarModelOptions([]);
@@ -472,8 +496,26 @@ const Navbar = () => {
     const { name, value } = e.target;
     setServiceEnquery((prev) => ({ ...prev, [name]: value }));
   };
+  const inputRefs = {
+    name: useRef(),
+    phone: useRef(),
+    email: useRef(),
+    city: useRef(),
+    address: useRef(),
+    carBrand: useRef(),
+    carModel: useRef(),
+    services: useRef(),
+    notes: useRef()
+  };
+
   const handleEnquirySubmit = async (e) => { // Submit service enquiry form
     e.preventDefault();
+    const isValid = validateForm({
+      values: serviceEnquery,
+      validationRules: submitInquiryValidationRules,
+      inputRefs
+    });
+    if (!isValid) return;
     try {
       const res = await axios.post("inquery/service-inquiry", {
         name: serviceEnquery.name,
@@ -494,7 +536,8 @@ const Navbar = () => {
         toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error);
+      console.error("Service Enquiry Error:", error);
+      toast.error("Something went wrong. Please try again.");
     }
   };
   return (
@@ -815,6 +858,7 @@ const Navbar = () => {
                       autoComplete="off"
                       value={serviceEnquery.name}
                       onChange={handleEnquiryInputChange}
+                      ref={inputRefs.name}
                     />
                   </div>
                   <div className="col-md-6">
@@ -825,6 +869,7 @@ const Navbar = () => {
                       placeholder="Phone Number*"
                       value={serviceEnquery.phone}
                       onChange={handleEnquiryInputChange}
+                      ref={inputRefs.phone}
                     />
                   </div>
 
@@ -836,6 +881,7 @@ const Navbar = () => {
                       placeholder="Email*"
                       value={serviceEnquery.email}
                       onChange={handleEnquiryInputChange}
+                      ref={inputRefs.email}
                     />
                   </div>
 
@@ -847,6 +893,7 @@ const Navbar = () => {
                       placeholder="City*"
                       value={serviceEnquery.city}
                       onChange={handleEnquiryInputChange}
+                      ref={inputRefs.city}
                     />
                   </div>
 
@@ -858,6 +905,7 @@ const Navbar = () => {
                       placeholder="Address"
                       value={serviceEnquery.address}
                       onChange={handleEnquiryInputChange}
+                      ref={inputRefs.address}
                     />
                   </div>
 
@@ -871,6 +919,7 @@ const Navbar = () => {
                         opt => opt.value === serviceEnquery.carBrand
                       )}
                       onChange={handleBrandChange}
+                      ref={inputRefs.carBrand}
                     />
                   </div>
                   <div className="col-md-6">
@@ -891,6 +940,7 @@ const Navbar = () => {
                           }
                         })
                       }
+                      ref={inputRefs.carModel}
                     />
                   </div>
                   <div className="col-md-12">
@@ -909,6 +959,7 @@ const Navbar = () => {
                         }))
                       }
                       styles={reactSelectStyles}
+                      ref={inputRefs.services}
                     />
                   </div>
                   <div className="col-12">
@@ -919,6 +970,7 @@ const Navbar = () => {
                       placeholder="Comments or Special Requirements"
                       value={serviceEnquery.notes}
                       onChange={handleEnquiryInputChange}
+                      ref={inputRefs.notes}
                     />
                   </div>
                 </div>
@@ -954,6 +1006,7 @@ const Navbar = () => {
                   placeholder="Enter Mobile Number"
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
+                  ref={mobileInputRefs.mobile}
                 />
               </div>
 
@@ -976,7 +1029,7 @@ const Navbar = () => {
                     maxLength="1"
                     className="otp-box"
                     value={digit}
-                    ref={(el) => (otpRefs.current[index] = el)} 
+                    ref={(el) => (otpRefs.current[index] = el)}
                     onChange={(e) => handleOtpChange(e, index)}
                     onKeyDown={(e) => handleKeyDown(e, index)}
                     onPaste={handlePaste}
@@ -1020,16 +1073,18 @@ const Navbar = () => {
               <input
                 type="text"
                 className="profile-input"
-                placeholder="Enter Name"
+                placeholder="Enter Name*"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                ref={completProfileInputRefs.name}
               />
               <input
                 type="email"
                 className="profile-input"
-                placeholder="Enter Email"
+                placeholder="Enter Email*"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                ref={completProfileInputRefs.email}
               />
               <button
                 className="cont-btn w-100"

@@ -1,16 +1,18 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import "../css/contact.css";
 import Select from "react-select";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { UserContext } from "../context/UserContext.jsx";
+import { validateForm } from "../utils/formValidation.js";
+import { submitInquiryValidationRules } from "../utils/validationRules.js";
 
 const Contact = () => {
     const { user } = useContext(UserContext);
     const [carBrandOptions, setCarBrandOptions] = useState([]);
     const [carModelOptions, setCarModelOptions] = useState([]);
     const [serviceOptions, setServiceOptions] = useState([]);
- 
+
     const reactSelectStyles = {
         control: (base, state) => ({
             ...base,
@@ -67,6 +69,19 @@ const Contact = () => {
         services: [],
         notes: ""
     });
+  
+    const inputRefs = {
+        name: useRef(),
+        phone: useRef(),
+        email: useRef(),
+        city: useRef(),
+        address: useRef(),
+        carBrand: useRef(),
+        carModel: useRef(),
+        services: useRef(),
+        notes: useRef()
+    };
+
     useEffect(() => {
         const fetchCompanies = async () => {
             try {
@@ -129,6 +144,12 @@ const Contact = () => {
     };
     const handleEnquirySubmit = async (e) => {
         e.preventDefault();
+        const isValid = validateForm({
+            values: serviceEnquery,
+            validationRules : submitInquiryValidationRules,
+            inputRefs
+        });
+        if (!isValid) return;
         try {
             const res = await axios.post("inquery/service-inquiry", {
                 name: serviceEnquery.name,
@@ -149,12 +170,11 @@ const Contact = () => {
             }
         } catch (error) {
             console.error("Frontend Error submitting enquiry:", error);
-            toast.error(error);
+            toast.error("Something went wrong");
         }
     };
     return (
         <div className="bg-black text-white px-2 px-md-0">
-
             <div className="py-5 text-center">
                 <span className="about-badge">
                     Contact Us
@@ -218,7 +238,6 @@ const Contact = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 {/* Contact Form */}
@@ -227,6 +246,7 @@ const Contact = () => {
                         <div className="col-md-6 mb-2">
                             <input type="text" name="name" className="form-control shadow-none text-white service-input"
                                 placeholder="Full Name*"
+                                ref={inputRefs.name}
                                 autoComplete="off"
                                 value={serviceEnquery.name}
                                 onChange={handleEnquiryInputChange}
@@ -236,6 +256,7 @@ const Contact = () => {
                             <input type="tel" name="phone" inputMode="numeric" className="form-control shadow-none text-white service-input"
                                 placeholder="Phone Number*"
                                 autoComplete="off"
+                                ref={inputRefs.phone}
                                 value={serviceEnquery.phone}
                                 onChange={handleEnquiryInputChange}
                             />
@@ -244,6 +265,7 @@ const Contact = () => {
                             <input type="email" name="email" className="form-control shadow-none text-white service-input"
                                 placeholder="Email*"
                                 autoComplete="off"
+                                ref={inputRefs.email}
                                 value={serviceEnquery.email}
                                 onChange={handleEnquiryInputChange}
                             />
@@ -252,6 +274,7 @@ const Contact = () => {
                             <input type="text" name="city" className="form-control shadow-none text-white service-input"
                                 placeholder="City*"
                                 autoComplete="off"
+                                ref={inputRefs.city}
                                 value={serviceEnquery.city}
                                 onChange={handleEnquiryInputChange}
                             />
@@ -261,6 +284,7 @@ const Contact = () => {
                             <input type="text" name="address" className="form-control shadow-none text-white service-input"
                                 placeholder="Address"
                                 autoComplete="off"
+                                ref={inputRefs.address}
                                 value={serviceEnquery.address}
                                 onChange={handleEnquiryInputChange}
                             />
@@ -270,6 +294,7 @@ const Contact = () => {
                                 options={carBrandOptions}
                                 placeholder="Car Manufacturer*"
                                 styles={reactSelectStyles}
+                                ref={inputRefs.carBrand}
                                 maxMenuHeight={180}
                                 value={carBrandOptions.find(
                                     opt => opt.value === serviceEnquery.carBrand
@@ -280,9 +305,10 @@ const Contact = () => {
                         <div className="col-md-6 mb-2">
                             <Select
                                 options={carModelOptions}
-                                key={serviceEnquery.carBrand} 
+                                key={serviceEnquery.carBrand}
                                 placeholder="Car Model*"
                                 styles={reactSelectStyles}
+                                ref={inputRefs.carModel}
                                 maxMenuHeight={180}
                                 value={carModelOptions.find(
                                     opt => opt.value === serviceEnquery.carModel
@@ -302,6 +328,7 @@ const Contact = () => {
                                 isMulti
                                 options={serviceOptions}
                                 placeholder="Required Service*"
+                                ref={inputRefs.services}
                                 maxMenuHeight={90}
                                 value={serviceOptions.filter(opt =>
                                     serviceEnquery.services.includes(opt.value)
@@ -320,6 +347,7 @@ const Contact = () => {
                                 name="notes"
                                 className="form-control shadow-none text-white service-input"
                                 value={serviceEnquery.notes}
+                                ref={inputRefs.notes}
                                 onChange={handleEnquiryInputChange}
                                 rows="2"
                                 placeholder="Comments or Special Requirements"

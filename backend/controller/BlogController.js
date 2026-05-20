@@ -10,9 +10,6 @@ const slugify = require('slugify');
 const creteAdminBlog = async (req, res) => {
     try {
         const { id, title, content, category, tags, metaTitle, metaDescription } = req.body;
-        if (!title || !content || !category || !metaTitle || !metaDescription || !tags || tags.length === 0) {
-            return res.json({ success: false, message: "All fields are required" });
-        }
         let imageData = null;
         if (req.file) {
             const uploadResult = await new Promise((resolve, reject) => {

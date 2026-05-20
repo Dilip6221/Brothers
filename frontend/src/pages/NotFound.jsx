@@ -16,9 +16,12 @@ export default function NotFound() {
                 <br />
                 Let’s get you back on the right road!
               </p>
-              <Link to="/" className="btn mt-4" style={{ background: "#ff6600", fontWeight: 500, }}>
+              {/* <Link to="/" className="btn mt-4" style={{ background: "#ff6600", fontWeight: 500, }}>
                 Go to Homepage →
-              </Link>
+              </Link> */}
+              <Link to="/" className="btn mt-3 px-4 py-2 cont-btn">
+                  Go to Homepage →
+                </Link>
           </div>
         </div>
       </div>

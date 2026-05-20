@@ -48,7 +48,10 @@ const CustomerJobCard = () => {
                                     <br />
                                     Once a job starts, you’ll see updates, media & progress here.
                                 </p>
-                                <Link to="/my-car-vault" className="btn mt-2" style={{ background: "#ff6600", fontWeight: 500 }}>
+                                {/* <Link to="/my-car-vault" className="btn mt-2" style={{ background: "#ff6600", fontWeight: 500 }}>
+                                    Back to My Car Vault →
+                                </Link> */}
+                                <Link to="/my-car-vault" className="btn mt-3 px-4 py-2 cont-btn">
                                     Back to My Car Vault →
                                 </Link>
                             </div>

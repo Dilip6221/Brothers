@@ -136,7 +136,10 @@ const Blog = () => {
                                     <br />
                                     Check back soon for fresh automotive insights!
                                 </p>
-                                <Link to="/" className="btn mt-2" style={{background: "#ff6600",fontWeight: 500,}}>
+                                {/* <Link to="/" className="btn mt-2" style={{background: "#ff6600",fontWeight: 500,}}>
+                                    Go to Homepage →
+                                </Link> */}
+                                <Link to="/" className="btn mt-3 px-4 py-2 cont-btn">
                                     Go to Homepage →
                                 </Link>
                             </div>

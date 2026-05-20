@@ -6,9 +6,6 @@ const { Gallery } = require("../model/Gallery.js");
 // router.post("/admin/upload", upload.single("image"), uploadGalleryImage);
 const uploadGalleryImage = async (req, res) => {
   const { service, title } = req.body;
-  if (!service) {
-    return res.json({success: false,message: "Service is required" });
-  }
   try {
     const uploadResult = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(

@@ -48,9 +48,6 @@ const registerUser = async (req, res) => {
 const updateUserData = async(req,res) => {
     try{
        const {_id,name, email, phone, role } =  req.body;
-        if (!_id || !name || !email || !phone || !role) {
-            return res.json({ success: false, message: 'All fields are required' });
-        }
         const user = await User.findById(_id);
         if(!user){
             return res.json({success: false,message:'User Not Found'});

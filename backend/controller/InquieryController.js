@@ -11,13 +11,6 @@ const createServiceInquiry = async (req, res) => {
             phone = req.user.phone;
             email = req.user.email;
         }
-        if (!name || !phone || !email || !city || !carBrand || !carModel || !services || services.length === 0) {
-            return res.json({ success: false, message: 'All fields are required' });
-        }
-        const phoneRegex = /^[6-9]\d{9}$/;
-        if (!phoneRegex.test(phone)) {
-            return res.json({ success: false, message: 'Please enter a valid phone number' });
-        }
         const inquiry = await Inquiry.create({
             userId: req.user ? req.user._id : null,
             name,

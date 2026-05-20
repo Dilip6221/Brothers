@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import AdminLayout from "../AdminLayout.jsx";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
+import { validateForm } from "../../../utils/formValidation.js";
+import { carCreateValidationRules } from "../../../utils/validationRules.js";
 
 const AdminCreateUserCars = () => {
     const navigate = useNavigate();
@@ -22,13 +24,26 @@ const AdminCreateUserCars = () => {
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
+
+    const createUserRef = {
+        userId: useRef(),
+        brand: useRef(),
+        model: useRef(),
+        year: useRef(),
+        color: useRef(),
+        registrationNumber: useRef(),
+        vinNumber: useRef(),
+    };
+        
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!form.userId) {
-            toast.error("Please select customer");
-            return;
-        }
+        const isValid = validateForm({
+            values: form,
+            validationRules: carCreateValidationRules,
+            inputRefs: createUserRef,
+        });
+        if (!isValid) return;
 
         try {
             const res = await axios.post("jobcard/admin/user-cars/create",{...form,year: Number(form.year)});
@@ -75,7 +90,7 @@ const AdminCreateUserCars = () => {
                             value={form.userId}
                             onChange={(e) => setForm({ ...form, userId: e.target.value })}
                             className="form-control bg-dark text-white"
-                            required
+                            ref={createUserRef.userId}
                         >
                             <option value="">Select Customer...</option>
                             {users.map(u => (
@@ -94,8 +109,8 @@ const AdminCreateUserCars = () => {
                             className="form-control bg-dark text-white"
                             value={form.brand}
                             onChange={handleChange}
-                            required
                             placeholder="e.g. Toyota"
+                            ref={createUserRef.brand}
                         />
                     </div>
 
@@ -107,8 +122,8 @@ const AdminCreateUserCars = () => {
                             className="form-control bg-dark text-white"
                             value={form.model}
                             onChange={handleChange}
-                            required
                             placeholder="e.g. Corolla"
+                            ref={createUserRef.model}
                         />
                     </div>
 
@@ -122,8 +137,8 @@ const AdminCreateUserCars = () => {
                             onChange={handleChange}
                             min={1900}
                             max={new Date().getFullYear() + 1}
-                            required
                             placeholder="e.g. 2024"
+                            ref={createUserRef.year}
                         />
                     </div>
 
@@ -136,6 +151,7 @@ const AdminCreateUserCars = () => {
                             value={form.color}
                             onChange={handleChange}
                             placeholder="e.g. Red"
+                            ref={createUserRef.color}
                         />
                     </div>
 
@@ -147,8 +163,8 @@ const AdminCreateUserCars = () => {
                             className="form-control bg-dark text-white"
                             value={form.registrationNumber}
                             onChange={(e) => setForm({ ...form, registrationNumber: e.target.value.toUpperCase() })}
-                            required
                             placeholder="e.g. ABC-1234"
+                            ref={createUserRef.registrationNumber}
                         />
                     </div>
 
@@ -161,6 +177,7 @@ const AdminCreateUserCars = () => {
                             value={form.vinNumber}
                             onChange={handleChange}
                             placeholder="e.g. 1HGCM82633A004352"
+                            ref={createUserRef.vinNumber}
                         />
                     </div>
 

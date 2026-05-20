@@ -36,51 +36,80 @@ const MyCarVault = () => {
       </div>
       <div className="container pb-5">
         <div className="row">
-          {cars.map(car => (
-            console.log(car),
-            <div className="col-lg-6 col-md-6 col-sm-12 mb-4" key={car._id}>
-              <div className="vault-card">
-
-                <div className="vault-card-body">
-                  <div className="d-flex justify-content-between align-items-start mb-3">
-                    <div>
-                      <h4 className="text-white mb-1">
-                        {car.brand} {car.model}
-                      </h4>
-                      <p className="text-secondary mb-0">
-                        Reg No: {car.registrationNumber}
-                      </p>
-                    </div>
-                    <span className="vault-chip">{car.isActive ? "Active" : "Complete"}</span>
-                  </div>
-                  <div className="vault-divider"></div>
-                  <div className="d-flex justify-content-between mt-3">
-                    <div>
-                      <small className="text-secondary">Color</small>
-                      <p className="text-white mb-0 text-capitalize">
-                        {car.color || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <small className="text-secondary">Year</small>
-                      <p className="text-white mb-0">
-                        {car.year || "—"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-end mt-4">
-                    <Link
-                      to={`/my-car-vault/${car._id}/job-card`}
-                      className="vault-btn"
-                    >
-                      View Job Card
-                    </Link>
-                  </div>
+          {cars.length === 0 ? (
+            <div className="col-12 text-center">
+              <div className="empty-blog-box">
+                <div className="empty-icon">
+                  <i className="bi bi-car-front-fill"></i>
                 </div>
+                <h3 className="text-white">
+                  Your Garage is Waiting
+                </h3>
 
+                <p className="empty-text text-secondary">
+                  No vehicles have been added to your Car Vault yet.
+                  <br />
+                  Start building your premium garage experience by adding your first car.
+                </p>
+                <Link to="/" className="btn mt-3 px-4 py-2 cont-btn">
+                  Explore Services →
+                </Link>
               </div>
             </div>
-          ))}
+          ) : (
+            cars.map((car) => (
+              <div
+                className="col-lg-6 col-md-6 col-sm-12 mb-4"
+                key={car._id}
+              >
+                <div className="vault-card">
+                  <div className="vault-card-body">
+                    <div className="d-flex justify-content-between align-items-start mb-3">
+                      <div>
+                        <h4 className="text-white mb-1">
+                          {car.brand} {car.model}
+                        </h4>
+                        <p className="text-secondary mb-0">
+                          Reg No: {car.registrationNumber}
+                        </p>
+                      </div>
+
+                      <span className="vault-chip">
+                        {car.isActive ? "Active" : "Complete"}
+                      </span>
+                    </div>
+
+                    <div className="vault-divider"></div>
+
+                    <div className="d-flex justify-content-between mt-3">
+                      <div>
+                        <small className="text-secondary">Color</small>
+                        <p className="text-white mb-0 text-capitalize">
+                          {car.color || "—"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <small className="text-secondary">Year</small>
+                        <p className="text-white mb-0">
+                          {car.year || "—"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-end mt-4">
+                      <Link
+                        to={`/my-car-vault/${car._id}/job-card`}
+                        className="vault-btn"
+                      >
+                        View Job Card
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

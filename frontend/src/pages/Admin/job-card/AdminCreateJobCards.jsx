@@ -46,12 +46,11 @@ const AdminCreateJobCards = () => {
 
   return (
     <AdminLayout>
-      <div className="container-fluid p-4">
-        <div className="d-flex justify-content-between align-items-center ">
+      <div className="container-fluid">
+        <div className="d-flex justify-content-between align-items-center mb-4 ">
           <h4 className="section-title">
             <span className="first-letter">C</span>reate Job Card
           </h4>
-
           <button type="button" className="btn btn-outline-danger d-flex align-items-center gap-2" onClick={() => navigate("/admin/job-cards")}>
             <i className="bi bi-arrow-left"></i> Back
           </button>

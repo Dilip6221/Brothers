@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import AdminLayout from "../AdminLayout";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { validateForm } from "../../../utils/formValidation.js";
+import { galleryValidationRules } from "../../../utils/validationRules.js";
 
 const AdminGallery = () => {
     const [images, setImages] = useState([]);
@@ -54,12 +56,20 @@ const AdminGallery = () => {
         }
     };
 
+    const titleRef = useRef(null);
+    const serviceRef = useRef(null);
+    const fileRef = useRef(null);
+
     const handleUploadImage = async (e) => {
         e.preventDefault();
-        if (!newImage.file) {
-            toast.error("Please select an image");
-            return;
-        }
+
+        const isValid = validateForm({
+            values: { title: newImage.title, service: newImage.service, file: newImage.file },
+            validationRules: galleryValidationRules,
+            inputRefs: { title: titleRef, service: serviceRef, file: fileRef },
+        });
+        if (!isValid) return;
+
         const formData = new FormData();
         formData.append("title", newImage.title);
         formData.append("service", newImage.service);
@@ -189,9 +199,8 @@ const AdminGallery = () => {
                                         type="text"
                                         className="form-control mt-2 bg-dark text-white"
                                         value={newImage.title}
-                                        onChange={(e) =>
-                                            setNewImage({ ...newImage, title: e.target.value })
-                                        }
+                                        onChange={(e) => setNewImage({ ...newImage, title: e.target.value })}
+                                        ref={titleRef}
                                     />
                                 </div>
                                 <div className="mb-3">
@@ -200,12 +209,8 @@ const AdminGallery = () => {
                                         name="service"
                                         className="form-control mt-2 bg-dark text-white"
                                         value={newImage.service || ""}
-                                        onChange={(e) =>
-                                            setNewImage(prev => ({
-                                                ...prev,
-                                                service: e.target.value
-                                            }))
-                                        }
+                                        onChange={(e) => setNewImage(prev => ({ ...prev, service: e.target.value }))}
+                                        ref={serviceRef}
                                     >
                                         <option value="">Select Service</option>
                                         {serviceOptions.map((opt, index) => (
@@ -220,9 +225,8 @@ const AdminGallery = () => {
                                     <input
                                         type="file"
                                         className="form-control mt-2 bg-dark text-white"
-                                        onChange={(e) =>
-                                            setNewImage({ ...newImage, file: e.target.files[0] })
-                                        }
+                                        onChange={(e) => setNewImage({ ...newImage, file: e.target.files[0] })}
+                                        ref={fileRef}
                                     />
                                 </div>
 

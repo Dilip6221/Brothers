@@ -94,9 +94,8 @@ const Faq = () => {
 
                 <div className="container text-center">
                     <h3 className="section-title section-title-small">
-                        <span className="first-letter">B</span>rother's FAQS
+                        <span className="first-letter">R</span>ydax FAQS
                     </h3>
-
                     <p className="text-secondary fs-5 mt-2">
                         Everything you need to know about our car services
                     </p>

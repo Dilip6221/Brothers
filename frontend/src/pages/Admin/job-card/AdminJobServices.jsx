@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams,useNavigate } from "react-router-dom";
 import AdminLayout from "../AdminLayout.jsx";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { validateForm } from "../../../utils/formValidation.js";
+import { jobServiceValidationRules } from "../../../utils/validationRules.js";
 
 
 const AdminJobServices = () => {
@@ -12,6 +14,8 @@ const AdminJobServices = () => {
   const [serviceName, setServiceName] = useState("");
   const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(false);
+  const serviceNameRef = useRef(null);
+  const priceRef = useRef(null);
 
   const fetchServices = async () => {
     try {
@@ -27,15 +31,16 @@ const AdminJobServices = () => {
   }, [jobId]);
   
   const addService = async () => {
-    if (!serviceName.trim()) {
-      return toast.error("Enter service name");
-    }
-    if (!price || isNaN(price)) {
-      return toast.error("Enter valid price");
-    }
+    const isValid = validateForm({
+      values: { serviceName, price },
+      validationRules: jobServiceValidationRules,
+      inputRefs: { serviceName: serviceNameRef, price: priceRef },
+    });
+    if (!isValid) return;
+
     try {
       setLoading(true);
-      await axios.post(`jobcard/admin/job-services/create`,{jobId,serviceName,price: Number(price),});
+      await axios.post(`jobcard/admin/job-services/create`, { jobId, serviceName, price: Number(price) });
       toast.success("Service added");
       setServiceName("");
       setPrice("");
@@ -78,6 +83,7 @@ const AdminJobServices = () => {
               placeholder="Service Name (e.g. Oil Change)"
               value={serviceName}
               onChange={(e) => setServiceName(e.target.value)}
+              ref={serviceNameRef}
             />
           </div>
           <div className="col-md-3">
@@ -87,6 +93,7 @@ const AdminJobServices = () => {
               placeholder="Price ₹"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
+              ref={priceRef}
             />
           </div>
           <div className="col-md-2">
