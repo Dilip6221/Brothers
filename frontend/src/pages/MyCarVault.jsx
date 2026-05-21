@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import "../css/job-card.css";
 
 const MyCarVault = () => {
   const { token } = useContext(UserContext);
@@ -59,52 +60,65 @@ const MyCarVault = () => {
           ) : (
             cars.map((car) => (
               <div
-                className="col-lg-6 col-md-6 col-sm-12 mb-4"
+                className="col-12 mb-4"
                 key={car._id}
               >
-                <div className="vault-card">
-                  <div className="vault-card-body">
-                    <div className="d-flex justify-content-between align-items-start mb-3">
-                      <div>
-                        <h4 className="text-white mb-1">
-                          {car.brand} {car.model}
-                        </h4>
-                        <p className="text-secondary mb-0">
-                          Reg No: {car.registrationNumber}
-                        </p>
-                      </div>
-
-                      <span className="vault-chip">
-                        {car.isActive ? "Active" : "Complete"}
-                      </span>
+                <div className="garage-card">
+                  <div className="garage-card-bg"></div>
+                  <div className="garage-left">
+                    <div className="garage-status">
+                      <span
+                        className={`garage-dot ${car.isActive
+                          ? "active"
+                          : ""
+                          }`}
+                      ></span>
+                      {car.isActive
+                        ? "SERVICE ACTIVE"
+                        : "SERVICE COMPLETE"}
                     </div>
-
-                    <div className="vault-divider"></div>
-
-                    <div className="d-flex justify-content-between mt-3">
-                      <div>
-                        <small className="text-secondary">Color</small>
-                        <p className="text-white mb-0 text-capitalize">
+                    <div className="garage-title">
+                      <h2>
+                        {car.brand}
+                      </h2>
+                      <h1>
+                        {car.model}
+                      </h1>
+                    </div>
+                    <div className="garage-reg">
+                      {car.registrationNumber}
+                    </div>
+                    <div className="garage-specs">
+                      <div className="garage-spec">
+                        <small>COLOR</small>
+                        <strong>
                           {car.color || "—"}
-                        </p>
+                        </strong>
                       </div>
-
-                      <div>
-                        <small className="text-secondary">Year</small>
-                        <p className="text-white mb-0">
+                      <div className="garage-spec">
+                        <small>YEAR</small>
+                        <strong>
                           {car.year || "—"}
-                        </p>
+                        </strong>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="text-end mt-4">
-                      <Link
-                        to={`/my-car-vault/${car._id}/job-card`}
-                        className="vault-btn"
-                      >
-                        View Job Card
-                      </Link>
+                  {/* RIGHT */}
+
+                  <div className="garage-right">
+                    <div className="garage-icon-wrap">
+                      <div className="garage-icon">
+                        <i className="bi bi-car-front-fill"></i>
+                      </div>
                     </div>
+                    <Link
+                      to={`/my-car-vault/${car._id}/job-card`}
+                      className="garage-btn"
+                    >
+                      Enter Garage
+                      <i className="bi bi-arrow-right"></i>
+                    </Link>
                   </div>
                 </div>
               </div>

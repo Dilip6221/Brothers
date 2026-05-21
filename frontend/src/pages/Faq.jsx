@@ -1,151 +1,261 @@
 import React, { useState, useRef } from "react";
-import cars from "../assets/images/11.png";
+import cars from "../assets/images/rydax-car.png";
 import { useNavigate } from "react-router-dom";
 import hornSound from "../assets/vidoes/horn-sound.mp3";
 
 const Faq = () => {
+
     const navigate = useNavigate();
-    const [activeIndex, setActiveIndex] = useState(0);
+
     const audioRef = useRef(null);
+
+    const [activeIndex, setActiveIndex] = useState(0);
+
     const faqs = [
         {
             question: "How do I book a slot for car treatment?",
             answer:
-                "Slot booking can be done through email, you can call our workshop to make a booking or you can walk-in our shop as well."
+                "Slot booking can be done through email, phone call, or direct workshop visit. Our support team will help schedule the best time for your vehicle."
         },
         {
             question: "What are your opening hours?",
             answer:
-                "Our workshop is open from 9:00 AM to 7:00 PM Monday to Saturday."
+                "Our workshop is open Monday to Saturday from 9:00 AM to 7:00 PM with dedicated premium support assistance."
         },
         {
             question: "What payment methods do you accept?",
             answer:
-                "We accept Cash, UPI, Debit/Credit Cards and Online Payments."
+                "We accept UPI, Debit/Credit Cards, Net Banking, Cash and major digital payment methods."
         },
         {
             question: "How much do you charge?",
             answer:
-                "Pricing depends on the service type and car model. Contact us for an exact quote."
+                "Pricing depends on your vehicle type, treatment package and service requirements."
         },
         {
             question: "Can you collect and deliver my car?",
             answer:
-                "Yes, we provide pickup and drop services depending on your location."
+                "Yes. We offer pickup and drop services for selected locations."
         },
         {
             question: "Are you insured?",
             answer:
-                "Yes, vehicles are fully protected while they are in our workshop."
+                "Absolutely. Every vehicle is professionally handled and protected."
         },
         {
             question: "Do I get a warranty or guarantee?",
             answer:
-                "Yes, selected services and parts come with a warranty."
+                "Yes. Selected detailing services and parts come with warranty coverage."
         },
         {
             question: "What is detailing?",
             answer:
-                "Car detailing is a deep cleaning and restoration process that makes your vehicle look brand new."
+                "Detailing is a premium restoration and deep cleaning process for your vehicle."
         }
     ];
 
     const toggleFAQ = (index) => {
-        setActiveIndex(activeIndex === index ? null : index);
+
+        setActiveIndex(
+            activeIndex === index
+                ? null
+                : index
+        );
     };
 
-    const leftFaq = faqs.slice(0, 4);
-    const rightFaq = faqs.slice(4);
-
-    const renderFaq = (faqList, startIndex) =>
-        faqList.map((faq, i) => {
-            const index = startIndex + i;
-            return (
-                <div
-                    key={index}
-                    className={`faq-item ${activeIndex === index ? "active" : ""}`}
-                >
-                    <div
-                        className="faq-question"
-                        onClick={() => toggleFAQ(index)}
-                    >
-                        <span>Q. {faq.question}</span>
-                        <div className={`arrow ${activeIndex === index ? "rotate" : ""}`}>
-                            ▼
-                        </div>
-                    </div>
-                    <div
-                        className={`faq-answer ${activeIndex === index ? "show" : ""
-                            }`}
-                    >
-                        <p>{faq.answer}</p>
-                    </div>
-                </div>
-            );
-        });
     return (
-        <div className="bg-black text-white">
 
-            {/* Header same */}
-            <div className="py-5 text-center">
+        <div className="faq-wrapper bg-black text-white">
+
+            {/* HEADER */}
+
+            <div className="faq-header text-center">
+
                 <span className="about-badge">
                     FAQS
                 </span>
 
-                <div className="container text-center">
-                    <h3 className="section-title section-title-small">
-                        <span className="first-letter">R</span>ydax FAQS
-                    </h3>
-                    <p className="text-secondary fs-5 mt-2">
-                        Everything you need to know about our car services
+                <div className="container">
+
+                    <h2 className="section-title section-title-small">
+
+                        <span className="first-letter">
+                            R
+                        </span>
+
+                        ydax FAQS
+
+                    </h2>
+
+                    <p className="text-secondary fs-5 mt-3">
+
+                        Everything you need to know about
+                        our premium automotive services.
+
                     </p>
+
                 </div>
+
             </div>
 
+            {/* FAQS */}
 
-            {/* FAQ Section */}
             <div className="container pb-5">
+
                 <div className="faq-grid">
-                    <div>{renderFaq(leftFaq, 0)}</div>
-                    <div>{renderFaq(rightFaq, 4)}</div>
+
+                    {faqs.map((faq, index) => (
+
+                        <div
+                            key={index}
+                            className={`faq-item ${
+                                activeIndex === index
+                                    ? "active"
+                                    : ""
+                            }`}
+                        >
+
+                            {/* QUESTION */}
+
+                            <div
+                                className="faq-question"
+                                onClick={() =>
+                                    toggleFAQ(index)
+                                }
+                            >
+
+                                <div className="faq-left">
+
+                                    <div className="faq-number">
+
+                                        {String(index + 1).padStart(2, "0")}
+
+                                    </div>
+
+                                    <span>
+                                        {faq.question}
+                                    </span>
+
+                                </div>
+
+                                <div
+                                    className={`faq-icon ${
+                                        activeIndex === index
+                                            ? "rotate"
+                                            : ""
+                                    }`}
+                                >
+
+                                    <i className="bi bi-plus-lg"></i>
+
+                                </div>
+
+                            </div>
+
+                            {/* ANSWER */}
+
+                            <div
+                                className={`faq-answer ${
+                                    activeIndex === index
+                                        ? "show"
+                                        : ""
+                                }`}
+                            >
+
+                                <div className="faq-answer-content">
+
+                                    <p>
+                                        {faq.answer}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    ))}
+
                 </div>
+
             </div>
-            {/* Contact CTA Section */}
+
+            {/* CTA */}
 
             <div className="faq-contact-section">
+
                 <div className="container">
+
                     <div className="faq-contact-grid">
+
+                        {/* LEFT */}
+
                         <div className="faq-contact-text">
+
                             <h2>
-                                SOME OF THE VERY FREQUENTLY ASKED
+
+                                SOME OF THE VERY
+
+                                <span>
+                                    {" "}FREQUENTLY ASKED{" "}
+                                </span>
+
                                 QUESTIONS ARE ANSWERED HERE.
+
                             </h2>
-                            <p>If you are still confused</p>
-                            <button className="cont-btn" onClick={() => navigate("/contact-us")}>
-                                Contact Us!
+
+                            <p>
+
+                                Still confused?
+                                Our premium support team
+                                is ready to help you.
+
+                            </p>
+
+                            <button
+                                className="premium-faq-btn"
+                                onClick={() =>
+                                    navigate("/contact-us")
+                                }
+                            >
+
+                                Contact Us
+
                             </button>
+
                         </div>
+
+                        {/* RIGHT */}
+
                         <div className="faq-contact-image">
+
                             <img
                                 src={cars}
-                                alt="RYDAX Studio"
+                                alt="RYDAX"
                                 onClick={() => {
+
                                     if (audioRef.current) {
+
                                         audioRef.current.currentTime = 0;
+
                                         audioRef.current.play();
                                     }
                                 }}
                             />
-                            <audio ref={audioRef} src={hornSound} preload="auto" />
-                            <p className="footer-slogan">
-                                - At <span className="brand-highlight">RYDAX</span> we don’t just fix cars —
-                                <span className="trust-text"> we build trust.</span>
-                            </p>
+
+                            <audio
+                                ref={audioRef}
+                                src={hornSound}
+                                preload="auto"
+                            />
+
                         </div>
 
                     </div>
+
                 </div>
+
             </div>
+
         </div>
     );
 };

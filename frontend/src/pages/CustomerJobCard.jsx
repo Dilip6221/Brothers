@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { UserContext } from "../context/UserContext.jsx";
-// import "./CustomerJobCard.css";
+import "../css/job-card.css";
 
 const CustomerJobCard = () => {
     const { carId } = useParams();
-    const navigate = useNavigate();
     const { token } = useContext(UserContext);
 
     const [job, setJob] = useState(null);
@@ -19,113 +18,271 @@ const CustomerJobCard = () => {
 
     const fetchJobCard = async () => {
         try {
-            const res = await axios.get(`jobcard/customer/job-card/${carId}`,{headers: { Authorization: `Bearer ${token}` }});
-            if (res.data.success) setJob(res.data.data);
+            const res = await axios.get(
+                `jobcard/customer/job-card/${carId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (res.data.success) {
+                setJob(res.data.data);
+            }
         } catch (error) {
-            console.error("Fetch job card error:", error);
+            console.error(error);
             toast.error("Failed to load job card");
         } finally {
             setLoading(false);
         }
     };
 
-    if (loading)
-        return <div className="text-center text-white py-5">Loading...</div>;
-
-    if (!job)
+    if (loading) {
         return (
-            <div className="bg-black text-white">
-                <div className="container pb-5">
-                    <div className="row">
-                        <div className="col-12 text-center py-5">
-                            <div className="empty-blog-box">
-                                <div className="empty-icon">
-                                    <i className="bi bi-car-front-fill"></i>
+            <div className="job-loading">
+                <div className="spinner-border text-danger"></div>
+            </div>
+        );
+    }
+
+    if (!job) {
+        return (
+            <div className="empty-job-wrapper">
+                <div className="empty-job-card">
+                    <div className="empty-icon">
+                        <i className="bi bi-car-front-fill"></i>
+                    </div>
+
+                    <h2>No Active Job Card</h2>
+
+                    <p>
+                        Your car is currently not in service.
+                        <br />
+                        Once work starts, live updates will appear here.
+                    </p>
+
+                    <Link
+                        to="/my-car-vault"
+                        className="btn back-btn"
+                    >
+                        Back to My Car Vault
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="job-page">
+            {/* HERO SECTION */}
+            <section className="job-hero">
+                <div className="hero-glow hero-glow-1"></div>
+                <div className="hero-glow hero-glow-2"></div>
+
+                <div className="container position-relative">
+                    <div className="live-status">
+                        <span></span>
+                        LIVE SERVICE ACTIVE
+                    </div>
+
+                    <div className="row align-items-center">
+                        <div className="col-lg-7">
+                            <span className="job-badge">
+                                JOB CARD #{job.jobCode}
+                            </span>
+
+                            <h1 className="hero-title">
+                                Your Car Is In
+                                <span> Expert Hands</span>
+                            </h1>
+
+                            <p className="hero-description">
+                                Track every stage of your vehicle service with
+                                premium live updates, work progress, workshop
+                                timeline & media uploads.
+                            </p>
+
+                            <div className="hero-info-grid">
+                                <div className="hero-info-card">
+                                    <small>Current Stage</small>
+
+                                    <strong>
+                                        {job.currentStage.replaceAll(
+                                            "_",
+                                            " "
+                                        )}
+                                    </strong>
                                 </div>
-                                <h3 className="mt-3">No Active Job Card</h3>
-                                <p className="empty-text">
-                                    Your car is currently not in service.
-                                    <br />
-                                    Once a job starts, you’ll see updates, media & progress here.
-                                </p>
-                                {/* <Link to="/my-car-vault" className="btn mt-2" style={{ background: "#ff6600", fontWeight: 500 }}>
-                                    Back to My Car Vault →
-                                </Link> */}
-                                <Link to="/my-car-vault" className="btn mt-3 px-4 py-2 cont-btn">
-                                    Back to My Car Vault →
-                                </Link>
+
+                                <div className="hero-info-card">
+                                    <small>Status</small>
+
+                                    <strong>
+                                        {job.status}
+                                    </strong>
+                                </div>
+
+                                <div className="hero-info-card">
+                                    <small>Expected Delivery</small>
+
+                                    <strong>
+                                        {job.expectedDelivery
+                                            ? new Date(
+                                                job.expectedDelivery
+                                            ).toLocaleDateString()
+                                            : "Updating Soon"}
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-lg-5 text-center mt-5 mt-lg-0">
+                            <div
+                                className="progress-ring"
+                                style={{
+                                    background: `conic-gradient(
+                                        #ff3c3c 0%,
+                                        #ff3c3c ${job.progressPercent}%,
+                                        #1b1b1b ${job.progressPercent}%,
+                                        #1b1b1b 100%
+                                    )`,
+                                }}
+                            >
+                                <div className="progress-inner">
+                                    <h2>
+                                        {job.progressPercent}%
+                                    </h2>
+
+                                    <span>Completed</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        );
-    return (
-        <>
-            <div className="bg-black text-white py-5 text-center">
-                <span className="about-badge">Job Card ({job.jobCode})</span>
-                <h3 className="section-title section-title-small">
-                    <span className="first-letter">S</span>ervice Progress
-                </h3>
-                <p className="text-secondary fs-5 mt-2">
-                    Track your car’s service journey
-                </p>
-            </div>
+            </section>
 
-            <div className="container py-4">
-                <div className="job-summary-card mb-5">
-                    <div className="d-flex justify-content-between align-items-center flex-wrap">
+            {/* CONTENT */}
+            <div className="container py-5">
+                {/* STATUS CARD */}
+                <div className="summary-card">
+                    <div className="summary-top">
                         <div>
-                            <p className="text-secondary mb-0">Current Status</p>
+                            <p className="summary-label">
+                                Service Progress
+                            </p>
+
+                            <h4>
+                                {job.currentStage.replaceAll(
+                                    "_",
+                                    " "
+                                )}
+                            </h4>
                         </div>
-                        <span className={`job-status ${job.status.toLowerCase()}`}>
+
+                        <span
+                            className={`job-status ${job.status.toLowerCase()}`}
+                        >
                             {job.status}
                         </span>
                     </div>
-                    <div className="progress mt-4 job-progress">
+
+                    <div className="progress custom-progress mt-4">
                         <div
                             className="progress-bar"
-                            style={{ width: `${job.progressPercent}%` }}
+                            style={{
+                                width: `${job.progressPercent}%`,
+                            }}
                         >
                             {job.progressPercent}%
                         </div>
                     </div>
                 </div>
-                <h5 className="section-subtitle">Service Timeline</h5>
-                <div className="timeline-compact">
-                    {job.timeline.map((t, i) => (
-                        <div className="timeline-row" key={i}>
-                            <span className="timeline-dot"></span>
-                            <div className="timeline-box">
-                                <div className="timeline-header">
-                                    <h6>{t.stage.replace("_", " ")}</h6>
-                                    <span>
-                                        {new Date(t.updatedAt).toLocaleDateString()}
-                                    </span>
+
+                {/* TIMELINE */}
+                <div className="section-header">
+                    <h3>Service Timeline</h3>
+                </div>
+
+                <div className="premium-timeline-wrapper">
+                    <div className="timeline-scroll">
+                        {job.timeline.map((t, i) => (
+                            <div className={`timeline-slide ${i === job.timeline.length - 1 ? "active-slide" : ""}`} key={i}>
+                                <div className="timeline-top-bar">
+                                    <div className="timeline-step">
+                                        STEP {i + 1}
+                                    </div>
+                                    <div className="timeline-status-dot"></div>
                                 </div>
-                                {t.note && (
-                                    <p className="timeline-note">{t.note}</p>
+                                {/* ICON */}
+                                <div className="timeline-big-icon">
+                                    <i className="bi bi-check2"></i>
+                                </div>
+                                <div className="timeline-content">
+                                    <h3>
+                                        {t.stage.replaceAll("_", " ")}
+                                    </h3>
+                                    <span className="timeline-date">
+                                        {new Date(t.updatedAt).toLocaleString()}
+                                    </span>
+                                    {t.note && (
+                                        <p>{t.note}</p>
+                                    )}
+                                </div>
+                                {i !== job.timeline.length - 1 && (
+                                    <div className="timeline-connector"></div>
                                 )}
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-                <h5 className="section-subtitle mt-5">Work Gallery</h5>
-                <div className="row g-3">
-                    {job.media.map(m => (
-                        <div className="col-6 col-md-4 col-lg-3" key={m._id}>
+                <div className="section-header mt-5">
+                    <h3>Work Gallery</h3>
+                </div>
+                <div className="row g-4">
+                    {job.media?.map((m) => (
+                        <div
+                            className="col-12 col-sm-6 col-lg-4"
+                            key={m._id}
+                        >
                             <div className="media-card">
                                 {m.mediaType === "video" ? (
-                                    <video src={m.url} controls />
+                                    <video
+                                        src={m.url}
+                                        controls
+                                    />
                                 ) : (
-                                    <img src={m.url} alt="Work media" />
+                                    <img
+                                        src={m.url}
+                                        alt="service"
+                                    />
                                 )}
+                                <div className="media-overlay">
+                                    <span>
+                                        {m.stage?.replaceAll(
+                                            "_",
+                                            " "
+                                        )}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     ))}
                 </div>
+
+                {job.customerNotes && (
+                    <>
+                        <div className="section-header mt-5">
+                            <h3>Customer Notes</h3>
+                        </div>
+
+                        <div className="customer-note-card">
+                            <p>{job.customerNotes}</p>
+                        </div>
+                    </>
+                )}
             </div>
-        </>
+        </div>
     );
 };
 

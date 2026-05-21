@@ -159,20 +159,6 @@ const Gallery = () => {
       {activeIndex !== null && images[activeIndex] && (
         <div className="premium-modal" onClick={() => setActiveIndex(null)}>
           <span className="premium-close">✕</span>
-          <span
-            className="premium-fullscreen"
-            onClick={(e) => {
-              e.stopPropagation();
-              const modal = document.querySelector(".premium-modal");
-              if (!document.fullscreenElement) {
-                modal.requestFullscreen();
-              } else {
-                document.exitFullscreen();
-              }
-            }}
-          >
-            ⛶
-          </span>
           {activeIndex > 0 && (
             <span className="nav-arrow left" onClick={handlePrev}>❮</span>
           )}

@@ -1,51 +1,62 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, {
+    useEffect,
+    useState,
+    useContext,
+    useCallback,
+    useMemo
+} from "react";
+
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext.jsx";
 import toast from "react-hot-toast";
+import "../css/blog.css";
 
 const Blog = () => {
-    const { user } = useContext(UserContext);//find login user
-
-    const [blogs, setBlogs] = useState([]); // Store published blogs
-    const [animatingId, setAnimatingId] = useState(null); // For like animation
-    const navigate = useNavigate();
-
+    const { user } = useContext(UserContext);
+    const [blogs, setBlogs] = useState([]);
+    const [animatingId, setAnimatingId] = useState(null);
+    const [activeCategory, setActiveCategory] = useState("ALL");
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         fetchBlogs();
     }, []);
-
-    const fetchBlogs = async () => { // For fetching blog data from backend
+    const fetchBlogs = async () => {
         try {
+            setLoading(true);
             const res = await axios.post("blog/admin/blogs");
-            const publishedBlogs = res.data.data.filter(
-                (blog) => blog.status === "PUBLISHED"
-            );
+            const publishedBlogs =
+                res.data.data.filter(
+                    (blog) =>
+                        blog.status === "PUBLISHED"
+                );
             setBlogs(publishedBlogs);
         } catch (err) {
             console.error(err);
             toast.error("Error fetching blogs");
+        } finally {
+            setLoading(false);
         }
     };
-
-    /* ================= SHARE ================= */
+    const categories = useMemo(() => {
+        const allCategories =
+            blogs.map((b) => b.category);
+        return [
+            "ALL",
+            ...new Set(allCategories)
+        ];
+    }, [blogs]);
+    const filteredBlogs =
+        activeCategory === "ALL"
+            ? blogs
+            : blogs.filter(
+                (b) =>
+                    b.category === activeCategory
+            );
     const shareMyBlog = async (blog) => {
         const url = `${window.location.origin}/blog/${blog.slug}`;
         try {
-            if (navigator.canShare && navigator.canShare({ files: [] })) {
-                const response = await fetch(blog.thumbnail.url);
-                const blob = await response.blob();
-                const file = new File([blob], "thumbnail.jpg", {
-                    type: blob.type,
-                });
-
-                await navigator.share({
-                    title: blog.title,
-                    text: blog.metaDescription,
-                    url,
-                    files: [file],
-                });
-            } else if (navigator.share) {
+            if (navigator.share) {
                 await navigator.share({
                     title: blog.title,
                     text: blog.metaDescription,
@@ -53,20 +64,16 @@ const Blog = () => {
                 });
             } else {
                 await navigator.clipboard.writeText(url);
-                console.log("Web Share API not supported in this browser.");
-                toast.success("Blog URL copied to clipboard!");
+                toast.success("Blog URL copied!");
             }
         } catch (err) {
             console.log(err);
-            toast.error("Error sharing the blog");
+            toast.error("Error sharing blog");
         }
     };
-
-    /* ================= LIKE TOGGLE ================= */
     const handleLikeToggle = async (blogId) => {
         if (!user) {
-            toast.error("Please log in First");
-            // navigate("/login");
+            toast.error("Please login first");
             return;
         }
         try {
@@ -77,55 +84,107 @@ const Blog = () => {
             }
             setBlogs((prev) =>
                 prev.map((blog) => {
-                    if (blog._id !== blogId) return blog;
-                    const likedBy = blog.likedBy || [];
-                    const alreadyLiked = likedBy.includes(user._id);
+                    if (
+                        blog._id !== blogId
+                    ) return blog;
+
+                    const likedBy =
+                        blog.likedBy || [];
+
+                    const alreadyLiked =
+                        likedBy.includes(user._id);
                     return {
                         ...blog,
                         likes: res.data.likes,
-                        likedBy: alreadyLiked
-                            ? likedBy.filter((id) => id !== user._id)
-                            : [...likedBy, user._id],
+                        likedBy:
+                            alreadyLiked
+                                ? likedBy.filter(
+                                    (id) =>
+                                        id !==
+                                        user._id
+                                )
+                                : [
+                                    ...likedBy,
+                                    user._id
+                                ]
                     };
                 })
             );
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error toggling like");
+            console.error(err);
+            toast.error("Error toggling like");
         }
     };
-
-    /* ================= ANIMATION ================= */
-    const triggerLikeAnimation = useCallback((blogId) => {
-        setAnimatingId(blogId);
-        setTimeout(() => setAnimatingId(null), 700);
-    }, []);
-
-    /* ================= LIKE + ANIMATE ================= */
-    const likeAndAnimate = (blogId) => {
+    const triggerLikeAnimation =
+        useCallback((blogId) => {
+            setAnimatingId(blogId);
+            setTimeout(() => {
+                setAnimatingId(null);
+            }, 700);
+        }, []);
+    const likeAndAnimate = (
+        blogId
+    ) => {
         handleLikeToggle(blogId);
         triggerLikeAnimation(blogId);
     };
-
     return (
-        <div className="bg-black text-white">
-            <div className="py-5 text-center">
+        <div className="premium-blog-section bg-black text-white">
+            <div className="blog-hero text-center">
                 <span className="about-badge">
-                    Our Blogs
+                    OUR BLOGS
                 </span>
-                <div className="container text-center">
-                    <h3 className="section-title section-title-small">
-                        <span className="first-letter">L</span>atest Blog Updates
-                    </h3>
-                    <p className="text-secondary fs-5 mt-2">
-                        Automotive • Technology • Future Insights
+                <div className="container">
+                    <h2 className="blog-main-title">
+                        Automotive
+                        <span>
+                            {" "}
+                            Stories & Insights
+                        </span>
+
+                    </h2>
+                    <p className="blog-subtitle">
+                        Explore luxury detailing,
+                        car care tips,
+                        performance upgrades
+                        and future automotive trends.
                     </p>
                 </div>
             </div>
-
+            {filteredBlogs.length != 0 &&  (
+            <div className="container">
+                <div className="blog-category-bar">
+                    {categories.map((cat) => (
+                        <button
+                            key={cat}
+                            className={`blog-category-btn ${activeCategory === cat
+                                ? "active"
+                                : ""
+                                }`}
+                            onClick={() =>
+                                setActiveCategory(cat)
+                            }
+                        >
+                            {cat}
+                        </button>
+                    ))}
+                </div>
+            </div>
+            )}
             <div className="container pb-5">
-                <div className="row">
-                    {blogs.length === 0 ? (
-                        <div className="col-12 text-center py-5">
+                {loading ? (
+                    <div className="row">
+                        {[1, 2, 3, 4].map((i) => (
+                            <div
+                                className="col-lg-3 col-md-6 mb-4"
+                                key={i}
+                            >
+                                <div className="blog-skeleton"></div>
+                            </div>
+                        ))}
+                    </div>
+                ) : filteredBlogs.length === 0 ? (
+                    <div className="col-12 text-center py-5">
                             <div className="empty-blog-box">
                                 <div className="empty-icon">
                                     <i className="bi bi-journal-x"></i>
@@ -144,65 +203,93 @@ const Blog = () => {
                                 </Link>
                             </div>
                         </div>
-                    ) : (
-                        blogs.map((blog) => {
+                ) : (
+                    <div className="row">
+                        {filteredBlogs.map((blog) => {
                             const isLiked = blog.likedBy?.includes(user?._id);
                             return (
-                                <div className="col-md-3 mb-4 d-flex" key={blog._id}>
-                                    <div className="blog-card">
-                                        <div className="blog-image-wrapper" onDoubleClick={() => likeAndAnimate(blog._id)}>
-                                            <img src={blog.thumbnail.url} alt={blog.title} />
-                                            {animatingId === blog._id && (<i className="bi bi-heart-fill double-like-heart"></i>)}
-                                            <span className="blog-category badge-on-image">
+                                <div
+                                    className="col-xl-4 col-md-6 mb-4 d-flex"
+                                    key={blog._id}
+                                >
+                                    <div className="ultra-blog-card">
+                                        <div
+                                            className="ultra-blog-image"
+                                            onDoubleClick={() =>
+                                                likeAndAnimate(blog._id)
+                                            }
+                                        >
+                                            <img
+                                                src={blog.thumbnail.url}
+                                                alt={blog.title}
+                                                loading="lazy"
+                                            />
+                                            <span className="ultra-blog-badge">
                                                 {blog.category}
                                             </span>
-                                        </div>
-
-                                        {/* CONTENT */}
-                                        <div className="blog-content-wrapper">
-                                            <div className="blog-meta-inline">
-                                                <span>
-                                                    <i className="bi bi-clock"></i>{" "}
+                                            <div className="blog-meta-float">
+                                                <span className="meta-chip">
+                                                    <i className="bi bi-clock"></i>
+                                                    {" "}
                                                     {blog.readTime} min
                                                 </span>
-                                                <span>
-                                                    <i className="bi bi-person"></i>{" "}
+                                                <span className="meta-chip">
+                                                    <i className="bi bi-person"></i>
+                                                    {" "}
                                                     RYDAX
                                                 </span>
                                             </div>
-
-                                            <h5 className="blog-title">
+                                            {animatingId === blog._id && (
+                                                <i className="bi bi-heart-fill double-like-heart"></i>
+                                            )}
+                                        </div>
+                                        <div className="ultra-blog-content">
+                                            <h3 className="ultra-blog-title">
                                                 {blog.title}
-                                            </h5>
-
-                                            <div className="blog-actions">
-                                                <Link to={`/blog/${blog.slug}`} className="btn btn-sm" style={{ background: "#ff6600", fontWeight: 600 }}>
-                                                    Read More →
+                                            </h3>
+                                            <p className="ultra-blog-desc">
+                                                {blog.metaDescription?.slice(0, 110)}...
+                                            </p>
+                                            <div className="ultra-blog-actions">
+                                                <Link
+                                                    to={`/blog/${blog.slug}`}
+                                                    className="read-more-btn"
+                                                >
+                                                    Read Article
+                                                    <i className="bi bi-arrow-right"></i>
                                                 </Link>
-                                                <button className="btn btn-sm share-btn" style={{background: "#ff6600"}} onClick={(e) => {e.stopPropagation();shareMyBlog(blog);}}>
+                                                <button
+                                                    className="glass-btn"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        shareMyBlog(blog);
+                                                    }}
+                                                >
                                                     <i className="bi bi-share-fill"></i>
                                                 </button>
-                                                <button className={`like-btn ${isLiked ? "liked" : ""}`}
-                                                    onClick={(e) => {e.stopPropagation();likeAndAnimate(blog._id);}}>   
-                                                    <i className={` bi ${isLiked ? " bi-heart-fill" : "bi-heart"}`}></i>
-                                                    <span>{blog.likes}</span>
-                                                </button>
-                                                 {/* <Link
-                                                    to={`/blog/${blog.slug}`}
-                                                    className="comment-btn"
-                                                    onClick={(e) => e.stopPropagation()}
+                                                <button
+                                                    className={`glass-btn like-btn ${isLiked
+                                                        ? "liked"
+                                                        : ""
+                                                        }`}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        likeAndAnimate(blog._id);
+                                                    }}
                                                 >
-                                                    <i className="bi bi-chat-dots "></i>
-                                                    <span>{blog.commentCount || 0}</span>
-                                                </Link> */}
+                                                    <i className={`bi ${isLiked
+                                                        ? "bi-heart-fill"
+                                                        : "bi-heart"
+                                                        }`}></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             );
-                        })
-                    )}
-                </div>
+                        })}
+                    </div>
+                )}
             </div>
         </div>
     );

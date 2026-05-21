@@ -277,7 +277,6 @@
   }
 }
 .premium-close,
-.premium-fullscreen,
 .premium-download {
   position: absolute;
   top: 22px;
@@ -296,11 +295,9 @@
   border: none;
   outline: none;
 }
-.premium-fullscreen {
-  right: 80px;
-}
+
 .premium-download {
-  right: 130px;
+  right: 80px;
 }
 .premium-close {
   right: 30px;

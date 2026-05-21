@@ -912,6 +912,7 @@ const Navbar = () => {
                   <div className="col-md-6">
                     <Select
                       options={carBrandOptions}
+                      classNamePrefix="react-select"
                       placeholder="Car Manufacturer*"
                       styles={reactSelectStyles}
                       maxMenuHeight={180}
@@ -928,6 +929,7 @@ const Navbar = () => {
                       key={serviceEnquery.carBrand}
                       placeholder="Car Model*"
                       styles={reactSelectStyles}
+                      classNamePrefix="react-select"
                       maxMenuHeight={180}
                       value={carModelOptions.find(
                         opt => opt.value === serviceEnquery.carModel
@@ -948,6 +950,7 @@ const Navbar = () => {
                       isMulti
                       options={serviceOptions}
                       maxMenuHeight={180}
+                      classNamePrefix="react-select"
                       placeholder="Required Service*"
                       value={serviceOptions.filter(opt =>
                         serviceEnquery.services.includes(opt.value)

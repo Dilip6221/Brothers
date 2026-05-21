@@ -69,7 +69,7 @@ const Contact = () => {
         services: [],
         notes: ""
     });
-  
+
     const inputRefs = {
         name: useRef(),
         phone: useRef(),
@@ -146,7 +146,7 @@ const Contact = () => {
         e.preventDefault();
         const isValid = validateForm({
             values: serviceEnquery,
-            validationRules : submitInquiryValidationRules,
+            validationRules: submitInquiryValidationRules,
             inputRefs
         });
         if (!isValid) return;
@@ -174,86 +174,136 @@ const Contact = () => {
         }
     };
     return (
-        <div className="bg-black text-white px-2 px-md-0">
-            <div className="py-5 text-center">
+        <div className="premium-contact-page text-white">
+            <div className="contact-hero text-center">
                 <span className="about-badge">
                     Contact Us
                 </span>
-                <div className="container text-center">
+                <div className="container">
                     <h3 className="section-title section-title-small">
                         <span className="first-letter">G</span>et in Touch
                     </h3>
-                    <p className="text-secondary fs-5 mt-2">
-                        Ready to transform your vehicle? Contact us today to book an appointment or learn more about our services.
+                    <p className="text-secondary fs-5 mt-3">
+                        Premium automotive care starts with one conversation.
                     </p>
                 </div>
             </div>
-
-            {/* Contact Info + Form */}
-            <div className="contact-container  w-100">
-                <div className="contact-info">
+            <div className="premium-contact-layout container">
+                <div className="premium-contact-info">
                     <a
                         href="https://www.google.com/maps?q=Navi+Veraval,+Gujarat,+India"
                         target="_blank"
+                        rel="noreferrer"
                         className="info-item"
                     >
-                        <div className="info-icon">📍</div>
-                        <div className="info-text">
-                            <h4>Location</h4>
-                            <p>Veraval Nani, Jamnagar</p>
+                        <div className="info-icon">
+                            <i className="bi bi-geo-alt-fill"></i>
                         </div>
-                    </a>
 
-                    <a href="mailto:beradilip39@gmail.com" className="info-item">
-                        <div className="info-icon">📧</div>
                         <div className="info-text">
-                            <h4>Email</h4>
-                            <p>beradilip39@gmail.com</p>
+                            <h4>Workshop Location</h4>
+                            <p>
+                                Veraval Nani,
+                                <br />
+                                Jamnagar, Gujarat
+                            </p>
                         </div>
                     </a>
-                    <a href="tel:919313015917" className="info-item">
-                        <div className="info-icon">📱</div>
+                    <a
+                        href="mailto:beradilip39@gmail.com"
+                        className="info-item"
+                    >
+                        <div className="info-icon">
+                            <i className="bi bi-envelope-fill"></i>
+                        </div>
                         <div className="info-text">
-                            <h4>Phone</h4>
-                            <p>+91 9313015917</p>
+                            <h4>Email Support</h4>
+                            <p>
+                                beradilip39@gmail.com
+                            </p>
                         </div>
                     </a>
+                    <a
+                        href="tel:919313015917"
+                        className="info-item"
+                    >
+                        <div className="info-icon">
+                            <i className="bi bi-telephone-fill"></i>
+                        </div>
+                        <div className="info-text">
+                            <h4>Call Us</h4>
+                            <p>
+                                +91 9313015917
+                            </p>
+                        </div>
+                    </a>
+                    <div className="info-item clean-social">
+                        <div className="info-text w-100">
+                            <h4 className="social-title">
+                                Connect With Us
+                            </h4>
 
-                    <div className="info-item social-card clean-social">
-                        <div className="info-text full-width">
-                            <h4 className="social-title">Connect With Us</h4>
-                            <div className="social-icons flex-wrap ">
-                                <a href="https://youtube.com/@dilipahir6221" target="_blank" rel="noreferrer" aria-label="YouTube">
+                            <div className="social-icons">
+
+                                <a
+                                    href="https://youtube.com/@dilipahir6221"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
                                     <i className="bi bi-youtube"></i>
                                 </a>
-                                <a href="https://wa.me/919313015917" target="_blank" rel="noreferrer" aria-label="WhatsApp">
+
+                                <a
+                                    href="https://wa.me/919313015917"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
                                     <i className="bi bi-whatsapp"></i>
                                 </a>
-                                <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram">
+
+                                <a
+                                    href="https://www.instagram.com/"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
                                     <i className="bi bi-instagram"></i>
                                 </a>
-                                <a href="https://x.com/DilipBe00479036" target="_blank" rel="noreferrer" aria-label="Facebook">
+
+                                <a
+                                    href="https://x.com/DilipBe00479036"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
                                     <i className="bi bi-twitter-x"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
+                <form
+                    className="premium-contact-form"
+                    onSubmit={handleEnquirySubmit}
+                >
 
-                {/* Contact Form */}
-                <form className="contact-form" onSubmit={handleEnquirySubmit}>
-                    <div className="row g-3 gx-2">
-                        <div className="col-md-6 mb-2">
-                            <input type="text" name="name" className="form-control shadow-none text-white service-input"
+                    <div className="row g-3">
+                        <div className="col-md-6">
+                            <input
+                                type="text"
+                                name="name"
+                                className="form-control service-input shadow-none"
                                 placeholder="Full Name*"
-                                ref={inputRefs.name}
                                 autoComplete="off"
+                                ref={inputRefs.name}
                                 value={serviceEnquery.name}
                                 onChange={handleEnquiryInputChange}
                             />
                         </div>
-                        <div className="col-md-6 mb-2">
-                            <input type="tel" name="phone" inputMode="numeric" className="form-control shadow-none text-white service-input"
+                        <div className="col-md-6">
+                            <input
+                                type="tel"
+                                name="phone"
+                                inputMode="numeric"
+                                className="form-control service-input shadow-none"
                                 placeholder="Phone Number*"
                                 autoComplete="off"
                                 ref={inputRefs.phone}
@@ -261,17 +311,23 @@ const Contact = () => {
                                 onChange={handleEnquiryInputChange}
                             />
                         </div>
-                        <div className="col-12 mb-2">
-                            <input type="email" name="email" className="form-control shadow-none text-white service-input"
-                                placeholder="Email*"
+                        <div className="col-12">
+                            <input
+                                type="email"
+                                name="email"
+                                className="form-control service-input shadow-none"
+                                placeholder="Email Address*"
                                 autoComplete="off"
                                 ref={inputRefs.email}
                                 value={serviceEnquery.email}
                                 onChange={handleEnquiryInputChange}
                             />
                         </div>
-                        <div className="col-md-4 mb-2">
-                            <input type="text" name="city" className="form-control shadow-none text-white service-input"
+                        <div className="col-md-4">
+                            <input
+                                type="text"
+                                name="city"
+                                className="form-control service-input shadow-none"
                                 placeholder="City*"
                                 autoComplete="off"
                                 ref={inputRefs.city}
@@ -279,9 +335,11 @@ const Contact = () => {
                                 onChange={handleEnquiryInputChange}
                             />
                         </div>
-
-                        <div className="col-md-8 mb-2">
-                            <input type="text" name="address" className="form-control shadow-none text-white service-input"
+                        <div className="col-md-8">
+                            <input
+                                type="text"
+                                name="address"
+                                className="form-control service-input shadow-none"
                                 placeholder="Address"
                                 autoComplete="off"
                                 ref={inputRefs.address}
@@ -292,84 +350,119 @@ const Contact = () => {
                         <div className="col-md-6">
                             <Select
                                 options={carBrandOptions}
+                                classNamePrefix="react-select"
                                 placeholder="Car Manufacturer*"
                                 styles={reactSelectStyles}
                                 ref={inputRefs.carBrand}
                                 maxMenuHeight={180}
                                 value={carBrandOptions.find(
-                                    opt => opt.value === serviceEnquery.carBrand
+                                    opt =>
+                                        opt.label ===
+                                        serviceEnquery.carBrand
                                 )}
                                 onChange={handleBrandChange}
                             />
                         </div>
-                        <div className="col-md-6 mb-2">
+                        <div className="col-md-6">
                             <Select
                                 options={carModelOptions}
+                                classNamePrefix="react-select"
                                 key={serviceEnquery.carBrand}
                                 placeholder="Car Model*"
                                 styles={reactSelectStyles}
                                 ref={inputRefs.carModel}
                                 maxMenuHeight={180}
                                 value={carModelOptions.find(
-                                    opt => opt.value === serviceEnquery.carModel
+                                    opt =>
+                                        opt.value ===
+                                        serviceEnquery.carModel
                                 )}
                                 onChange={(selected) =>
                                     handleEnquiryInputChange({
                                         target: {
                                             name: "carModel",
-                                            value: selected ? selected.value : ""
+                                            value: selected
+                                                ? selected.value
+                                                : ""
                                         }
                                     })
                                 }
                             />
                         </div>
-                        <div className="col-md-12 mb-2">
+                        <div className="col-12">
                             <Select
                                 isMulti
                                 options={serviceOptions}
-                                placeholder="Required Service*"
+                                classNamePrefix="react-select"
+                                placeholder="Required Services*"
                                 ref={inputRefs.services}
-                                maxMenuHeight={90}
+                                maxMenuHeight={120}
                                 value={serviceOptions.filter(opt =>
-                                    serviceEnquery.services.includes(opt.value)
+                                    serviceEnquery.services.includes(
+                                        opt.value
+                                    )
                                 )}
                                 onChange={(selected) =>
                                     setServiceEnquery(prev => ({
                                         ...prev,
-                                        services: selected ? selected.map(s => s.value) : [],
+                                        services: selected
+                                            ? selected.map(
+                                                s => s.value
+                                            )
+                                            : [],
                                     }))
                                 }
                                 styles={reactSelectStyles}
                             />
                         </div>
-                        <div className="col-12 mb-4 mb-2">
+                        <div className="col-12">
                             <textarea
                                 name="notes"
-                                className="form-control shadow-none text-white service-input"
-                                value={serviceEnquery.notes}
-                                ref={inputRefs.notes}
-                                onChange={handleEnquiryInputChange}
                                 rows="2"
+                                className="form-control service-input shadow-none"
                                 placeholder="Comments or Special Requirements"
+                                ref={inputRefs.notes}
+                                value={serviceEnquery.notes}
+                                onChange={handleEnquiryInputChange}
                             ></textarea>
+
                         </div>
+
                     </div>
-                    {/* <button type="submit" className="submit-btn">
-                        Submit Enquiry
-                    </button> */}
-                    <button type="submit" className="cont-btn w-100" >
-                        Submit Enquiry
+                    <div className="booking-note">
+                        <i className="bi bi-shield-check"></i>
+                        Your details are securely protected
+                    </div>
+                    <button
+                        type="submit"
+                        className="garage-btn"
+                    >
+                        <span>
+                            Book Premium Consultation
+                        </span>
+                        <i className="bi bi-arrow-right"></i>
                     </button>
+
                 </form>
+
             </div>
-            <div className="map-container mt-4 mt-md-5 px-2 px-md-0">
-                <iframe
-                    title="map"
-                    src="https://www.google.com/maps?q=Navi+Veraval,+Gujarat,+India&output=embed"
-                    style={{ border: 0, width: "100%", height: "400px", borderRadius: "20px" }}
-                    loading="lazy"
-                    allowFullScreen
-                ></iframe>
+
+            {/* MAP */}
+            <div className="container pb-5">
+                <div className="map-container">
+                    <iframe
+                        title="map"
+                        src="https://www.google.com/maps?q=Navi+Veraval,+Gujarat,+India&output=embed"
+                        style={{
+                            border: 0,
+                            width: "100%",
+                            height: "420px"
+                        }}
+                        loading="lazy"
+                        allowFullScreen
+                    ></iframe>
+
+                </div>
             </div>
         </div>
     );
