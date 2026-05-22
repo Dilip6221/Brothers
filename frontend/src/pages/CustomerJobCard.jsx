@@ -171,7 +171,6 @@ const CustomerJobCard = () => {
                             <p className="summary-label">
                                 Service Progress
                             </p>
-
                             <h4>
                                 {job.currentStage.replaceAll(
                                     "_",
@@ -179,9 +178,11 @@ const CustomerJobCard = () => {
                                 )}
                             </h4>
                         </div>
-
                         <span
-                            className={`job-status ${job.status.toLowerCase()}`}
+                            className={`job-status ${job.status.toLowerCase() === "progress"
+                                    ? "in-progress"
+                                    : job.status.toLowerCase()
+                                }`}
                         >
                             {job.status}
                         </span>
@@ -257,14 +258,14 @@ const CustomerJobCard = () => {
                                         alt="service"
                                     />
                                 )}
-                                <div className="media-overlay">
+                                {/* <div className="media-overlay">
                                     <span>
                                         {m.stage?.replaceAll(
                                             "_",
                                             " "
                                         )}
                                     </span>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     ))}

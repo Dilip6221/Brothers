@@ -1014,7 +1014,7 @@ const Navbar = () => {
               </div>
 
               <button
-                className="cont-btn w-100"
+                className="garage-btn"
                 onClick={sendOtp}
                 disabled={loading}
               >
@@ -1040,7 +1040,7 @@ const Navbar = () => {
                 ))}
               </div>
               <button
-                className="cont-btn w-100"
+                className="garage-btn"
                 onClick={verifyOtp}
                 disabled={loading}
               >
@@ -1090,7 +1090,7 @@ const Navbar = () => {
                 ref={completProfileInputRefs.email}
               />
               <button
-                className="cont-btn w-100"
+                className="garage-btn"
                 onClick={completeProfile}
               >
                 COMPLETE PROFILE

@@ -40,7 +40,7 @@ const Ppf = () => {
               </ul>
 
               <div className="service-enquiry">
-                <button className="cont-btn" onClick={() => navigate("/contact-us")}>
+                <button className="garage-btn" onClick={() => navigate("/contact-us")}>
                     Enquire for PPF Service!
                 </button>
 

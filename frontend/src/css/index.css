@@ -608,17 +608,52 @@ body.modal-open {
   color: white;
 }
 
-/* INPUTS */
-.reset-input,
+
 .service-input {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
+    height: 45px !important;
+    border-radius: 12px !important;
+    background: rgba(255,255,255,0.05) !important;
+    border:1px solid rgba(255,255,255,0.08) !important;
+    color: #fff !important;
+    padding: 0 18px !important;
+    transition: 0.3s ease;
+}
+textarea.service-input {
+    height: auto !important;
+    padding-top: 16px !important;
+}
+.service-input:focus {
+    border-color: rgba(255,77,77,0.35) !important;
+    box-shadow: 0 0 0 4px rgba(255,77,77,0.08) !important;
+}
+.service-input::placeholder {
+    color: #eae3e3ec !important;
 }
 
-.reset-input::placeholder,
-.service-input::placeholder {
-  color: #ddd;
+.react-select__control {
+    min-height: 45px !important;
+    border-radius: 12px !important;
+    background:
+        rgba(255,255,255,0.05) !important;
+    border:
+        1px solid rgba(255,255,255,0.08) !important;
+    box-shadow: none !important;
+}
+
+.react-select__menu {
+    background: #121212 !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+
+.react-select__option {
+    background: #121212 !important;
+    color: #fff !important;
+}
+
+.react-select__option--is-focused {
+    background:
+        rgba(255,77,77,0.15) !important;
 }
 
 /* CLOSE BUTTON */

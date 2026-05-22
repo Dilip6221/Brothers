@@ -40,7 +40,7 @@ const CarWash = () => {
               </ul>
 
               <div className="service-enquiry">
-                <button className="cont-btn" onClick={() => navigate("/contact-us")}>
+                <button className="garage-btn" onClick={() => navigate("/contact-us")}>
                     Enquire for Car Wash Service!
                 </button>
 
