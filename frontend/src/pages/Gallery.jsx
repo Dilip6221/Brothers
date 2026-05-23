@@ -35,7 +35,7 @@ const Gallery = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-       const res = await axios.get("service/admin/services");
+        const res = await axios.get("service/admin/services");
         if (res.data.success) {
           const dynamicCats = res.data.data.map(s => s.title);
           setCategories(["ALL", ...dynamicCats]);
@@ -105,9 +105,9 @@ const Gallery = () => {
 
   return (
 
-    <div className="bg-black text-white">
+    <div className="text-white dot-wrapper">
       <div className="py-5 text-center">
-        <span className="about-badge">
+        {/* <span className="about-badge">
           Our Work
         </span>
         <div className="container text-center">
@@ -117,6 +117,24 @@ const Gallery = () => {
           <p className="text-secondary fs-5 mt-2">
             Technology • Community Moments
           </p>
+        </div> */}
+
+        <div className="services-heading text-center">
+          <div className="section-top-title">
+            <span></span>
+            <p>Explore Our Work</p>
+            <span></span>
+          </div>
+
+          <h2 className="services-title">
+            Our <span>Gallery</span>
+          </h2>
+
+          {/* <p className="services-subtitle">
+            Take a closer look at our premium detailing transformations,
+            ceramic coating finishes, paint protection work, and luxury
+            automotive care projects delivered by the RyDAX team.
+          </p> */}
         </div>
       </div>
 

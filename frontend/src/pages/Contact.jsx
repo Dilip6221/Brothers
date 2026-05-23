@@ -176,7 +176,7 @@ const Contact = () => {
     return (
         <div className="premium-contact-page text-white">
             <div className="contact-hero text-center">
-                <span className="about-badge">
+                {/* <span className="about-badge">
                     Contact Us
                 </span>
                 <div className="container">
@@ -185,6 +185,22 @@ const Contact = () => {
                     </h3>
                     <p className="text-secondary fs-5 mt-3">
                         Premium automotive care starts with one conversation.
+                    </p>
+                </div> */}
+                <div className="services-heading text-center">
+                    <div className="section-top-title">
+                        <span></span>
+                        <p>Get In Touch With RyDAX</p>
+                        <span></span>
+                    </div>
+
+                    <h2 className="services-title">
+                        Contact <span>Us</span>
+                    </h2>
+
+                    <p className="services-subtitle">
+                        Have questions about detailing, ceramic coating, PPF, or premium car care?
+                        Our experts are here to help you choose the perfect service for your vehicle.
                     </p>
                 </div>
             </div>

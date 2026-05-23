@@ -23,7 +23,7 @@ const MyCarVault = () => {
   return (
     <div className="bg-black text-white">
       <div className="py-5 text-center">
-        <span className="about-badge">
+        {/* <span className="about-badge">
           Car Vault
         </span>
         <div className="container text-center">
@@ -33,7 +33,23 @@ const MyCarVault = () => {
           <p className="text-secondary fs-5 mt-2">
             Your vehicles. Your service history. One place.
           </p>
-        </div>
+        </div> */}
+
+          <div className="services-heading text-center">
+            <div className="section-top-title">
+                <span></span>
+                  <p>My Car Vault</p>
+                <span></span>
+            </div>
+
+            <h2 className="services-title">
+                Your  <span>Vehicle Collection</span>
+            </h2>
+            {/* <p className="services-subtitle">
+                Access your saved vehicles, service history, detailing records,
+                bookings, and premium automotive care journey — all in one place.
+            </p> */}
+          </div>
       </div>
       <div className="container pb-5">
         <div className="row">

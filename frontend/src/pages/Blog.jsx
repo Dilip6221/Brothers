@@ -131,10 +131,10 @@ const Blog = () => {
     return (
         <div className="premium-blog-section bg-black text-white">
             <div className="blog-hero text-center">
-                <span className="about-badge">
+                {/* <span className="about-badge">
                     OUR BLOGS
-                </span>
-                <div className="container">
+                </span> */}
+                {/* <div className="container">
                     <h2 className="blog-main-title">
                         Automotive
                         <span>
@@ -149,6 +149,21 @@ const Blog = () => {
                         performance upgrades
                         and future automotive trends.
                     </p>
+                </div> */}
+                <div className="services-heading text-center">
+                    <div className="section-top-title">
+                        <span></span>
+                        <p>OUR BLOGS</p>
+                        <span></span>
+                    </div>
+
+                    <h2 className="services-title">
+                        Automotive <span>Stories & Insights</span>
+                    </h2>
+                    {/* <p className="services-subtitle">
+                        Discover expert car care tips, premium detailing guides,
+                        performance upgrades, and the latest trends in luxury automotive culture.
+                    </p> */}
                 </div>
             </div>
             {filteredBlogs.length != 0 &&  (
