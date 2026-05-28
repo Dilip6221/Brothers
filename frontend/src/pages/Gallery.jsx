@@ -17,6 +17,7 @@ const Gallery = () => {
         {
           params: {
             service: category !== "ALL" ? category : undefined,
+            type: 'SINGLE',
           },
         }
       );

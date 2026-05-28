@@ -15,8 +15,6 @@ const saveCustomerReview = async (req, res) => {
         userId: req.user ? req.user._id : null,
         rating,
         review,
-        // service,
-        // car,
       });
     res.json({success: true,message: "Thank you for giving us your valuable feedback!."});
   } catch (error) {

@@ -15,10 +15,10 @@ import Contact from './pages/Contact.jsx'
 import Gallery from './pages/Gallery.jsx'
 import Faq from './pages/Faq.jsx'
 
-import Ppf from './pages/Service/Ppf.jsx'
-import Paint from './pages/Service/Paint.jsx'
-import Ceramic from './pages/Service/Ceramic.jsx'
-import CarWash from './pages/Service/CarWash.jsx'
+// import Ppf from './pages/Service/Ppf.jsx'
+// import Paint from './pages/Service/Paint.jsx'
+// import Ceramic from './pages/Service/Ceramic.jsx'
+// import CarWash from './pages/Service/CarWash.jsx'
 
 // import ServiceIcon from "./component/ServiceIcon.jsx";
 import AdminLayout from './pages/Admin/AdminLayout.jsx'
@@ -45,7 +45,7 @@ import AdminJobServices from './pages/Admin/job-card/AdminJobServices.jsx'
 import AdminJobMedia from './pages/Admin/job-card/AdminJobMedia.jsx';
 import MyCarVault from './pages/MyCarVault.jsx';
 import CustomerJobCard from './pages/CustomerJobCard.jsx';
-import ScrollToTop from './pages/ScrollToTop.jsx';
+import ScrollToTop from './component/ScrollToTop.jsx';
 import AdminCustomerReview from './pages/Admin/customer-review/AdminCustomerReview.jsx';
 import AdminAboutTimeLine from './pages/Admin/about-time-line/AdminAboutTimeLine.jsx';
 import AdminCreateAboutTimeLine from './pages/Admin/about-time-line/AdminCreateAboutTimeLine.jsx';
@@ -59,6 +59,10 @@ import AdminCreateOnlineServicePackages from './pages/OnlineService/admin/packge
 import AdminOnlineServicePackages from './pages/OnlineService/admin/packges/AdminOnlineServicePackages.jsx';
 import AdminOnlineAddonService from './pages/OnlineService/admin/addon/AdminOnlineAddonService.jsx';
 import AdminCreateOnlineAddonService from './pages/OnlineService/admin/addon/AdminCreateOnlineAddonService.jsx';
+import AdminCreateInvoice from './pages/Admin/invoice/AdminCreateInvoice.jsx';
+import ScrollToTopArrow from './component/ScrollToTopArrow.jsx';
+import ServiceCard from './pages/ServiceCard.jsx';
+import ServiceDetail from './pages/ServiceDetail.jsx';
 
 const App = () => {
   const location = useLocation();
@@ -92,6 +96,7 @@ const App = () => {
   return (
     <>
       <ScrollToTop />
+      <ScrollToTopArrow />
       {/* {!shouldHideNavbar && <ServiceIcon />} */}
       {!shouldHideNavbar && <Navbar />}
 
@@ -99,20 +104,22 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
 
-        <Route path="/ppf" element={<Ppf />} />
+        {/* <Route path="/ppf" element={<Ppf />} />
         <Route path="/paint" element={<Paint />} />
         <Route path="/ceramic" element={<Ceramic />} />
-        <Route path="/premium-car-wash" element={<CarWash />} />
+        <Route path="/premium-car-washs" element={<CarWash />} /> */}
         <Route path="/about" element={<About />} />
         <Route path="/contact-us" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/blog/:slug" element={<BlogView />} />
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-        <Route path="/forget-password/:token" element={<ForgetPassword />} />
+        {/* <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} /> */}
+        {/* <Route path="/forget-password/:token" element={<ForgetPassword />} /> */}
         <Route path="/my-car-vault" element={<MyCarVault />} />
         <Route path="/my-car-vault/:carId/job-card" element={<CustomerJobCard />} />
         <Route path="/faqs" element={<Faq />} />
+        <Route path="/services" element={<ServiceCard />} />
+        <Route path="/:slug" element={<ServiceDetail />} />
         <Route path="*" element={<NotFound />} />
 
         {/*  ALL ADMIN ROUTES ARE NOW PROTECTED AUTOMATICALLY */}
@@ -158,6 +165,7 @@ const App = () => {
        <Route path="/admin/online-addon-services" element={<AdminOnlineAddonService />} />
         <Route path="/admin/online-addon-services/create" element={<AdminCreateOnlineAddonService />} />
         <Route path="/admin/online-addon-services/edit/:id" element={<AdminCreateOnlineAddonService />} />
+        <Route path="/admin/invoice/create/:jobId" element={<AdminCreateInvoice />}/>
 
         <Route path="/online-services" element={<OnlineServiceLayout />} />
       </Routes>

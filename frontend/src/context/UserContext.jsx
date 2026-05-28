@@ -78,7 +78,7 @@ export const UserProvider = ({ children }) => {
       await axios.post("/user/logout");
       setUser(null);
       setToken(null);
-      navigate("/");
+      // navigate("/");
     } catch (err) {
       console.error("Logout failed:", err.message);
       setUser(null);

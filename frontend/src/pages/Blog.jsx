@@ -268,7 +268,7 @@ const Blog = () => {
                                             <div className="ultra-blog-actions">
                                                 <Link
                                                     to={`/blog/${blog.slug}`}
-                                                    className="read-more-btn"
+                                                    className="read-blog-more-btn"
                                                 >
                                                     Read Article
                                                     <i className="bi bi-arrow-right"></i>

@@ -1,36 +1,89 @@
-import React from "react";
-import ppf from "../assets/images/car-ppf.jpg";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import "../css/home.css";
 
-const services = [
-    { title: "Paint Protection Film", img: ppf,url: "/ppf" },
-    { title: "Full Body Painting", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s3.png",url: "/paint" },
-    { title: "Panel Painting", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s3.png",url: "/paint" },
-    { title: "Ceramic & Graphene Coating", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s2.png",url: "/ceramic" },
-    { title: "Vinyl Wrap", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s3.png",url: "/vinyl-wrap" },
-    { title: "Sound Damping", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s3.png",url: "/sound-damping" },
-    { title: "Sunroof and Safety Glazing Film", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s3.png",url: "/sunroof-ppf" },
-    { title: "Interior Customization", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s3.png" ,url: "/interior-custmization"},
-    { title: "Premium Car Wash", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s3.png",url: "/car-wash" },
-    { title: "Others", img: "https://brotomotiv.in/admin/public/uploads/1747660788_s3.png",url: "/other-service" },
-];
+const ServiceCard = () => {
+  const [services, setServices] = useState([]);
 
-const Services = () => {
-    return (
-        <section className="services-section">
-            <h2 className="service-main-title">OUR <span className="text-danger">PREMIUM SERVICES</span></h2>
-            <div className="services-grid">
-                {services.map((s,i)=>(
-                    <Link to={s.url} key={i} className="service-card">
-                        <h3 className="service-title">{s.title}</h3>
-                        <div className="img-box">
-                            <img src={s.img} alt={s.title} className="service-img" />
-                        </div>
-                    </Link>
-                ))}
+  const fetchServices = async () => {
+    try {
+      const res = await axios.get("service/admin/services");
+
+      if (res.data.success) {
+        const activeServices = res.data.data.filter(
+          (item) => item.status === "ACTIVE"
+        );
+        setServices(activeServices);
+      }
+    } catch (error) {
+      console.error("Fetch services error:", error);
+      toast.error("Failed to load services");
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  return (
+    <section className="premium-service-section">
+      <div className="services-heading text-center">
+        <div className="section-top-title">
+          <span></span>
+          <p>What We Offer</p>
+          <span></span>
+        </div>
+
+        <h2 className="services-title">
+          Our <span>Services</span>
+        </h2>
+
+        <p className="services-subtitle">
+          Professional car care services delivered by certified experts
+        </p>
+      </div>
+
+      <div className="premium-service-grid">
+        {services.map((service) => (
+          <div className="premium-service-card" key={service._id}>
+            <div className="service-img-box">
+              <img
+                src={service.image?.url}
+                alt={service.title}
+                className="premium-service-img"
+              />
+              <div className="service-img-overlay"></div>
             </div>
-        </section>
-    );
+
+            <div className="premium-service-content">
+              <h3>{service.title}</h3>
+
+              <p className="service-short-desc">
+                {service.shortDescription}
+              </p>
+
+              {service.cardFeatures?.length > 0 && (
+                <ul className="service-feature-list">
+                  {service.cardFeatures.slice(0, 3).map((feature, index) => (
+                    <li key={index}>
+                      <i className="bi bi-check-circle-fill"></i>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <Link to={`/${service.slug}`} className="service-read-more">
+                Read More <span>→</span>
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
 };
 
-export default Services;
+export default ServiceCard;

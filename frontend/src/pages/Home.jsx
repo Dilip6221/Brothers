@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
-import ServiceSlider from "../pages/ServiceSlider.jsx";
 import ServiceCard from "../pages/ServiceCard.jsx";
-import WhyChooseUs from "./WhyChooseUs.jsx";
-import  CustomerReview  from "./CustomerReview.jsx";
-
+import  CustomerReview  from "../component/CustomerReview.jsx";
+import WhyChooseUs from "../component/WhyChooseUs.jsx";
+import HomeCta from "./HomeCta.jsx";
+import HomeGallery from "./HomeGallery.jsx";
+import HeroSection from "../component/HeroSection.jsx";
 
 const Home = () => {
 
   return (
     <>
-    {/* <ServiceSlider /> */}
+    <HeroSection />
     <ServiceCard />
-    {/* <WhyChooseUs /> */}
-    {/* <CustomerReview /> */}
+    <WhyChooseUs />
+    <HomeGallery />
+    <CustomerReview />
+    <HomeCta />
     </>
 
   );
