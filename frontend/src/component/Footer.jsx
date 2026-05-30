@@ -133,7 +133,7 @@ const Footer = () => {
                 {services.length > 0 ? (
                   services.map((service) => (
                     <li key={service._id}>
-                      <NavLink to={`/${service.slug}`}>
+                      <NavLink to={`/service/${service.slug}`}>
                         {service.title}
                       </NavLink>
                     </li>

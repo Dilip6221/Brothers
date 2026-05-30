@@ -119,7 +119,7 @@ const App = () => {
         <Route path="/my-car-vault/:carId/job-card" element={<CustomerJobCard />} />
         <Route path="/faqs" element={<Faq />} />
         <Route path="/services" element={<ServiceCard />} />
-        <Route path="/:slug" element={<ServiceDetail />} />
+        <Route path="service/:slug" element={<ServiceDetail />} />
         <Route path="*" element={<NotFound />} />
 
         {/*  ALL ADMIN ROUTES ARE NOW PROTECTED AUTOMATICALLY */}

@@ -397,7 +397,7 @@ const MegaDropdown = ({title,isActive,items,mainLink = null}) => (
                 mainLink="/services"
                 isActive={isServiceActive}
                 items={services.map((service) => ({
-                  to: `/${service.slug}`,
+                  to: `/service/${service.slug}`,
                   label: service.title,
                 }))}
               />

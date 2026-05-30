@@ -75,7 +75,7 @@ const ServiceCard = () => {
                 </ul>
               )}
 
-              <Link to={`/${service.slug}`} className="service-read-more">
+              <Link to={`/service/${service.slug}`} className="service-read-more">
                 Read More <span>→</span>
               </Link>
             </div>

@@ -7,12 +7,13 @@ import React, {
 } from "react";
 
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext.jsx";
 import toast from "react-hot-toast";
 import "../css/blog.css";
 
 const Blog = () => {
+    const navigate = useNavigate();
     const { user } = useContext(UserContext);
     const [blogs, setBlogs] = useState([]);
     const [animatingId, setAnimatingId] = useState(null);
@@ -166,25 +167,25 @@ const Blog = () => {
                     </p> */}
                 </div>
             </div>
-            {filteredBlogs.length != 0 &&  (
-            <div className="container">
-                <div className="blog-category-bar">
-                    {categories.map((cat) => (
-                        <button
-                            key={cat}
-                            className={`blog-category-btn ${activeCategory === cat
-                                ? "active"
-                                : ""
-                                }`}
-                            onClick={() =>
-                                setActiveCategory(cat)
-                            }
-                        >
-                            {cat}
-                        </button>
-                    ))}
+            {filteredBlogs.length != 0 && (
+                <div className="container">
+                    <div className="blog-category-bar">
+                        {categories.map((cat) => (
+                            <button
+                                key={cat}
+                                className={`blog-category-btn ${activeCategory === cat
+                                    ? "active"
+                                    : ""
+                                    }`}
+                                onClick={() =>
+                                    setActiveCategory(cat)
+                                }
+                            >
+                                {cat}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-            </div>
             )}
             <div className="container pb-5">
                 {loading ? (
@@ -200,24 +201,31 @@ const Blog = () => {
                     </div>
                 ) : filteredBlogs.length === 0 ? (
                     <div className="col-12 text-center py-5">
-                            <div className="empty-blog-box">
-                                <div className="empty-icon">
-                                    <i className="bi bi-journal-x"></i>
-                                </div>
-                                <h3 className="mt-3">No Blogs Available</h3>
-                                <p className="empty-text">
-                                    We're preparing something exciting for you.
-                                    <br />
-                                    Check back soon for fresh automotive insights!
-                                </p>
-                                {/* <Link to="/" className="btn mt-2" style={{background: "#ff6600",fontWeight: 500,}}>
+                        <div className="empty-blog-box">
+                            <div className="empty-icon">
+                                <i className="bi bi-journal-x"></i>
+                            </div>
+                            <h3 className="mt-3">No Blogs Available</h3>
+                            <p className="empty-text">
+                                We're preparing something exciting for you.
+                                <br />
+                                Check back soon for fresh automotive insights!
+                            </p>
+                            {/* <Link to="/" className="btn mt-2" style={{background: "#ff6600",fontWeight: 500,}}>
                                     Go to Homepage →
                                 </Link> */}
-                                <Link to="/" className="btn mt-3 px-4 py-2 cont-btn">
-                                    Go to Homepage →
-                                </Link>
+                        
+                            <div className="notfound-actions">
+                                <button
+                                    className="back-btn-404"
+                                    onClick={() => navigate("/")}
+                                >
+                                    <i className="bi bi-arrow-left me-2"></i>
+                                    Go Home
+                                </button>
                             </div>
                         </div>
+                    </div>
                 ) : (
                     <div className="row">
                         {filteredBlogs.map((blog) => {
@@ -304,9 +312,10 @@ const Blog = () => {
                             );
                         })}
                     </div>
-                )}
-            </div>
-        </div>
+                )
+                }
+            </div >
+        </div >
     );
 };
 

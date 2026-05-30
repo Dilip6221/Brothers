@@ -1,30 +1,37 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function NotFound() {
-  return (
-    <div className="bg-black text-white">
-      <div className="container pb-5">
-        <div className="row">
-          <div className="col-12 text-center py-5">
-              <div className="empty-icon">
-                <i className="bi bi-journal-x"></i>
-              </div>
-              <h2 className="mt-4 mb-4">404 - Page Not Found</h2>
-              <p className="empty-text">
-                Looks like this page took a wrong turn.
-                <br />
-                Let’s get you back on the right road!
-              </p>
-              {/* <Link to="/" className="btn mt-4" style={{ background: "#ff6600", fontWeight: 500, }}>
-                Go to Homepage →
-              </Link> */}
-              <Link to="/" className="btn mt-3 px-4 py-2 cont-btn">
-                  Go to Homepage →
-                </Link>
-          </div>
+    const navigate = useNavigate();
+
+    return (
+        <div className="notfound-page">
+            <div className="road-line"></div>
+            <div className="notfound-content">
+                <div className="car-animation">
+                    <i className="bi bi-car-front-fill"></i>
+                </div>
+                <h1 className="error-code">
+                    404
+                </h1>
+                <h2 className="error-title">
+                    Oops! This Road Doesn't Exist
+                </h2>
+                <p className="error-text">
+                    Looks like your journey took a wrong turn.
+                    <br />
+                    Let's get you back to the RYDAX garage.
+                </p>
+                <div className="notfound-actions">
+                    <button
+                        className="back-btn-404"
+                        onClick={() => navigate("/")}
+                    >
+                        <i className="bi bi-arrow-left me-2"></i>
+                        Go Home
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-    </div >
-  );
+    );
 }
