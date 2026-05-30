@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import "../css/job-card.css";
 
 const MyCarVault = () => {
+    const navigate = useNavigate();
   const { token } = useContext(UserContext);
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,9 +69,14 @@ const MyCarVault = () => {
                   <br />
                   Start building your premium garage experience by adding your first car.
                 </p>
-                <Link to="/" className="btn mt-3 px-4 py-2 cont-btn">
-                  Explore Services →
-                </Link>
+                <div className="notfound-actions">
+                  <button
+                      className="back-btn-404"
+                      onClick={() => navigate("/services")}
+                  >
+                      Explore Services →
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
