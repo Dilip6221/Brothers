@@ -63,3 +63,6 @@ export const blogCreateValidationRules = {
     content: { required: true, minLength: 20, message: "Content is required", minLengthMessage: "Content must be at least 20 characters" },
     thumbnail: { required: true, message: "Thumbnail is required" },
 };
+export const emailSubmitValidationRules = {
+    email: { required: true, message: "Email is required", pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
+};

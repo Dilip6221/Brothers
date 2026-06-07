@@ -3,23 +3,35 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import "../css/job-card.css";
+import toast from "react-hot-toast";
 
 const MyCarVault = () => {
-    const navigate = useNavigate();
-  const { token } = useContext(UserContext);
+  const navigate = useNavigate();
+  const {user, token } = useContext(UserContext);
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("jobcard/customer/my-cars", {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => {
-        setCars(res.data.data || []);
+    if (!user) {
+      navigate("/", { replace: true });
+      return;
+    }
+    const fetchCars = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get("jobcard/customer/my-cars",{headers: {Authorization: `Bearer ${token}`}});
+        if (res.data.success) {
+          setCars(res.data.data || []);
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to load your cars");
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+      }
+    };
+    fetchCars();
+  }, [user, token, navigate]);
 
   return (
     <div className="bg-black text-white">
@@ -36,21 +48,21 @@ const MyCarVault = () => {
           </p>
         </div> */}
 
-          <div className="services-heading text-center">
-            <div className="section-top-title">
-                <span></span>
-                  <p>My Car Vault</p>
-                <span></span>
-            </div>
+        <div className="services-heading text-center">
+          <div className="section-top-title">
+            <span></span>
+            <p>My Car Vault</p>
+            <span></span>
+          </div>
 
-            <h2 className="services-title">
-                Your  <span>Vehicle Collection</span>
-            </h2>
-            {/* <p className="services-subtitle">
+          <h2 className="services-title">
+            Your  <span>Vehicle Collection</span>
+          </h2>
+          {/* <p className="services-subtitle">
                 Access your saved vehicles, service history, detailing records,
                 bookings, and premium automotive care journey — all in one place.
             </p> */}
-          </div>
+        </div>
       </div>
       <div className="container pb-5">
         <div className="row">
@@ -71,10 +83,10 @@ const MyCarVault = () => {
                 </p>
                 <div className="notfound-actions">
                   <button
-                      className="back-btn-404"
-                      onClick={() => navigate("/services")}
+                    className="back-btn-404"
+                    onClick={() => navigate("/services")}
                   >
-                      Explore Services →
+                    Explore Services →
                   </button>
                 </div>
               </div>

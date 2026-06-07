@@ -77,7 +77,7 @@ const OnlineServiceLayout = () => {
               {!user ? (
                 <button
                   type="button"
-                  className="os-icon-btn"
+                  className="os-user-avatar-btn"
                   onClick={() => loginDrawerRef.current?.open()}
                 >
                   <FaUser />

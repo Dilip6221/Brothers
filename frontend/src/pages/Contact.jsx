@@ -176,17 +176,7 @@ const Contact = () => {
     return (
         <div className="premium-contact-page text-white">
             <div className="contact-hero text-center">
-                {/* <span className="about-badge">
-                    Contact Us
-                </span>
-                <div className="container">
-                    <h3 className="section-title section-title-small">
-                        <span className="first-letter">G</span>et in Touch
-                    </h3>
-                    <p className="text-secondary fs-5 mt-3">
-                        Premium automotive care starts with one conversation.
-                    </p>
-                </div> */}
+               
                 <div className="services-heading text-center">
                     <div className="section-top-title">
                         <span></span>

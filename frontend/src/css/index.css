@@ -339,18 +339,6 @@ body.menu-lock {
   width: 100%;
 }
 
-/* .social-icons {
-  transition: transform 0.3s ease, color 0.3s ease;
-  font-size: 14px !important;
-  display: flex !important;
-  align-items: center !important;
-  color: white !important;
-}
-
-.social-icons:hover {
-  color: #ffc107 !important;
-} */
-
 input::placeholder,
 textarea::placeholder {
   color: white !important;
@@ -390,15 +378,6 @@ textarea:focus {
   color: white !important;
 }
 
-/* .tooltip-inner {
-  background-color: white !important;
-  color: black !important;
-
-  font-weight: 400;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-} */
-
 .tooltip-arrow::before {
   border-top-color: white !important;
 }
@@ -420,38 +399,6 @@ textarea:focus {
     opacity: 1;
   }
 }
-/* .user-profile {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px;
-  border-radius: 8px;
-  background: linear-gradient(to bottom right, #1d7684 0%, rgba(46, 142, 255, 0) 30%);
-  background-color: rgba(91, 99, 108, 0.2);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.user-profile:hover,
-.user-profile:focus {
-  background-color: rgba(238, 232, 232, 0.323);
-  box-shadow: 0 0 10px rgba(46, 142, 255, 0.5);
-  outline: none;
-} */
-/* .user-profile-inner {
-  background-color: black;
-  color: #fff;
-  font-weight: 600;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-height: 35px;
-  width: 100%;
-} */
-
 select option {
   color: white !important;
   background-color: #444444ff !important;
@@ -694,42 +641,6 @@ body.modal-open {
     text-shadow: 0 0 16px red;
   }
 }
-
-/* ================= TOP BADGE ================= */
-
-/* .about-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 16px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.6px;
-  margin-bottom: 7px;
-  ;
-  text-transform: uppercase;
-  color: #cfa144;
-  background: linear-gradient(135deg,
-      rgba(207, 161, 68, 0.18),
-      rgba(0, 0, 0, 0.85));
-
-  border: 1px solid rgba(207, 161, 68, 0.6);
-  border-radius: 8px;
-
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.8),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-}
-
-.about-badge::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  background: #cfa144;
-  border-radius: 50%;
-} */
-
-/* =================END: TOP BADGE ================= */
 
 /* For heading first red and white combination text */
 .section-title {
@@ -1589,20 +1500,6 @@ body.login-open {
 .mobile-input-wrapper input[type="number"] {
   -moz-appearance: textfield;
 }
-.profile-input {
-  width: 100%;
-  background: transparent;
-  border: 1px solid #444;
-  padding: 10px;
-  color: #fff;
-  border-radius: 5px;
-  margin-bottom: 15px;
-}
-
-.profile-input::placeholder {
-  color: #777;
-}
-
 
 .otp-container {
   display: flex;

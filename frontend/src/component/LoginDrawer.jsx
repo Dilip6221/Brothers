@@ -56,6 +56,29 @@ const LoginDrawer = forwardRef((props, ref) => {
     }, 300);
   };
 
+  const handleSubmitByStep = () => {
+    if (loading) return;
+    if (loginStep === "PHONE") {
+      sendOtp();
+    }
+    if (loginStep === "OTP") {
+      verifyOtp();
+    }
+    if (loginStep === "PROFILE") {
+      completeProfile();
+    }
+  };
+
+  const handleDrawerKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmitByStep();
+    }
+    if (e.key === "Escape") {
+      closeLoginDrawer();
+    }
+  };
+
   const closeLoginDrawer = () => {
     setShowLogin(false);
     setLoginStep("PHONE");
@@ -272,14 +295,28 @@ const LoginDrawer = forwardRef((props, ref) => {
       verifyOtp(pasteData);
     }
   };
+  useEffect(() => {
+    if (!showLogin) return;
 
+    const handleEscClose = (e) => {
+      if (e.key === "Escape") {
+        closeLoginDrawer();
+      }
+    };
+
+    window.addEventListener("keydown", handleEscClose);
+
+    return () => {
+      window.removeEventListener("keydown", handleEscClose);
+    };
+  }, [showLogin]);
   return (
     <>
       {showLogin && (
         <div className="login-overlay" onClick={closeLoginDrawer}></div>
       )}
 
-      <div className={`login-drawer ${showLogin ? "open" : ""}`}>
+      <div className={`login-drawer ${showLogin ? "open" : ""}`} onKeyDown={handleDrawerKeyDown} tabIndex={-1}>
         <div className="drawer-content">
           <button className="close-btn" onClick={closeLoginDrawer}>
             ✕
@@ -368,7 +405,7 @@ const LoginDrawer = forwardRef((props, ref) => {
             <>
               <input
                 type="text"
-                className="profile-input"
+                className="form-control service-input shadow-none mb-3"
                 placeholder="Enter Name*"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -377,7 +414,7 @@ const LoginDrawer = forwardRef((props, ref) => {
 
               <input
                 type="email"
-                className="profile-input"
+                className="form-control service-input shadow-none mb-3"
                 placeholder="Enter Email*"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

@@ -63,6 +63,7 @@ import AdminCreateInvoice from './pages/Admin/invoice/AdminCreateInvoice.jsx';
 import ScrollToTopArrow from './component/ScrollToTopArrow.jsx';
 import ServiceCard from './pages/ServiceCard.jsx';
 import ServiceDetail from './pages/ServiceDetail.jsx';
+import Profile from './pages/Profile.jsx';
 
 const App = () => {
   const location = useLocation();
@@ -117,6 +118,7 @@ const App = () => {
         {/* <Route path="/forget-password/:token" element={<ForgetPassword />} /> */}
         <Route path="/my-car-vault" element={<MyCarVault />} />
         <Route path="/my-car-vault/:carId/job-card" element={<CustomerJobCard />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/faqs" element={<Faq />} />
         <Route path="/services" element={<ServiceCard />} />
         <Route path="service/:slug" element={<ServiceDetail />} />
