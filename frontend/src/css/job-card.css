@@ -494,28 +494,6 @@
     transform: scale(1.08);
 }
 
-/* .media-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: flex-end;
-    padding: 20px;
-    background:
-        linear-gradient(
-            to top,
-            rgba(0,0,0,0.85),
-            transparent
-        );
-}
-
-.media-overlay span {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.08);
-    padding: 8px 14px;
-    border-radius: 30px;
-    font-size: 12px;
-    backdrop-filter: blur(10px);
-} */
 .customer-note-card {
     background:
         linear-gradient(
@@ -575,27 +553,6 @@
     line-height: 1.8;
     margin-top: 18px;
 }
-
-.back-btn {
-    background: linear-gradient(
-        90deg,
-        #ff3c3c,
-        #ff6b3d
-    );
-    color: #fff;
-    border: none;
-    padding: 12px 28px;
-    border-radius: 40px;
-    margin-top: 25px;
-    font-weight: 600;
-}
-
-.back-btn:hover {
-    color: #fff;
-    transform: translateY(-2px);
-}
-
-/* MOBILE */
 
 @media (max-width: 768px) {
     .hero-title {

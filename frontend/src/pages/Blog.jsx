@@ -3,7 +3,8 @@ import React, {
     useState,
     useContext,
     useCallback,
-    useMemo
+    useMemo,
+    useRef
 } from "react";
 
 import axios from "axios";
@@ -11,13 +12,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext.jsx";
 import toast from "react-hot-toast";
 import "../css/blog.css";
+import LoginDrawer from "../component/LoginDrawer.jsx";
 
 const Blog = () => {
     const navigate = useNavigate();
     const { user } = useContext(UserContext);
+    const loginDrawerRef = useRef(null);
     const [blogs, setBlogs] = useState([]);
     const [animatingId, setAnimatingId] = useState(null);
-    const [activeCategory, setActiveCategory] = useState("ALL");
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         fetchBlogs();
@@ -39,21 +41,7 @@ const Blog = () => {
             setLoading(false);
         }
     };
-    const categories = useMemo(() => {
-        const allCategories =
-            blogs.map((b) => b.category);
-        return [
-            "ALL",
-            ...new Set(allCategories)
-        ];
-    }, [blogs]);
-    const filteredBlogs =
-        activeCategory === "ALL"
-            ? blogs
-            : blogs.filter(
-                (b) =>
-                    b.category === activeCategory
-            );
+   
     const shareMyBlog = async (blog) => {
         const url = `${window.location.origin}/blog/${blog.slug}`;
         try {
@@ -74,7 +62,7 @@ const Blog = () => {
     };
     const handleLikeToggle = async (blogId) => {
         if (!user) {
-            toast.error("Please login first");
+            loginDrawerRef.current?.open();
             return;
         }
         try {
@@ -167,26 +155,7 @@ const Blog = () => {
                     </p> */}
                 </div>
             </div>
-            {filteredBlogs.length != 0 && (
-                <div className="container">
-                    <div className="blog-category-bar">
-                        {categories.map((cat) => (
-                            <button
-                                key={cat}
-                                className={`blog-category-btn ${activeCategory === cat
-                                    ? "active"
-                                    : ""
-                                    }`}
-                                onClick={() =>
-                                    setActiveCategory(cat)
-                                }
-                            >
-                                {cat}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
+            
             <div className="container pb-5">
                 {loading ? (
                     <div className="row">
@@ -199,7 +168,7 @@ const Blog = () => {
                             </div>
                         ))}
                     </div>
-                ) : filteredBlogs.length === 0 ? (
+                ) : blogs.length === 0 ? (
                     <div className="col-12 text-center py-5">
                         <div className="empty-blog-box">
                             <div className="empty-icon">
@@ -221,14 +190,14 @@ const Blog = () => {
                                     onClick={() => navigate("/")}
                                 >
                                     <i className="bi bi-arrow-left me-2"></i>
-                                    Go Home
+                                    Go to Home
                                 </button>
                             </div>
                         </div>
                     </div>
                 ) : (
                     <div className="row">
-                        {filteredBlogs.map((blog) => {
+                        {blogs.map((blog) => {
                             const isLiked = blog.likedBy?.includes(user?._id);
                             return (
                                 <div
@@ -276,7 +245,7 @@ const Blog = () => {
                                             <div className="ultra-blog-actions">
                                                 <Link
                                                     to={`/blog/${blog.slug}`}
-                                                    className="read-blog-more-btn"
+                                                    className="garage-btn"
                                                 >
                                                     Read Article
                                                     <i className="bi bi-arrow-right"></i>
@@ -315,6 +284,7 @@ const Blog = () => {
                 )
                 }
             </div >
+            <LoginDrawer ref={loginDrawerRef} />
         </div >
     );
 };

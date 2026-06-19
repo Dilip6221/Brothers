@@ -37,6 +37,13 @@ const Navbar = () => {
     loginDrawerRef.current?.open();
   };
 
+  const handleMyCarVaultClick = (e) => {
+    if (!user) {
+      e.preventDefault();
+      openLoginDrawer();
+    }
+  };
+
   const fetchServices = async () => {
     try {
       const res = await axios.get("service/admin/services");
@@ -55,7 +62,7 @@ const Navbar = () => {
     fetchServices();
   }, []);
   const MORE_MENU = [
-    ...(user ? [{ to: "/my-car-vault", label: "My Car Vault" }] : []),
+    // ...(user ? [{ to: "/my-car-vault", label: "My Car Vault" }] : []),
     { to: "/blog", label: "Blog" },
     { to: "/gallery", label: "Gallery" },
     { to: "/contact-us", label: "Contact Us" },
@@ -73,7 +80,7 @@ const Navbar = () => {
     "/blog",
     "/gallery",
     "/contact-us",
-    "/my-car-vault",
+    // "/my-car-vault",
     "/faqs",
   ]);
 
@@ -195,10 +202,25 @@ const Navbar = () => {
                 </NavLink>
               </li>
 
-              <li>
+              {/* <li>
                 <NavLink to="/online-services" className="nav-link cool-link">
                   Online Services
                 </NavLink>
+              </li> */}
+              <li>
+                {!user ? (
+                  <button
+                    type="button"
+                    className="nav-link cool-link"
+                    onClick={openLoginDrawer}
+                  >
+                    My Car Vault
+                  </button>
+                ) : (
+                  <NavLink to="/my-car-vault" className="nav-link cool-link">
+                    My Car Vault
+                  </NavLink>
+                )}
               </li>
 
               <li>
@@ -314,14 +336,29 @@ const Navbar = () => {
             <span>Home</span>
           </NavLink>
 
-          <NavLink
+          {/* <NavLink
             to="/online-services"
             className="mobile-menu-link"
             onClick={closeMobileMenu}
           >
             <i className="bi bi-calendar-check"></i>
             <span>Online Services</span>
-          </NavLink>
+          </NavLink> */}
+          {!user ? (
+            <button
+              type="button"
+              className="mobile-menu-link btn-link"
+              onClick={openLoginDrawer}
+            >
+              <i className="bi bi-info-circle"></i>
+              <span>My Car Vault</span>
+            </button>
+          ) : (
+            <NavLink to="/my-car-vault" className="mobile-menu-link" onClick={closeMobileMenu}>
+              <i className="bi bi-info-circle"></i>
+              <span>My Car Vault</span>
+            </NavLink>
+          )}
 
           <NavLink
             to="/about"

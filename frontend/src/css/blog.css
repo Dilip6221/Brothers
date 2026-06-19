@@ -328,7 +328,7 @@
 }
 
 .meta-item i {
-    color: #ff7a2f;
+    color: #ff362f;
 }
 
 /* BUTTONS */
@@ -343,42 +343,21 @@
 .hero-btn {
     min-width: 170px;
     height: 56px;
-
     border-radius: 18px;
-
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-
     font-weight: 700;
-
     transition: 0.35s ease;
-
     text-decoration: none;
 }
 
 .share-btn {
     border: none;
-
-    background:
-        rgba(255,255,255,0.08);
-
-    border:
-        1px solid rgba(255,255,255,0.08);
-
+    background:rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.08);
     color: #fff;
-}
-
-.explore-btn {
-    background:
-        linear-gradient(
-            135deg,
-            #ff5e00,
-            #ff893a
-        );
-
-    color: #000;
 }
 
 .hero-btn:hover {
@@ -604,11 +583,8 @@
 }
 
 .like-hero-btn.liked {
-  background: linear-gradient(
-    135deg,
-    #ff2d55,
-    #ff4d4d
-  );
+    background: linear-gradient(135deg, #ff3b30, #ad3737);
+
   color: white;
 }
 

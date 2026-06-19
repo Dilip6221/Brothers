@@ -36,17 +36,7 @@ const MyCarVault = () => {
   return (
     <div className="bg-black text-white">
       <div className="py-5 text-center">
-        {/* <span className="about-badge">
-          Car Vault
-        </span>
-        <div className="container text-center">
-          <h3 className="section-title section-title-small">
-            <span className="first-letter">M</span>y Car Vault
-          </h3>
-          <p className="text-secondary fs-5 mt-2">
-            Your vehicles. Your service history. One place.
-          </p>
-        </div> */}
+        
 
         <div className="services-heading text-center">
           <div className="section-top-title">

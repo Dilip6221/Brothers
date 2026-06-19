@@ -1,42 +1,46 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { UserContext } from "../context/UserContext.jsx";
 import "../css/job-card.css";
 
 const CustomerJobCard = () => {
+    const navigate = useNavigate();
+    const { user, token } = useContext(UserContext);
     const { carId } = useParams();
-    const { token } = useContext(UserContext);
 
     const [job, setJob] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchJobCard();
-    }, [carId]);
-
-    const fetchJobCard = async () => {
-        try {
-            const res = await axios.get(
-                `jobcard/customer/job-card/${carId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-            if (res.data.success) {
-                setJob(res.data.data);
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error("Failed to load job card");
-        } finally {
-            setLoading(false);
+        if (!user) {
+            navigate("/", { replace: true });
+            return;
         }
-    };
+        const fetchJobCard = async () => {
+            try {
+                const res = await axios.get(
+                    `jobcard/customer/job-card/${carId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                if (res.data.success) {
+                    setJob(res.data.data);
+                }
+            } catch (error) {
+                console.error(error);
+                toast.error("Failed to load job card");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchJobCard();
+    }, [carId, user, token, navigate]);
 
     if (loading) {
         return (
@@ -55,19 +59,19 @@ const CustomerJobCard = () => {
                     </div>
 
                     <h2>No Active Job Card</h2>
-
                     <p>
                         Your car is currently not in service.
                         <br />
                         Once work starts, live updates will appear here.
                     </p>
-
-                    <Link
-                        to="/my-car-vault"
-                        className="btn back-btn"
-                    >
-                        Back to My Car Vault
-                    </Link>
+                    <div className="notfound-actions">
+                        <button
+                            className="back-btn-404"
+                            onClick={() => navigate("/services")}
+                        >
+                            Explore Services →
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -180,8 +184,8 @@ const CustomerJobCard = () => {
                         </div>
                         <span
                             className={`job-status ${job.status.toLowerCase() === "progress"
-                                    ? "in-progress"
-                                    : job.status.toLowerCase()
+                                ? "in-progress"
+                                : job.status.toLowerCase()
                                 }`}
                         >
                             {job.status}

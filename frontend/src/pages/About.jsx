@@ -82,6 +82,29 @@ const About = () => {
     };
   }, [preview]);
 
+  useEffect(() => {
+    const handleKeydown = (e) => {
+      if (!preview) return;
+
+      if (e.key === "Escape") {
+        closePreview();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        changePreviewImage(-1);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        changePreviewImage(1);
+      }
+    };
+
+    if (preview) {
+      window.addEventListener("keydown", handleKeydown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeydown);
+    };
+  }, [preview, previewImages]);
   const coreValues = [
     {
       icon: "bi bi-award",

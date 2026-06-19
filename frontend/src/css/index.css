@@ -223,7 +223,7 @@ body.menu-lock {
 .navbar-wrapper {
   height: 85px;
   background: #000;
-  border-bottom: 1px solid rgba(255, 0, 0, 0.226);
+  border-bottom: 1px solid rgba(154, 45, 45, 0.226);
   display: flex;
   align-items: center;
 }
@@ -265,17 +265,6 @@ body.menu-lock {
   padding: 12px;
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
-/* .avatar {
-  width: 35px;
-  height: 35px;
-  background: #ffc107;
-  color: #000;
-  font-weight: bold;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-} */
 
 /* ITEMS */
 .dropdown-item-custom {

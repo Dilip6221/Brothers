@@ -1,11 +1,13 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, { useEffect, useState, useContext, useCallback, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { UserContext } from "../context/UserContext.jsx";
 import "../css/blog.css";
+import LoginDrawer from "../component/LoginDrawer.jsx";
 
 const BlogView = () => {
+  const loginDrawerRef = useRef(null);
   const { slug } = useParams();
   const { user } = useContext(UserContext);
   const [blog, setBlog] = useState(null);
@@ -64,7 +66,7 @@ const BlogView = () => {
 
   const handleLikeToggle = async () => {
     if (!user) {
-      toast.error("Please login first");
+      loginDrawerRef.current?.open();
       return;
     }
     try {
@@ -139,15 +141,10 @@ const BlogView = () => {
                 <i className="bi bi-share-fill"></i>
                 Share
               </button>
-
               <button className={`hero-btn like-hero-btn ${isLiked ? "liked" : ""}`} onClick={handleLikeToggle}>
                 <i className={`bi ${isLiked ? "bi-heart-fill" : "bi-heart"}`}></i>
                 {blog.likes || 0}
               </button>
-
-              <Link to="/blog" className="hero-btn explore-btn">
-                Explore Blogs
-              </Link>
             </div>
           </div>
         </div>
@@ -172,6 +169,7 @@ const BlogView = () => {
           </div>
         </div>
       </section>
+      <LoginDrawer ref={loginDrawerRef} />
     </div>
   );
 };

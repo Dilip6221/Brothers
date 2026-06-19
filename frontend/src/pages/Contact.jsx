@@ -441,7 +441,7 @@ const Contact = () => {
                     </div>
                     <button
                         type="submit"
-                        className="garage-btn"
+                        className="cta-primary-btn w-100"
                     >
                         <span>
                             Book Premium Consultation
