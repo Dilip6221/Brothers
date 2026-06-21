@@ -963,10 +963,9 @@ body.review-modal-open {
 }
 .home-gallery-swiper .swiper-button-prev,
 .home-gallery-swiper .swiper-button-next {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
-  background: rgba(255, 59, 48, 0.12);
   border: 1px solid rgba(255, 59, 48, 0.35);
   color: #fff;
   backdrop-filter: blur(10px);

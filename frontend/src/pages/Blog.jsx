@@ -48,7 +48,7 @@ const Blog = () => {
             if (navigator.share) {
                 await navigator.share({
                     title: blog.title,
-                    text: blog.metaDescription,
+                    text: blog.metaDescription || blog.title,
                     url,
                 });
             } else {

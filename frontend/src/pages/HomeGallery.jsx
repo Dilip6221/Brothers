@@ -36,6 +36,48 @@ const HomeGallery = ({ serviceName = "", featured = true }) => {
     fetchBeforeAfterGallery();
   }, [serviceName, featured]);
 
+
+  const closeModal = () => {
+    if (window.history.state?.galleryModal) {
+      window.history.back();
+    } else {
+      setActiveItem(null);
+    }
+  };
+
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        closeModal();
+      }
+    };
+    if (activeItem) {
+      window.addEventListener("keydown", handleEsc);
+    }
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, [activeItem]);
+
+  useEffect(() => {
+    if (!activeItem) return;
+    window.history.pushState(
+      { galleryModal: true },
+      "",
+      window.location.href
+    );
+
+    const handlePopState = () => {
+      setActiveItem(null);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [activeItem]);
+
   useEffect(() => {
     if (activeItem) {
       document.body.classList.add("gallery-modal-open");
@@ -127,20 +169,24 @@ const HomeGallery = ({ serviceName = "", featured = true }) => {
       </Swiper>
 
       {activeItem && (
-        <div className="ba-modal-overlay" onClick={() => setActiveItem(null)}>
+        <div className="ba-modal-overlay" onClick={closeModal}>
           <div className="ba-modal-card" onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
               className="ba-modal-close"
-              onClick={() => setActiveItem(null)}
+              onClick={closeModal}
             >
               ×
             </button>
 
             <div className="ba-modal-header">
               <span>{activeItem.service}</span>
-              <h3>{activeItem.title || "Before / After Result"}</h3>
-              {activeItem.description && <p>{activeItem.description}</p>}
+              <h3>
+                {activeItem.title || "Before / After Result"}
+              </h3>
+              {activeItem.description && (
+                <p>{activeItem.description}</p>
+              )}
             </div>
 
             <div className="ba-modal-images">

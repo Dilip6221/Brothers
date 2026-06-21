@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { UserContext } from "../context/UserContext.jsx";
 import "../css/job-card.css";
+import { FaTimes } from "react-icons/fa";
 
 const CustomerJobCard = () => {
     const navigate = useNavigate();
@@ -12,6 +13,33 @@ const CustomerJobCard = () => {
 
     const [job, setJob] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [galleryModal, setGalleryModal] = useState({ open: false, index: 0 });
+    const galleryScrollRef = useRef(0);
+
+    const touchStartX = useRef(0);
+    const touchEndX = useRef(0);
+
+    const handleTouchStart = (e) => {
+        touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchMove = (e) => {
+        touchEndX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+        const distance = touchStartX.current - touchEndX.current;
+
+        if (Math.abs(distance) < 50) return;
+
+        if (distance > 0) {
+            nextMedia();
+        } else {
+            prevMedia();
+        }
+        touchStartX.current = 0;
+        touchEndX.current = 0;
+    };
 
     useEffect(() => {
         if (!user) {
@@ -41,7 +69,103 @@ const CustomerJobCard = () => {
         };
         fetchJobCard();
     }, [carId, user, token, navigate]);
+    const openGalleryModal = (index) => {
+        galleryScrollRef.current = window.scrollY;
 
+        setGalleryModal({ open: true, index });
+
+        window.history.pushState(
+            { workGalleryModal: true, scrollY: window.scrollY },
+            ""
+        );
+    };
+
+    const closeGalleryModal = () => {
+        setGalleryModal({ open: false, index: 0 });
+
+        if (window.history.state?.workGalleryModal) {
+            window.history.back();
+        }
+    };
+
+    const closeGalleryOnly = () => {
+        setGalleryModal({ open: false, index: 0 });
+    };
+
+    const nextMedia = () => {
+        setGalleryModal((prev) => ({
+            ...prev,
+            index: (prev.index + 1) % job.media.length,
+        }));
+    };
+
+    const prevMedia = () => {
+        setGalleryModal((prev) => ({
+            ...prev,
+            index: prev.index === 0 ? job.media.length - 1 : prev.index - 1,
+        }));
+    };
+
+    const downloadMedia = async (e) => {
+        e?.stopPropagation();
+
+        try {
+            const current = job.media[galleryModal.index];
+            if (!current?.url) return;
+            const response = await fetch(current.url);
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = blobUrl;
+            link.download =
+                current.mediaType === "video"
+                    ? `rydax-video-${galleryModal.index + 1}.mp4`
+                    : `rydax-image-${galleryModal.index + 1}.jpg`;
+
+            document.body.appendChild(link);
+            link.click();
+
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(blobUrl);
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to download media");
+        }
+    };
+
+    useEffect(() => {
+        if (!galleryModal.open) return;
+
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape") {
+                closeGalleryModal();
+            }
+
+            if (e.key === "ArrowRight") {
+                nextMedia();
+            }
+
+            if (e.key === "ArrowLeft") {
+                prevMedia();
+            }
+        };
+
+        const handleBackButton = () => {
+            closeGalleryOnly();
+        };
+        document.body.classList.add("work-gallery-modal-open");
+        document.documentElement.classList.add("work-gallery-modal-open");
+
+        window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("popstate", handleBackButton);
+
+        return () => {
+            document.body.classList.remove("work-gallery-modal-open");
+            document.documentElement.classList.remove("work-gallery-modal-open");
+            window.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener("popstate", handleBackButton);
+        };
+    }, [galleryModal.open, galleryModal.index, job]);
     if (loading) {
         return (
             <div className="job-loading">
@@ -57,7 +181,6 @@ const CustomerJobCard = () => {
                     <div className="empty-icon">
                         <i className="bi bi-car-front-fill"></i>
                     </div>
-
                     <h2>No Active Job Card</h2>
                     <p>
                         Your car is currently not in service.
@@ -244,32 +367,25 @@ const CustomerJobCard = () => {
                 <div className="section-header mt-5">
                     <h3>Work Gallery</h3>
                 </div>
-                <div className="row g-4">
-                    {job.media?.map((m) => (
-                        <div
-                            className="col-12 col-sm-6 col-lg-4"
-                            key={m._id}
-                        >
-                            <div className="media-card">
+
+                <div className="work-media-strip">
+                    {job.media?.map((m, index) => (
+                        <div className="work-media-slide" key={m._id}>
+                            <div className="media-card" onClick={() => openGalleryModal(index)}>
                                 {m.mediaType === "video" ? (
-                                    <video
-                                        src={m.url}
-                                        controls
-                                    />
+                                    <>
+                                        <video src={m.url} muted />
+                                        <div className="media-play-icon">
+                                            <i className="bi bi-play-fill"></i>
+                                        </div>
+                                    </>
                                 ) : (
-                                    <img
-                                        src={m.url}
-                                        alt="service"
-                                    />
+                                    <img src={m.url} alt="service" />
                                 )}
-                                {/* <div className="media-overlay">
-                                    <span>
-                                        {m.stage?.replaceAll(
-                                            "_",
-                                            " "
-                                        )}
-                                    </span>
-                                </div> */}
+
+                                <div className="media-card-overlay">
+                                    <i className="bi bi-arrows-fullscreen"></i>
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -287,7 +403,44 @@ const CustomerJobCard = () => {
                     </>
                 )}
             </div>
+            {galleryModal.open && job.media?.length > 0 && (
+                <div className="work-gallery-modal" onClick={closeGalleryModal}>
+                    <div className="work-gallery-modal-content" onClick={(e) => e.stopPropagation()} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+                        <button className="work-gallery-close" onClick={closeGalleryModal}>
+                            <FaTimes />
+                        </button>
+                        <button
+                            className="work-gallery-download"
+                            onClick={downloadMedia}
+                        >
+                            <i className="bi bi-download"></i>
+                        </button>
+                        {job.media.length > 1 && (
+                            <>
+                                <button className="work-gallery-arrow left" onClick={prevMedia}>
+                                    <i className="bi bi-chevron-left"></i>
+                                </button>
+                                <button className="work-gallery-arrow right" onClick={nextMedia}>
+                                    <i className="bi bi-chevron-right"></i>
+                                </button>
+                            </>
+                        )}
+                        <div className="work-gallery-preview">
+                            {job.media[galleryModal.index]?.mediaType === "video" ? (
+                                <video src={job.media[galleryModal.index]?.url} controls autoPlay />
+                            ) : (
+                                <img src={job.media[galleryModal.index]?.url} alt="Work Gallery" />
+                            )}
+                        </div>
+
+                        <div className="work-gallery-count">
+                            {galleryModal.index + 1} / {job.media.length}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
+
     );
 };
 

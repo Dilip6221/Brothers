@@ -207,7 +207,7 @@ const Contact = () => {
                         </div>
 
                         <div className="info-text">
-                            <h4>Workshop Location</h4>
+                            <h4>Studio Location</h4>
                             <p>
                                 Veraval Nani,
                                 <br />

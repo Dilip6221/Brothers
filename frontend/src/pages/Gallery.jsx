@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import '../css/gallery.css';
+import "../css/gallery.css";
+import "../css/about.css";
 
 const Gallery = () => {
   const [images, setImages] = useState([]);
@@ -10,20 +11,25 @@ const Gallery = () => {
   const [categories, setCategories] = useState(["ALL"]);
 
   const requestIdRef = useRef(0);
+  const modalHistoryRef = useRef(false);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
   const fetchImages = async (category) => {
     const requestId = ++requestIdRef.current;
+
     try {
-      const res = await axios.get("gallery/gallery",
-        {
-          params: {
-            service: category !== "ALL" ? category : undefined,
-            type: 'SINGLE',
-          },
-        }
-      );
+      const res = await axios.get("gallery/gallery", {
+        params: {
+          service: category !== "ALL" ? category : undefined,
+          type: "SINGLE",
+        },
+      });
+
       if (requestId !== requestIdRef.current) return;
+
       if (res.data.success) {
-        setImages(res.data.data);
+        setImages(res.data.data || []);
       } else {
         toast.error(res.data.message);
       }
@@ -37,8 +43,9 @@ const Gallery = () => {
     const fetchCategories = async () => {
       try {
         const res = await axios.get("service/admin/services");
+
         if (res.data.success) {
-          const dynamicCats = res.data.data.map(s => s.title);
+          const dynamicCats = res.data.data.map((s) => s.title);
           setCategories(["ALL", ...dynamicCats]);
         }
       } catch (err) {
@@ -46,53 +53,138 @@ const Gallery = () => {
         toast.error("Failed to load categories");
       }
     };
+
     fetchCategories();
   }, []);
 
-  /* ================= CATEGORY CHANGE ================= */
   useEffect(() => {
     setImages([]);
     setActiveIndex(null);
     fetchImages(activeCategory);
   }, [activeCategory]);
 
-  /* ================= KEYBOARD CONTROLS ================= */
+  const openModal = (index) => {
+    setActiveIndex(index);
+
+    if (!modalHistoryRef.current) {
+      window.history.pushState({ galleryModal: true }, "");
+      modalHistoryRef.current = true;
+    }
+  };
+
+  const closeModal = () => {
+    setActiveIndex(null);
+
+    if (modalHistoryRef.current && window.history.state?.galleryModal) {
+      modalHistoryRef.current = false;
+      window.history.back();
+    } else {
+      modalHistoryRef.current = false;
+    }
+  };
+
+  const closeModalOnly = () => {
+    setActiveIndex(null);
+    modalHistoryRef.current = false;
+  };
+
+  const handleNext = (e) => {
+    e?.stopPropagation();
+    if (!images.length) return;
+
+    setActiveIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const handlePrev = (e) => {
+    e?.stopPropagation();
+    if (!images.length) return;
+
+    setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (activeIndex === null || images.length <= 1) return;
+
+    const distance = touchStartX.current - touchEndX.current;
+
+    if (Math.abs(distance) < 50) return;
+
+    if (distance > 0) {
+      handleNext();
+    } else {
+      handlePrev();
+    }
+
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (activeIndex === null) return;
-      if (e.key === "ArrowRight" && activeIndex < images.length - 1) {
-        setActiveIndex((prev) => prev + 1);
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        handleNext(e);
       }
-      if (e.key === "ArrowLeft" && activeIndex > 0) {
-        setActiveIndex((prev) => prev - 1);
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handlePrev(e);
       }
+
       if (e.key === "Escape") {
-        setActiveIndex(null);
+        e.preventDefault();
+        closeModal();
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
+
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeIndex, images.length]);
 
-  const handleNext = (e) => {
-    e.stopPropagation();
-    if (activeIndex < images.length - 1) setActiveIndex(activeIndex + 1);
-  };
-  const handlePrev = (e) => {
-    e.stopPropagation();
-    if (activeIndex > 0) setActiveIndex(activeIndex - 1);
-  };
+  useEffect(() => {
+    const handlePopState = () => {
+      if (activeIndex !== null) {
+        closeModalOnly();
+      }
+    };
 
+    if (activeIndex !== null) {
+      document.body.classList.add("gallery-preview-open");
+      document.documentElement.classList.add("gallery-preview-open");
+      window.addEventListener("popstate", handlePopState);
+    } else {
+      document.body.classList.remove("gallery-preview-open");
+      document.documentElement.classList.remove("gallery-preview-open");
+      window.removeEventListener("popstate", handlePopState);
+    }
+
+    return () => {
+      document.body.classList.remove("gallery-preview-open");
+      document.documentElement.classList.remove("gallery-preview-open");
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [activeIndex]);
 
   const downloadImage = async (url, filename) => {
     try {
+      if (!url) return;
       const response = await fetch(url);
       const blob = await response.blob();
       const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
-
       link.href = blobUrl;
-      link.download = filename || "image";
+      link.download = `${filename || "rydax-gallery"}.jpg`;
       document.body.appendChild(link);
       link.click();
 
@@ -105,21 +197,8 @@ const Gallery = () => {
   };
 
   return (
-
     <div className="text-white dot-wrapper">
       <div className="py-5 text-center">
-        {/* <span className="about-badge">
-          Our Work
-        </span>
-        <div className="container text-center">
-          <h3 className="section-title section-title-small">
-            <span className="first-letter">T</span>he Drive Gallery
-          </h3>
-          <p className="text-secondary fs-5 mt-2">
-            Technology • Community Moments
-          </p>
-        </div> */}
-
         <div className="services-heading text-center">
           <div className="section-top-title">
             <span></span>
@@ -130,12 +209,6 @@ const Gallery = () => {
           <h2 className="services-title">
             Our <span>Gallery</span>
           </h2>
-
-          {/* <p className="services-subtitle">
-            Take a closer look at our premium detailing transformations,
-            ceramic coating finishes, paint protection work, and luxury
-            automotive care projects delivered by the RyDAX team.
-          </p> */}
         </div>
       </div>
 
@@ -144,7 +217,8 @@ const Gallery = () => {
           {categories.map((cat) => (
             <button
               key={cat}
-              className={`category-btn ${activeCategory === cat ? "active" : ""}`}
+              className={`category-btn ${activeCategory === cat ? "active" : ""
+                }`}
               onClick={() => setActiveCategory(cat)}
             >
               {cat}
@@ -152,22 +226,28 @@ const Gallery = () => {
           ))}
         </div>
       </div>
+
       <div className="container pb-5">
         <div className="row g-4">
           {images.map((item, index) => (
             <div key={item._id} className="col-12 col-sm-6 col-md-4 col-lg-3">
               <div
                 className="premium-card fade-up"
-                onClick={() => setActiveIndex(index)}
+                onClick={() => openModal(index)}
               >
                 <img
                   src={item.imageUrl}
-                  alt={item.title || "RYDAX Studion"}
+                  alt={item.title || "RYDAX Studio"}
                   loading="lazy"
                 />
+
                 <div className="premium-overlay">
                   <h5>{item.title || "RYDAX Studio"}</h5>
                   <p>{item.service}</p>
+                </div>
+
+                <div className="gallery-card-view">
+                  <i className="bi bi-arrows-fullscreen"></i>
                 </div>
               </div>
             </div>
@@ -176,32 +256,65 @@ const Gallery = () => {
       </div>
 
       {activeIndex !== null && images[activeIndex] && (
-        <div className="premium-modal" onClick={() => setActiveIndex(null)}>
-          <span className="premium-close">✕</span>
-          {activeIndex > 0 && (
-            <span className="nav-arrow left" onClick={handlePrev}>❮</span>
-          )}
-          <img
-            src={images[activeIndex].imageUrl}
-            alt="Preview"
+        <div className="gallery-preview-modal" onClick={closeModal}>
+          <div
+            className="gallery-preview-content"
             onClick={(e) => e.stopPropagation()}
-          />
-          {activeIndex < images.length - 1 && (
-            <span className="nav-arrow right" onClick={handleNext}>❯</span>
-          )}
-          <button
-            className="premium-download "
-            onClick={(e) => {
-              e.stopPropagation();
-              downloadImage(
-                images[activeIndex].imageUrl,
-                images[activeIndex].title
-              );
-            }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
-            <i className="bi bi-download"></i>
-          </button>
+            {images.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  className="gallery-preview-nav gallery-preview-prev"
+                  onClick={handlePrev}
+                >
+                  <i className="bi bi-chevron-left"></i>
+                </button>
 
+                <button
+                  type="button"
+                  className="gallery-preview-nav gallery-preview-next"
+                  onClick={handleNext}
+                >
+                  <i className="bi bi-chevron-right"></i>
+                </button>
+              </>
+            )}
+
+            <button
+              type="button"
+              className="gallery-preview-close"
+              onClick={closeModal}
+            >
+              ×
+            </button>
+
+            <button
+              type="button"
+              className="gallery-preview-download"
+              onClick={(e) => {
+                e.stopPropagation();
+                downloadImage(
+                  images[activeIndex].imageUrl,
+                  images[activeIndex].title || `rydax-gallery-${activeIndex + 1}`
+                );
+              }}
+            >
+              <i className="bi bi-download"></i>
+            </button>
+
+            <img
+              src={images[activeIndex].imageUrl}
+              alt={images[activeIndex].title || "Preview"}
+            />
+
+            <div className="gallery-preview-counter">
+              {activeIndex + 1} / {images.length}
+            </div>
+          </div>
         </div>
       )}
     </div>
