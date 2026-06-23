@@ -32,7 +32,7 @@ body.work-gallery-modal-open {
             rgba(255, 102, 0, 0.12),
             transparent 30%),
         #050505;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .hero-glow {
@@ -63,8 +63,8 @@ body.work-gallery-modal-open {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     padding: 10px 16px;
     border-radius: 30px;
     margin-bottom: 35px;
@@ -83,15 +83,15 @@ body.work-gallery-modal-open {
 
 @keyframes pulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(0,255,106,0.7);
+        box-shadow: 0 0 0 0 rgba(0, 255, 106, 0.7);
     }
 
     70% {
-        box-shadow: 0 0 0 12px rgba(0,255,106,0);
+        box-shadow: 0 0 0 12px rgba(0, 255, 106, 0);
     }
 
     100% {
-        box-shadow: 0 0 0 0 rgba(0,255,106,0);
+        box-shadow: 0 0 0 0 rgba(0, 255, 106, 0);
     }
 }
 
@@ -99,7 +99,7 @@ body.work-gallery-modal-open {
 
 .job-badge {
     display: inline-block;
-    background: rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.08);
     color: #ff4d4d;
     padding: 10px 18px;
     border-radius: 30px;
@@ -137,8 +137,8 @@ body.work-gallery-modal-open {
 }
 
 .hero-info-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(12px);
     border-radius: 20px;
     padding: 18px 22px;
@@ -165,8 +165,8 @@ body.work-gallery-modal-open {
     padding: 16px;
     margin: auto;
     box-shadow:
-        0 0 40px rgba(255,77,77,0.22),
-        inset 0 0 30px rgba(255,255,255,0.02);
+        0 0 40px rgba(255, 77, 77, 0.22),
+        inset 0 0 30px rgba(255, 255, 255, 0.02);
 }
 
 .progress-inner {
@@ -174,7 +174,7 @@ body.work-gallery-modal-open {
     height: 100%;
     border-radius: 50%;
     background: #0b0b0b;
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -195,12 +195,10 @@ body.work-gallery-modal-open {
 
 .summary-card {
     background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,0.03),
-            rgba(255,255,255,0.01)
-        );
-    border: 1px solid rgba(255,255,255,0.06);
+        linear-gradient(145deg,
+            rgba(255, 255, 255, 0.03),
+            rgba(255, 255, 255, 0.01));
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 24px;
     padding: 28px;
     margin-bottom: 50px;
@@ -283,14 +281,13 @@ body.work-gallery-modal-open {
     position: relative;
     margin-top: 40px;
 }
+
 .timeline-scroll {
     display: flex;
     gap: 28px;
     overflow-x: auto;
     padding:
-        20px
-        10px
-        30px;
+        20px 10px 30px;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
 
@@ -1027,5 +1024,129 @@ body.work-gallery-modal-open {
 
     .garage-spec {
         width: 100%;
+    }
+}
+
+.transformation-reel-card {
+    display: grid;
+    grid-template-columns: 330px 1fr;
+    gap: 28px;
+    align-items: center;
+    background:
+        radial-gradient(circle at top left, rgba(255, 60, 60, 0.14), transparent 34%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    padding: 24px;
+    margin-bottom: 38px;
+}
+
+.reel-preview-box {
+    background: #000;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    max-height: 540px;
+}
+
+.reel-preview-box video {
+    width: 100%;
+    height: 520px;
+    object-fit: cover;
+    display: block;
+}
+
+.reel-badge {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    color: #ff6b6b;
+    background: rgba(255, 77, 77, 0.1);
+    border: 1px solid rgba(255, 77, 77, 0.18);
+    padding: 8px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.reel-info-box h3 {
+    margin-top: 18px;
+    font-size: 30px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.reel-info-box p {
+    color: #aaa;
+    line-height: 1.8;
+    margin-top: 12px;
+}
+
+.reel-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 18px 0;
+}
+
+.reel-meta span {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #ddd;
+    border-radius: 30px;
+    padding: 8px 13px;
+    font-size: 13px;
+}
+
+.reel-action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.reel-btn {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    border-radius: 14px;
+    padding: 11px 16px;
+    font-weight: 700;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.reel-btn.primary {
+    background: linear-gradient(135deg, #ff3c3c, #7a0000);
+    border: none;
+}
+
+.reel-btn.whatsapp {
+    border-color: rgba(37, 211, 102, 0.35);
+    color: #25d366;
+}
+
+@media (max-width: 768px) {
+    .transformation-reel-card {
+        grid-template-columns: 1fr;
+        padding: 18px;
+        border-radius: 24px;
+    }
+
+    .reel-preview-box video {
+        height: 480px;
+    }
+
+    .reel-info-box h3 {
+        font-size: 24px;
+    }
+
+    .reel-action-row {
+        flex-direction: column;
+    }
+
+    .reel-btn {
+        width: 100%;
+        justify-content: center;
     }
 }

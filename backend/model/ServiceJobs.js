@@ -31,9 +31,31 @@ const ServiceJobsSchema = new mongoose.Schema(
     checkInTime: { type: Date, default: Date.now },
     expectedDelivery: { type: Date },
     timeline: [{ stage: String, status: String, note: String, updatedAt: { type: Date, default: Date.now } }],
-    customerNotes: String
+    customerNotes: {type: String,default: ""},
+    reel: {
+      status: {
+        type: String,
+        enum: ["NOT_GENERATED", "PROCESSING", "READY", "FAILED"],
+        default: "NOT_GENERATED",
+        index: true,
+      },
+      template: {
+        type: String,
+        enum: ["CINEMATIC", "FAST", "LUXURY"],
+        default: "CINEMATIC",
+      },
+      video: {
+        url: {type: String, default: ""},
+        publicId: {type: String, default: "",},
+      },
+      caption: {type: String,default: ""},
+      duration: {type: Number,default: 0},
+      mediaCount: {type: Number,default: 0},
+      errorMessage: {type: String,default: ""},
+      generatedAt: {type: Date,},
+    },
   },
   { timestamps: true, versionKey: false }
 );
 const ServiceJobs = mongoose.model('ServiceJobs', ServiceJobsSchema);
-module.exports = { ServiceJobs };
+module.exports = { ServiceJobs ,JOB_STAGES };

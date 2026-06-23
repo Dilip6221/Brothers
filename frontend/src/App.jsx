@@ -59,7 +59,6 @@ import AdminCreateOnlineServicePackages from './pages/OnlineService/admin/packge
 import AdminOnlineServicePackages from './pages/OnlineService/admin/packges/AdminOnlineServicePackages.jsx';
 import AdminOnlineAddonService from './pages/OnlineService/admin/addon/AdminOnlineAddonService.jsx';
 import AdminCreateOnlineAddonService from './pages/OnlineService/admin/addon/AdminCreateOnlineAddonService.jsx';
-import AdminCreateInvoice from './pages/Admin/invoice/AdminCreateInvoice.jsx';
 import ScrollToTopArrow from './component/ScrollToTopArrow.jsx';
 import ServiceCard from './pages/ServiceCard.jsx';
 import ServiceDetail from './pages/ServiceDetail.jsx';
@@ -167,7 +166,6 @@ const App = () => {
        <Route path="/admin/online-addon-services" element={<AdminOnlineAddonService />} />
         <Route path="/admin/online-addon-services/create" element={<AdminCreateOnlineAddonService />} />
         <Route path="/admin/online-addon-services/edit/:id" element={<AdminCreateOnlineAddonService />} />
-        <Route path="/admin/invoice/create/:jobId" element={<AdminCreateInvoice />}/>
 
         <Route path="/online-services" element={<OnlineServiceLayout />} />
       </Routes>
