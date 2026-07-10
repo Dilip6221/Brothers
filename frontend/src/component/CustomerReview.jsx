@@ -138,7 +138,7 @@ const CustomerReview = () => {
 
                     <div>
                       <h4>{item.name || "RyDAX User"}</h4>
-                      <p>RyDAX Customer</p>
+                      <p>RYDAX Customer</p>
                     </div>
                   </div>
                 </div>
