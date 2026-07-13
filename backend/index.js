@@ -15,7 +15,6 @@ const JobCardRoute = require('./routes/JobCardRoute.js');
 const AboutTimeLineRoute = require('./routes/AboutTimeLineRoute.js');
 const CarCompanyRoute = require('./routes/CarCompanyRoute.js');
 const authRoute = require('./routes/AuthRoute.js');
-const ReelGenerate = require('./routes/ReelGenerateRoute.js');
 const OnlineServiceRoute = require('./routes/OnlineServiceRoute.js');
 
 const connectDB = require('./config/db.js');
@@ -49,7 +48,6 @@ app.use('/api/about-timeline', AboutTimeLineRoute);
 app.use('/api/car-companies', CarCompanyRoute);
 app.use('/api/customer-reviews', CustomerReviewRoute);
 app.use('/api/auth', authRoute);
-app.use('/api/generate-reel', ReelGenerate);
 
 app.get('/', (req, res) => {
     res.send('Welcome To RYDAX Studio');
