@@ -65,7 +65,34 @@
     border-radius: 10px;
     background: linear-gradient(90deg, #ff3c3c, #ff6a3d);
 }
-
+.footer-social-icons {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+.footer-social-icons a {
+    width: 50px;
+    height: 50px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 20px;
+    transition: 0.3s ease;
+}
+.footer-social-icons a:hover {
+    transform:translateY(-5px);
+    background:
+        linear-gradient(
+            145deg,
+            var(--red),
+            var(--orange)
+        );
+    border-color: transparent;
+}
 .footer-links {
     list-style: none;
     padding: 0;

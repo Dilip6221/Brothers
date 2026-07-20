@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import { UserContext } from "../context/UserContext.jsx";
 import { validateForm } from "../utils/formValidation.js";
 import { submitInquiryValidationRules } from "../utils/validationRules.js";
+import rydaxAnimation from "../assets/vidoes/rydaxCarAnimation.gif";
 
 const Contact = () => {
     const { user } = useContext(UserContext);
@@ -62,10 +63,10 @@ const Contact = () => {
         name: user ? user.name : "",
         phone: user ? user.phone : "",
         email: user ? user.email : "",
-        city: "",
-        address: "",
-        carBrand: "",
-        carModel: "",
+        // city: "",
+        // address: "",
+        // carBrand: "",
+        // carModel: "",
         services: [],
         notes: ""
     });
@@ -74,39 +75,45 @@ const Contact = () => {
         name: useRef(),
         phone: useRef(),
         email: useRef(),
-        city: useRef(),
-        address: useRef(),
-        carBrand: useRef(),
-        carModel: useRef(),
+        // city: useRef(),
+        // address: useRef(),
+        // carBrand: useRef(),
+        // carModel: useRef(),
         services: useRef(),
         notes: useRef()
     };
 
-    useEffect(() => {
-        const fetchCompanies = async () => {
-            try {
-                const res = await axios.get("car-companies/companies");
-                const options = res.data.data.map(c => ({
-                    value: c._id,
-                    label: c.name
-                }));
-                setCarBrandOptions(options);
-            } catch (err) {
-                console.error("Frontend Error Fetching Companies:", err);
-                toast.error(err.message || "Failed to load car companies");
-            }
-        };
-        fetchCompanies();
-    }, []);
+    // useEffect(() => {
+    //     const fetchCompanies = async () => {
+    //         try {
+    //             const res = await axios.get("car-companies/companies");
+    //             const options = res.data.data.map(c => ({
+    //                 value: c._id,
+    //                 label: c.name
+    //             }));
+    //             setCarBrandOptions(options);
+    //         } catch (err) {
+    //             console.error("Frontend Error Fetching Companies:", err);
+    //             toast.error(err.message || "Failed to load car companies");
+    //         }
+    //     };
+    //     fetchCompanies();
+    // }, []);
 
     useEffect(() => {
         const fetchServices = async () => {
             try {
                 const res = await axios.get("service/admin/services");
-                const options = res.data.data.map(c => ({
-                    value: c.title,
-                    label: c.title
-                }));
+                const options = [
+                    ...res.data.data.map(c => ({
+                        value: c.title,
+                        label: c.title
+                    })),
+                    {
+                        value: "Other Service",
+                        label: "Other Service"
+                    }
+                ];
                 setServiceOptions(options);
             } catch (err) {
                 console.error("Frontend Error Fetching Services:", err);
@@ -116,27 +123,27 @@ const Contact = () => {
         fetchServices();
     }, []);
 
-    const handleBrandChange = async (selected) => {
-        const companyId = selected?.value || "";
-        setServiceEnquery(prev => ({
-            ...prev,
-            carBrand: selected?.label || "",
-            carModel: ""
-        }));
-        setCarModelOptions([]);
-        if (!companyId) return;
-        try {
-            const res = await axios.get(`car-companies/${companyId}/car-models`);
-            const options = res.data.data.map(m => ({
-                value: m.name,
-                label: m.name
-            }));
-            setCarModelOptions(options);
-        } catch (err) {
-            console.error("Frontend Error Fetching Models:", err);
-            toast.error(err.message || "Failed to load car models");
-        }
-    };
+    // const handleBrandChange = async (selected) => {
+    //     const companyId = selected?.value || "";
+    //     setServiceEnquery(prev => ({
+    //         ...prev,
+    //         carBrand: selected?.label || "",
+    //         carModel: ""
+    //     }));
+    //     setCarModelOptions([]);
+    //     if (!companyId) return;
+    //     try {
+    //         const res = await axios.get(`car-companies/${companyId}/car-models`);
+    //         const options = res.data.data.map(m => ({
+    //             value: m.name,
+    //             label: m.name
+    //         }));
+    //         setCarModelOptions(options);
+    //     } catch (err) {
+    //         console.error("Frontend Error Fetching Models:", err);
+    //         toast.error(err.message || "Failed to load car models");
+    //     }
+    // };
 
     const handleEnquiryInputChange = (e) => {
         const { name, value } = e.target;
@@ -155,10 +162,10 @@ const Contact = () => {
                 name: serviceEnquery.name,
                 phone: serviceEnquery.phone,
                 email: serviceEnquery.email,
-                city: serviceEnquery.city,
-                address: serviceEnquery.address,
-                carBrand: serviceEnquery.carBrand,
-                carModel: serviceEnquery.carModel,
+                // city: serviceEnquery.city,
+                // address: serviceEnquery.address,
+                // carBrand: serviceEnquery.carBrand,
+                // carModel: serviceEnquery.carModel,
                 services: serviceEnquery.services,
                 notes: serviceEnquery.notes,
             });
@@ -194,91 +201,77 @@ const Contact = () => {
                     </p>
                 </div>
             </div>
-            <div className="premium-contact-layout container">
-                <div className="premium-contact-info">
-                    <a
-                        href="https://www.google.com/maps?q=Navi+Veraval,+Gujarat,+India"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="info-item"
-                    >
-                        <div className="info-icon">
-                            <i className="bi bi-geo-alt-fill"></i>
-                        </div>
 
-                        <div className="info-text">
-                            <h4>Studio Location</h4>
-                            <p>
-                                Veraval Nani,
-                                <br />
-                                Jamnagar, Gujarat
-                            </p>
-                        </div>
-                    </a>
+            <div className="container">
+                <div className="contact-info-grid">
                     <a
                         href="mailto:beradilip39@gmail.com"
-                        className="info-item"
+                        className="top-info-card"
                     >
-                        <div className="info-icon">
+                        <div className="top-info-icon">
                             <i className="bi bi-envelope-fill"></i>
                         </div>
-                        <div className="info-text">
-                            <h4>Email Support</h4>
-                            <p>
-                                beradilip39@gmail.com
-                            </p>
+                        <div className="top-info-text">
+                            <p>beradilip39@gmail.com</p>
                         </div>
                     </a>
                     <a
                         href="tel:919313015917"
-                        className="info-item"
+                        className="top-info-card"
                     >
-                        <div className="info-icon">
+                        <div className="top-info-icon">
                             <i className="bi bi-telephone-fill"></i>
                         </div>
-                        <div className="info-text">
-                            <h4>Call Us</h4>
-                            <p>
-                                +91 9313015917
-                            </p>
+                        <div className="top-info-text">
+                            <p>+91 9313015917</p>
                         </div>
                     </a>
-                    <div className="info-item clean-social">
-                        <div className="info-text w-100">
-                            <h4 className="social-title">
-                                Connect With Us
-                            </h4>
-
-                            <div className="social-icons">
-
+                    <a
+                        href="https://www.google.com/maps?q=Navi+Veraval,+Gujarat,+India"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="top-info-card"
+                    >
+                        <div className="top-info-icon">
+                            <i className="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <div className="top-info-text">
+                            <p>Ground Floor, Parthana Complex,<br />Shyamal Manek Baug Road, Satellite, Ahmedabad</p>
+                        </div>
+                    </a>
+                    <div className="top-info-card social-card">
+                        <div className="top-info-text">
+                            <p className="social-label">Connect With Us</p>
+                            <div className="footer-social-icons">
                                 <a
                                     href="https://youtube.com/@dilipahir6221"
                                     target="_blank"
                                     rel="noreferrer"
+                                    title="YouTube"
                                 >
                                     <i className="bi bi-youtube"></i>
                                 </a>
-
                                 <a
                                     href="https://wa.me/919313015917"
                                     target="_blank"
                                     rel="noreferrer"
+                                    title="WhatsApp"
                                 >
                                     <i className="bi bi-whatsapp"></i>
                                 </a>
-
                                 <a
                                     href="https://www.instagram.com/"
                                     target="_blank"
                                     rel="noreferrer"
+                                    title="Instagram"
                                 >
                                     <i className="bi bi-instagram"></i>
                                 </a>
-
                                 <a
                                     href="https://x.com/DilipBe00479036"
                                     target="_blank"
                                     rel="noreferrer"
+                                    title="Twitter"
                                 >
                                     <i className="bi bi-twitter-x"></i>
                                 </a>
@@ -286,12 +279,22 @@ const Contact = () => {
                         </div>
                     </div>
                 </div>
-                <form
-                    className="premium-contact-form"
-                    onSubmit={handleEnquirySubmit}
-                >
+            </div>
 
-                    <div className="row g-3">
+            <div className="premium-contact-layout container">
+                <div className="contact-left-section">
+                    <h2 className="contact-left-title">Welcome To RYDAX Studio</h2>
+                    <div className="contact-left-image">
+                        <img loading="lazy" src={rydaxAnimation} alt="RYDAX Studio" title="RYDAX Studio" />
+                    </div>
+                </div>
+                <div className="contact-right-section">
+                    <form
+                        className="premium-contact-form"
+                        onSubmit={handleEnquirySubmit}
+                    >
+                        <h3 className="form-title">Book Your Car Service</h3>
+                        <div className="row g-3">
                         <div className="col-md-6">
                             <input
                                 type="text"
@@ -329,7 +332,7 @@ const Contact = () => {
                                 onChange={handleEnquiryInputChange}
                             />
                         </div>
-                        <div className="col-md-4">
+                        {/* <div className="col-md-4">
                             <input
                                 type="text"
                                 name="city"
@@ -352,8 +355,8 @@ const Contact = () => {
                                 value={serviceEnquery.address}
                                 onChange={handleEnquiryInputChange}
                             />
-                        </div>
-                        <div className="col-md-6">
+                        </div> */}
+                        {/* <div className="col-md-6">
                             <Select
                                 options={carBrandOptions}
                                 classNamePrefix="react-select"
@@ -368,8 +371,8 @@ const Contact = () => {
                                 )}
                                 onChange={handleBrandChange}
                             />
-                        </div>
-                        <div className="col-md-6">
+                        </div> */}
+                        {/* <div className="col-md-6">
                             <Select
                                 options={carModelOptions}
                                 classNamePrefix="react-select"
@@ -394,7 +397,7 @@ const Contact = () => {
                                     })
                                 }
                             />
-                        </div>
+                        </div> */}
                         <div className="col-12">
                             <Select
                                 isMulti
@@ -448,9 +451,8 @@ const Contact = () => {
                         </span>
                         <i className="bi bi-arrow-right"></i>
                     </button>
-
-                </form>
-
+                    </form>
+                </div>
             </div>
 
             {/* MAP */}

@@ -72,7 +72,7 @@ const Footer = () => {
                   service experience for every car enthusiast.
                 </p>
 
-                <div className="social-icons">
+                <div className="footer-social-icons">
 
                   <a
                     href="https://youtube.com/@dilipahir6221"

@@ -5,7 +5,7 @@ const { sendInqueryMail } = require("../mail/InquieryMail.js");
 // router.post("/service-inquiry", authOptional, createServiceInquiry);
 const createServiceInquiry = async (req, res) => {
     try {
-        let {name, phone, email, city,carBrand, carModel,services, address, notes } = req.body;
+        let {name, phone, email,services, /* city,carBrand, carModel,services, address, */ notes } = req.body;
         if (req.user) {
             name = req.user.name;
             phone = req.user.phone;
@@ -16,11 +16,11 @@ const createServiceInquiry = async (req, res) => {
             name,
             phone,
             email,
-            city,
-            carBrand,
-            carModel,
             services,
-            address,
+            // city,
+            // carBrand,
+            // carModel,
+            // address,
             notes
         });
         res.json({success: true,message: "Your inquiry has been submitted. Our team will contact you soon."});
@@ -67,10 +67,10 @@ const exportCustomerInqueryData = async (req, res) => {
         if (filter === "COMPLETED") query.status = "COMPLETED";
         if (filter === "ALL") query = {};
         const users = await Inquiry.find(query);
-        let csv = "Full Name,Email,Phone,Brand,Model,Services,Status\n";
+        let csv = "Full Name,Email,Phone,Services,Status\n";
         users.forEach(u => {
             const services = Array.isArray(u.services) ? u.services.join(", "): u.services;
-            csv += `"${u.name}","${u.email}","${u.phone}","${u.carBrand}","${u.carModel}","${services}","${u.status}"\n`;
+            csv += `"${u.name}","${u.email}","${u.phone}","${services}","${u.status}"\n`;
         });
         res.setHeader("Content-Type", "text/csv");
         res.setHeader("Content-Disposition", "attachment; filename=users.csv");
@@ -79,4 +79,29 @@ const exportCustomerInqueryData = async (req, res) => {
         res.status(500).json({ success: false, message: "CSV export failed" });
     }
 };
-module.exports = { createServiceInquiry,adminInquiryData,getInquiryDetails,exportCustomerInqueryData};
+
+/* Update inquiry status and admin notes */
+// router.post("/admin/update-inquiry", authAdminRole, updateInquiryStatus);
+const updateInquiryStatus = async (req, res) => {
+    try {
+        const { id, status, adminNotes } = req.body;
+        
+        if (!id) {
+            return res.json({ success: false, message: "Inquiry ID is required" });
+        }
+        const inquiry = await Inquiry.findByIdAndUpdate(
+            id,
+            { status, adminNotes },
+            { new: true }
+        );
+        if (!inquiry) {
+            return res.json({ success: false, message: "Inquiry not found" });
+        }
+        res.json({  success: true, message: "Inquiry updated successfully"});
+    } catch (error) {
+        console.error('Error updating inquiry:', error);
+        res.json({ success: false, message: error.message });
+    }
+};
+
+module.exports = { createServiceInquiry,adminInquiryData,getInquiryDetails,exportCustomerInqueryData, updateInquiryStatus };

@@ -5,12 +5,13 @@ const InquirySchema = new mongoose.Schema({
     name: String,
     phone: String,
     email: String,
-    city: String,
-    carBrand: String,
-    carModel: String,
+    // city: String,
+    // carBrand: String,
+    // carModel: String,
     services: [String],
-    address: String,
+    // address: String,
     notes: String,
+    adminNotes: String,
     status: {type:String,enum:['PENDING','COMPLETE'],default:'PENDING'},
     createdAt: { type: Date, default: Date.now }
 });

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
 import "../css/home.css";
+import { Link, useNavigate } from "react-router-dom";
 
 const ServiceCard = () => {
+  const navigate = useNavigate();
   const [services, setServices] = useState([]);
 
   const fetchServices = async () => {
@@ -47,7 +48,12 @@ const ServiceCard = () => {
 
       <div className="premium-service-grid">
         {services.map((service) => (
-          <div className="premium-service-card" key={service._id}>
+          <div
+            className="premium-service-card"
+            key={service._id}
+            onClick={() => navigate(`/service/${service.slug}`)}
+            style={{ cursor: "pointer" }}
+          >
             <div className="service-img-box">
               <img
                 src={service.image?.url}
@@ -75,7 +81,11 @@ const ServiceCard = () => {
                 </ul>
               )}
 
-              <Link to={`/service/${service.slug}`} className="service-read-more">
+              <Link
+                to={`/service/${service.slug}`}
+                className="service-read-more"
+                onClick={(e) => e.stopPropagation()}
+              >
                 Read More <span>→</span>
               </Link>
             </div>

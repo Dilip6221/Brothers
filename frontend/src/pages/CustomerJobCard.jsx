@@ -133,43 +133,6 @@ const CustomerJobCard = () => {
         }
     };
 
-    const downloadReel = async () => {
-        try {
-            const url = job?.reel?.video?.url;
-            if (!url) return toast.error("Reel not available");
-
-            const response = await fetch(url);
-            const blob = await response.blob();
-            const blobUrl = window.URL.createObjectURL(blob);
-
-            const link = document.createElement("a");
-            link.href = blobUrl;
-            link.download = `${job.jobCode}-rydax-reel.mp4`;
-
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            window.URL.revokeObjectURL(blobUrl);
-        } catch (err) {
-            console.error(err);
-            toast.error("Failed to download reel");
-        }
-    };
-
-    const copyReelCaption = async () => {
-        try {
-            await navigator.clipboard.writeText(job?.reel?.caption || "");
-            toast.success("Caption copied");
-        } catch (err) {
-            toast.error("Failed to copy caption");
-        }
-    };
-
-    const shareReelWhatsApp = () => {
-        const text = `${job?.reel?.caption || ""}\n\n${job?.reel?.video?.url || ""}`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
-    };
     useEffect(() => {
         if (!galleryModal.open) return;
 
@@ -401,66 +364,6 @@ const CustomerJobCard = () => {
                         ))}
                     </div>
                 </div>
-                {job.reel?.status === "READY" && job.reel?.video?.url && (
-                    <>
-                        <div className="section-header mt-5">
-                            <h3>Transformation Reel</h3>
-                        </div>
-
-                        <div className="transformation-reel-card">
-                            <div className="reel-preview-box">
-                                <video
-                                    src={job.reel.video.url}
-                                    controls
-                                    playsInline
-                                    preload="metadata"
-                                />
-                            </div>
-
-                            <div className="reel-info-box">
-                                <span className="reel-badge">
-                                    <i className="bi bi-stars"></i>
-                                    RYDAX Reel Ready
-                                </span>
-
-                                <h3>Your car transformation is ready to share.</h3>
-
-                                <p>
-                                    Download your premium transformation reel and share it on WhatsApp or
-                                    Instagram with the auto-generated caption.
-                                </p>
-
-                                <div className="reel-meta">
-                                    <span>
-                                        <i className="bi bi-clock"></i>
-                                        {job.reel.duration || 15}s Reel
-                                    </span>
-                                    <span>
-                                        <i className="bi bi-camera-reels"></i>
-                                        {job.reel.template || "CINEMATIC"}
-                                    </span>
-                                </div>
-
-                                <div className="reel-action-row">
-                                    <button className="reel-btn primary" onClick={downloadReel}>
-                                        <i className="bi bi-download"></i>
-                                        Download Reel
-                                    </button>
-
-                                    <button className="reel-btn" onClick={copyReelCaption}>
-                                        <i className="bi bi-copy"></i>
-                                        Copy Caption
-                                    </button>
-
-                                    <button className="reel-btn whatsapp" onClick={shareReelWhatsApp}>
-                                        <i className="bi bi-whatsapp"></i>
-                                        WhatsApp
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )}
                 <div className="section-header mt-5">
                     <h3>Work Gallery</h3>
                 </div>

@@ -23,17 +23,6 @@ const sendInqueryMail = async (user) => {
               <p><strong>Name:</strong> ${user.name}</p>
               <p><strong>Phone:</strong> ${user.phone}</p>
               <p><strong>Email:</strong> ${user.email}</p>
-              <p><strong>City:</strong> ${user.city}</p>
-              <p><strong>Address:</strong> ${user.address}</p>
-            </div>
-          </div>
-
-          <!-- CAR INFO -->
-          <div style="padding:20px;">
-            <h3 style="border-left:4px solid #72545b; padding-left:10px; color:#333;">🚘 Car Details</h3>
-            <div style="background:#fafafa; padding:15px; border-radius:8px; margin-top:10px;">
-              <p><strong>Brand:</strong> ${user.carBrand}</p>
-              <p><strong>Model:</strong> ${user.carModel}</p>
             </div>
           </div>
 
