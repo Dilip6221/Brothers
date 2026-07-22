@@ -18,6 +18,94 @@ html {
 body {
   -ms-overflow-style: none;
 }
+/* Loader CSS START */
+
+.global-loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background:
+    radial-gradient(circle at top, rgba(255, 59, 48, 0.16), transparent 28%),
+    linear-gradient(135deg, rgba(6, 6, 6, 0.98), rgba(14, 14, 14, 0.96));
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.global-loader-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 32px;
+  min-width: 260px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 0 1px rgba(255, 59, 48, 0.12),
+    0 18px 48px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.global-loader-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+  transform: translateX(-120%);
+  animation: shimmer 1.8s linear infinite;
+}
+
+.global-loader-spinner {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-top-color: #ff3b30;
+  border-right-color: #ff7a6d;
+  animation: spin 0.9s linear infinite;
+  display: grid;
+  place-items: center;
+}
+
+.global-loader-spinner-core {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff8c80, #ff3b30);
+  box-shadow: 0 0 12px rgba(255, 59, 48, 0.3);
+}
+
+.global-loader-brand {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.global-loader-text {
+  margin: 0;
+  color: #f2f2f2;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  to { transform: translateX(120%); }
+}
+
+/* Loader CSS END */
 
 .navbar-logo {
   height: 195px;

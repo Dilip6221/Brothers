@@ -8,6 +8,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import './css/index.css'
 import UserProvider from "./context/UserContext.jsx";
 import { Toaster } from "react-hot-toast"
+import LoaderProvider from "./context/LoaderContext.jsx";
 
 
 createRoot(document.getElementById('root')).render(
@@ -15,12 +16,14 @@ createRoot(document.getElementById('root')).render(
 
   <>
     <BrowserRouter>
-      <UserProvider> 
-        <App />
-        <Toaster
-          position="bottom-right"
-        />
-      </UserProvider> 
+      <LoaderProvider>
+        <UserProvider> 
+          <App />
+          <Toaster
+            position="bottom-right"
+          />
+        </UserProvider> 
+      </LoaderProvider>
     </BrowserRouter>
   {/* </StrictMode>, */}
   </>

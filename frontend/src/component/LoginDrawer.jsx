@@ -154,6 +154,8 @@ const LoginDrawer = forwardRef((props, ref) => {
 
       const res = await axios.post("auth/send-otp", {
         phone: mobile,
+      }, {
+        skipGlobalLoader: true,
       });
 
       if (res.data.success) {
@@ -179,6 +181,8 @@ const LoginDrawer = forwardRef((props, ref) => {
       const res = await axios.post("auth/verify-otp", {
         phone: mobile,
         otp: finalOtp,
+      }, {
+        skipGlobalLoader: true,
       });
 
       if (res.data.success) {
@@ -212,6 +216,8 @@ const LoginDrawer = forwardRef((props, ref) => {
 
       const res = await axios.post("auth/send-otp", {
         phone: mobile,
+      }, {
+        skipGlobalLoader: true,
       });
 
       if (res.data.success) {
@@ -245,6 +251,8 @@ const LoginDrawer = forwardRef((props, ref) => {
         phone: mobile,
         name,
         email,
+      }, {
+        skipGlobalLoader: true,
       });
 
       if (res.data.success) {

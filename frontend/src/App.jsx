@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { UserContext } from "./context/UserContext.jsx";
 import Home from './pages/Home.jsx'
@@ -60,13 +60,17 @@ import AdminOnlineServicePackages from './pages/OnlineService/admin/packges/Admi
 import AdminOnlineAddonService from './pages/OnlineService/admin/addon/AdminOnlineAddonService.jsx';
 import AdminCreateOnlineAddonService from './pages/OnlineService/admin/addon/AdminCreateOnlineAddonService.jsx';
 import ScrollToTopArrow from './component/ScrollToTopArrow.jsx';
+import GlobalLoader from './component/GlobalLoader.jsx';
 import ServiceCard from './pages/ServiceCard.jsx';
 import ServiceDetail from './pages/ServiceDetail.jsx';
 import Profile from './pages/Profile.jsx';
+import { useLoader } from './context/LoaderContext.jsx';
+import { attachGlobalLoader } from './utils/loader.js';
 
 const App = () => {
   const location = useLocation();
   const { user, authLoading } = useContext(UserContext);
+  const { setGlobalLoading, startRequest, endRequest } = useLoader();
 
   const hideNavbarRoutes = ["/login", "/forget-password", "/admin","/online-services"];
   const shouldHideNavbar = hideNavbarRoutes.some((route) =>
@@ -75,12 +79,27 @@ const App = () => {
 
   const isAdminRoute = location.pathname.toLowerCase().startsWith("/admin");
 
+  useEffect(() => {
+    const cleanup = attachGlobalLoader({ startRequest, endRequest });
+    return cleanup;
+  }, [startRequest, endRequest]);
+
+  useEffect(() => {
+    if (authLoading) {
+      setGlobalLoading(true, 'Your Premium studio is waiting...');
+      return;
+    }
+
+    setGlobalLoading(true, 'Loading page...');
+    const timer = window.setTimeout(() => {
+      setGlobalLoading(false);
+    }, 350);
+
+    return () => window.clearTimeout(timer);
+  }, [authLoading, location.pathname, setGlobalLoading]);
+
   if (authLoading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-        <div className="spinner-border text-warning"></div>
-      </div>
-    );
+    return <GlobalLoader />;
   }
 
   //  Admin route but user not logged in
@@ -95,6 +114,7 @@ const App = () => {
 
   return (
     <>
+      <GlobalLoader />
       <ScrollToTop />
       <ScrollToTopArrow />
       {/* {!shouldHideNavbar && <ServiceIcon />} */}
