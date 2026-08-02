@@ -416,6 +416,7 @@ const LoginDrawer = forwardRef((props, ref) => {
                 className="form-control service-input shadow-none mb-3"
                 placeholder="Enter Name*"
                 value={name}
+                autoFocus = {true}
                 onChange={(e) => setName(e.target.value)}
                 ref={completeProfileInputRefs.name}
               />

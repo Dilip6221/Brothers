@@ -1,9 +1,10 @@
 const express = require('express');
 const userRoute = express.Router();
-const { registerUser,loginUser,sendForgotPasswordEmail,resetPassword ,getUserData,changePassword,logoutUser, allUsers,getDashboardDataCount,exportUsersData,changeUserStatus,updateUserData,getUsersForJob } = require('../controller/UserController');
+const { registerUser,loginUser,sendForgotPasswordEmail,resetPassword ,getUserData,changePassword,logoutUser, allUsers,getDashboardDataCount,exportUsersData,changeUserStatus,updateUserData,getUsersForJob,/* previewWelcomeMail */ } = require('../controller/UserController');
 const {authUser,authForAndroid} = require('../middleware/auth');
 
 userRoute.post('/register', registerUser);
+// userRoute.post('/preview-welcome-mail', previewWelcomeMail);
 userRoute.post('/login', loginUser);
 userRoute.post('/forget-pass', sendForgotPasswordEmail);
 userRoute.post("/forget-password/:token", resetPassword);  

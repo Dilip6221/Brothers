@@ -134,13 +134,7 @@ const verifyOtp = async (req, res) => {
 const completeProfile = async (req, res) => {
     try {
         const { phone, name, email,role,isAdminCreate } = req.body;
-        // if (!name || !email) {
-        //     return res.json({success: false, message: "Name and email are required"});
-        // }
-        // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        // if (!emailRegex.test(email)) {
-        //     return res.json({success: false,message: "Invalid email format"});
-        // }
+    
         const normalizedEmail = email.toLowerCase().trim();
         const existingUsers = await User.find({
             $or: [

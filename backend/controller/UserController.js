@@ -3,7 +3,7 @@ const { Inquiry } = require('../model/Inquiery.js');
 const jwt = require('jsonwebtoken');
 const crypto = require("crypto");
 const bcrypt = require('bcryptjs')
-const { sendWelcomeMail } = require('../mail/UserMail.js');
+// const { sendWelcomeMail, buildWelcomeMailHtml } = require('../mail/UserMail.js');
 const exportToCSV = require("../config/csv.js");
 const { Subscription } = require('../model/Subscribe.js');
 const { Services } = require('../model/Services.js');
@@ -15,9 +15,24 @@ const generateToken = (userId) => {
 };
 /* Register user action */
 // userRoute.post('/register', registerUser);
+// const previewWelcomeMail = async (req, res) => {
+//     try {
+//         const { name, email } = req.body;
+//         const previewHtml = await buildWelcomeMailHtml({
+//             name: name || 'Guest',
+//             email: email || 'demo@rydaxstudio.com',
+//         });
+
+//         return res.type('html').send(previewHtml);
+//     } catch (error) {
+//         console.error('Error previewing welcome email:', error);
+//         return res.status(500).json({ success: false, message: error.message });
+//     }
+// };
+
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password, phone, role } = req.body;
+        const { name, email, password, phone, role, /* previewEmail */ } = req.body;
         if (!name || !email || !password || !phone) {
             return res.json({ success: false, isregistered: false, message: 'All fields are required' });
         }
@@ -29,14 +44,17 @@ const registerUser = async (req, res) => {
         if (exitUser) {
             return res.json({ success: false, isregistered: true, message: 'You are already registered' });
         }
+        // if (previewEmail) {
+        //     const previewHtml = await buildWelcomeMailHtml({ name, email });
+        //     return res.type('html').send(previewHtml);
+        // }
+
         const newUserData = { name, email, password, phone };
         if (role) {
             newUserData.role = role;
         }
         const newUser = await User.create(newUserData);
         res.json({ success: true, message: 'User Created Succesfully' });
-        // sendWelcomeMail(newUser)
-        //     .then(() => console.log('Welcome mail sent'))
         await sendWelcomeMail(newUser);
     } catch (error) {
         console.error('Error in registerUser:', error);
@@ -369,4 +387,4 @@ const getUsersForJob = async (req, res) => {
     .limit(20);
   res.json({ success: true, data: users });
 };
-module.exports = { registerUser, loginUser, sendForgotPasswordEmail, resetPassword, getUserData, changePassword, logoutUser, allUsers, getDashboardDataCount, exportUsersData,changeUserStatus,updateUserData,getUsersForJob };
+module.exports = { registerUser, loginUser, sendForgotPasswordEmail, resetPassword, getUserData, changePassword, logoutUser, allUsers, getDashboardDataCount, exportUsersData,changeUserStatus,updateUserData,getUsersForJob,/* previewWelcomeMail */ };
