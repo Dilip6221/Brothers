@@ -9,7 +9,7 @@ const createServiceInquiry = async (req, res) => {
         if (req.user) {
             name = req.user.name;
             phone = req.user.phone;
-            email = req.user.email;
+            // User no longer stores email; keep inquiry email independent.
         }
         const inquiry = await Inquiry.create({
             userId: req.user ? req.user._id : null,

@@ -5,7 +5,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import "../css/profile.css";
 import { validateForm } from "../utils/formValidation.js";
-import { completeProfileValidationRules } from "../utils/validationRules.js";
 
 const Profile = () => {
     const { user,token, fetchUser } = useContext(UserContext);
@@ -18,7 +17,6 @@ const Profile = () => {
 
     const [formData, setFormData] = useState({
         name: user?.name || "",
-        email: user?.email || "",
     });
 
     useEffect(() => {
@@ -28,7 +26,6 @@ const Profile = () => {
         }
         setFormData({
             name: user.name || "",
-            email: user.email || "",
         });
         fetchUserCars();
     }, [user, navigate]);
@@ -72,22 +69,14 @@ const Profile = () => {
     };
     const inputRefs = {
         name: useRef(),
-        email: useRef(),
     };
     const handleSaveProfile = async (e) => {
         e.preventDefault();
-        const isValid = validateForm({
-            values: formData,
-            validationRules: completeProfileValidationRules,
-            inputRefs
-        });
-        if (!isValid) return;
         try {
             setLoading(true);
             const res = await axios.post("/user/admin/update-user-data", {
                 _id: user._id,
                 name: formData.name,
-                email: formData.email,
                 phone: user.phone,
                 role: user.role,
             });
@@ -107,7 +96,6 @@ const Profile = () => {
     const handleCancel = () => {
         setFormData({
             name: user.name || "",
-            email: user.email || "",
         });
         setIsEditing(false);
     };
@@ -127,7 +115,7 @@ const Profile = () => {
                             <div className="profile-avatar-box">{getInitials()}</div>
                             <div>
                                 <h2>{user.name}</h2>
-                                <p>{user.email }</p>
+                                <p>{user.phone}</p>
                                
                             </div>
                         </div>
@@ -156,19 +144,6 @@ const Profile = () => {
                                 value={formData.name}
                                 onChange={handleInputChange}
                                 ref={inputRefs.name}
-                            />
-                        </div>
-                        <div className="col-md-4">
-                            <label>Email Address</label>
-                            <input
-                                type="email"
-                                name="email"
-                                className="form-control service-input mt-2 shadow-none"
-                                placeholder="Email Address*"
-                                disabled={!isEditing}
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                ref={inputRefs.email}
                             />
                         </div>
                         <div className="col-md-4">

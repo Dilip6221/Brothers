@@ -32,46 +32,8 @@ export const UserProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  // 🔹 Login handler
-  const login = async (email, password) => {
-    try {
-      const res = await axios.post("/user/login", { email, password });
-      if (res.data.success) {
-        if (res.data.token) setToken(res.data.token);
-        await fetchUser();
-        return { success: true, message: res.data.message };
-      } else {
-        return { success: false, message: res.data.message };
-      }
-    } catch (err) {
-      console.error("Login error:",  err.message);
-      return {success: false, message: err.message || "Login failed"};
-    }
-  };
-
-  // 🔹 Register handler
-  const register = async (name, email, password, phone) => {
-    try {
-      const res = await axios.post("/user/register", {
-        name,
-        email,
-        password,
-        phone,
-      });
-
-      if (res.data.success) {
-        return { success: true, message: res.data.message };
-      } else {
-        return { success: false, isregistered: res.data.isregistered, message: res.data.message };
-      }
-    } catch (err) {
-      console.error("Register error:", err.response?.data || err.message);
-      return {
-        success: false,
-        message: err.response?.data?.message || "Registration failed",
-      };
-    } 
-  };
+  // Legacy email/password login and registration handlers are disabled.
+  // They remain in the old Login page as commented legacy code.
 
   const logout = async () => {
     try {
@@ -115,8 +77,6 @@ export const UserProvider = ({ children }) => {
     setToken,
     authLoading,
     setAuthLoading,
-    login,
-    register,
     logout,
     downloadCSV,
     fetchUser

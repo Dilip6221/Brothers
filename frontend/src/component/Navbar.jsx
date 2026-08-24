@@ -22,7 +22,6 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [services, setServices] = useState([]);
@@ -274,7 +273,7 @@ const Navbar = () => {
               </div>
               <div>
                 <h6>{user.name}</h6>
-                <small>{user.email || user.phone}</small>
+                <small>{user.phone}</small>
               </div>
             </div>
 

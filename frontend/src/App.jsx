@@ -3,8 +3,9 @@ import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { UserContext } from "./context/UserContext.jsx";
 import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
-import Login from './pages/Login.jsx'
-import ForgetPassword from './pages/ForgetPassword.jsx'
+// Legacy email/password login pages are disabled; OTP login is provided by LoginDrawer.
+// import Login from './pages/Login.jsx'
+// import ForgetPassword from './pages/ForgetPassword.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Navbar from './component/Navbar.jsx'
 import WhatsappButton  from './component/WhatsappButton.jsx'

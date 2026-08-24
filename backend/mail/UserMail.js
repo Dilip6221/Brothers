@@ -1,4 +1,4 @@
-const { transporter } = require('../model/User.js');
+const { transporter } = require('../config/mail.js');
 const { Services } = require('../model/Services.js');
 
 const escapeHtml = (value = "") => {

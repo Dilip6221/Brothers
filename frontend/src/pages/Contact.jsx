@@ -62,7 +62,7 @@ const Contact = () => {
     const [serviceEnquery, setServiceEnquery] = useState({
         name: user ? user.name : "",
         phone: user ? user.phone : "",
-        email: user ? user.email : "",
+        email: "",
         // city: "",
         // address: "",
         // carBrand: "",
@@ -171,7 +171,7 @@ const Contact = () => {
             });
             if (res.data.success) {
                 toast.success(res.data.message);
-                setServiceEnquery({ name: user ? user.name : "", phone: user ? user.phone : "", email: user ? user.email : "", city: "", address: "", carBrand: "", carModel: "", services: [], notes: "" });
+                setServiceEnquery({ name: user ? user.name : "", phone: user ? user.phone : "", email: "", city: "", address: "", carBrand: "", carModel: "", services: [], notes: "" });
             } else {
                 toast.error(res.data.message);
             }

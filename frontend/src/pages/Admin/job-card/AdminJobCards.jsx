@@ -26,7 +26,7 @@ const AdminJobCards = () => {
         job.carId?.registrationNumber?.toLowerCase().includes(search.toLowerCase()) ||
         job.carId?.brand?.toLowerCase().includes(search.toLowerCase()) ||
         job.userId?.name?.toLowerCase().includes(search.toLowerCase()) ||
-        job.userId?.email?.toLowerCase().includes(search.toLowerCase())
+        job.userId?.phone?.toLowerCase().includes(search.toLowerCase())
     );
 
     return (
@@ -91,7 +91,7 @@ const AdminJobCards = () => {
                                             <td>
                                                 {job.userId?.name}<br />
                                                 <small className="text-info">
-                                                    {job.userId?.email}
+                                                    {job.userId?.phone}
                                                 </small>
                                             </td>
                                             <td>

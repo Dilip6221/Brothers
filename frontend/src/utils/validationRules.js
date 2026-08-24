@@ -2,8 +2,7 @@ export const otpValidationRules = {
     mobile: { required: true, message: "Mobile Number is required", pattern: /^\d{10}$/, patternMessage: "Mobile Number must be 10 digits" },
 };
 export const completeProfileValidationRules  = {
-    name: { required: true, minLength: 3, message: "Name is required", minLengthMessage: "Name must be 3 characters" },
-    email: { required: true, message: "Email is required", pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, patternMessage: "Invalid email format" }
+    name: { required: true, minLength: 3, message: "Name is required", minLengthMessage: "Name must be 3 characters" }
 };
 
 export const submitInquiryValidationRules = {
@@ -19,7 +18,6 @@ export const submitInquiryValidationRules = {
 
 export const userCreateValidationRules = {
     name: { required: true, minLength: 3, message: "Name is required", minLengthMessage: "Name must be 3 characters" },
-    email: { required: true, message: "Email is required", pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
     phone: { required: true, message: "Mobile Number is required", pattern: /^\d{10}$/, patternMessage: "Mobile Number must be 10 digits" },
     role: { required: true, message: "Role is required" },
 };

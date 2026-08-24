@@ -11,10 +11,7 @@ import { UserContext } from "../context/UserContext.jsx";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { validateForm } from "../utils/formValidation.js";
-import {
-  otpValidationRules,
-  completeProfileValidationRules,
-} from "../utils/validationRules.js";
+import { otpValidationRules, completeProfileValidationRules } from "../utils/validationRules.js";
 
 const LoginDrawer = forwardRef((props, ref) => {
   const { fetchUser } = useContext(UserContext);
@@ -28,7 +25,6 @@ const LoginDrawer = forwardRef((props, ref) => {
 
   const completeProfileInputRefs = {
     name: useRef(null),
-    email: useRef(null),
   };
 
   const [showLogin, setShowLogin] = useState(false);
@@ -36,7 +32,6 @@ const LoginDrawer = forwardRef((props, ref) => {
   const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(60);
@@ -48,7 +43,6 @@ const LoginDrawer = forwardRef((props, ref) => {
     setMobile("");
     setOtp(Array(6).fill(""));
     setName("");
-    setEmail("");
     setShowLogin(true);
 
     setTimeout(() => {
@@ -85,7 +79,6 @@ const LoginDrawer = forwardRef((props, ref) => {
     setMobile("");
     setOtp(Array(6).fill(""));
     setName("");
-    setEmail("");
   };
 
   useImperativeHandle(ref, () => ({
@@ -189,7 +182,6 @@ const LoginDrawer = forwardRef((props, ref) => {
         if (res.data.isNewUser) {
           setLoginStep("PROFILE");
           setName("");
-          setEmail("");
         } else {
           toast.success("Login successful");
           await fetchUser();
@@ -237,7 +229,7 @@ const LoginDrawer = forwardRef((props, ref) => {
 
   const completeProfile = async () => {
     const isValid = validateForm({
-      values: { name, email },
+      values: { name },
       validationRules: completeProfileValidationRules,
       inputRefs: completeProfileInputRefs,
     });
@@ -250,7 +242,6 @@ const LoginDrawer = forwardRef((props, ref) => {
       const res = await axios.post("auth/complete-profile", {
         phone: mobile,
         name,
-        email,
       }, {
         skipGlobalLoader: true,
       });
@@ -419,15 +410,6 @@ const LoginDrawer = forwardRef((props, ref) => {
                 autoFocus = {true}
                 onChange={(e) => setName(e.target.value)}
                 ref={completeProfileInputRefs.name}
-              />
-
-              <input
-                type="email"
-                className="form-control service-input shadow-none mb-3"
-                placeholder="Enter Email*"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                ref={completeProfileInputRefs.email}
               />
 
               <button

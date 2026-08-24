@@ -1,7 +1,7 @@
-const { User, transporter } = require('../model/User.js');
+const { User } = require('../model/User.js');
 const { Inquiry } = require('../model/Inquiery.js');
 const jwt = require('jsonwebtoken');
-const crypto = require("crypto");
+// const crypto = require("crypto");
 const bcrypt = require('bcryptjs')
 // const { sendWelcomeMail, buildWelcomeMailHtml } = require('../mail/UserMail.js');
 const exportToCSV = require("../config/csv.js");
@@ -65,7 +65,7 @@ const registerUser = async (req, res) => {
 // userRoute.post("/admin/update-user-data", updateUserData);
 const updateUserData = async(req,res) => {
     try{
-       const {_id,name, email, phone, role } =  req.body;
+    const {_id,name, phone, role } =  req.body;
         const user = await User.findById(_id);
         if(!user){
             return res.json({success: false,message:'User Not Found'});
@@ -74,14 +74,7 @@ const updateUserData = async(req,res) => {
         if (!phoneRegex.test(phone)) {
             return res.json({ success: false, message: 'Please enter a valid phone number' });
         }
-        if (email !== user.email) {
-            const emailExists = await User.findOne({ email });
-            if (emailExists) {
-                return res.json({success: false,message: "Email already in use by another user"});
-            }
-        }
         user.name = name;
-        user.email = email;
         user.phone = phone;
         user.role = role;
         await user.save();
@@ -346,9 +339,9 @@ const exportUsersData = async (req, res) => {
         if (filter === "STAFF") query.role = { $in: ["STAFF", "ADMIN"] };
         if (filter === "ALL") query = {};
         const users = await User.find(query);
-        let csv = "Name,Email,Phone,Role\n";
+        let csv = "Name,Phone,Role\n";
         users.forEach(u => {
-            csv += `${u.name},${u.email},${u.phone},${u.role}\n`;
+            csv += `${u.name},${u.phone},${u.role}\n`;
         });
         res.setHeader("Content-Type", "text/csv");
         res.setHeader("Content-Disposition", "attachment; filename=users.csv");

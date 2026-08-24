@@ -3,7 +3,7 @@ const { Otp } = require('../model/Otp');
 const bcrypt = require('bcryptjs');
 const otpProvider = require('../config/otpProvider');
 const jwt = require('jsonwebtoken');
-const { sendWelcomeMail } = require('../mail/UserMail');
+// const { sendWelcomeMail } = require('../mail/UserMail');
 
 
 const generateToken = (user) => {
@@ -78,7 +78,7 @@ const sendOtp = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
     try {
-        const { phone, otp, name, email } = req.body;
+        const { phone, otp, name } = req.body;
         const otpDoc = await Otp.findOne({
             phone,
             isUsed: false
@@ -133,23 +133,13 @@ const verifyOtp = async (req, res) => {
 };
 const completeProfile = async (req, res) => {
     try {
-        const { phone, name, email,role,isAdminCreate } = req.body;
-    
-        const normalizedEmail = email.toLowerCase().trim();
-        const existingUsers = await User.find({
-            $or: [
-                { phone },
-                { email: normalizedEmail }
-            ]
-        });
+        const { phone, name, role, isAdminCreate } = req.body;
+        const existingUsers = await User.find({ phone });
 
         let user = null;
         for (const u of existingUsers) {
             if (u.phone === phone) {
                 user = u;
-            }
-            if (u.email === normalizedEmail &&u.phone !== phone) {
-                return res.json({success: false,message: "User with this email already exists"});
             }
         }
 
@@ -158,12 +148,10 @@ const completeProfile = async (req, res) => {
                 phone,
                 name,
                 role: role || "USER",
-                email: normalizedEmail,
                 isProfileComplete: true
             });
         } else {
             user.name = name;
-            user.email = normalizedEmail;
             user.isProfileComplete = true;
             await user.save();
         }
@@ -178,13 +166,11 @@ const completeProfile = async (req, res) => {
                 maxAge: isAdmin ? 1 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000,
             });
         }
-        sendWelcomeMail(user).catch(err =>
-            console.error("Mail Error:", err)
-        );
+        // sendWelcomeMail(user).catch(err => console.error("Mail Error:", err));
         return res.json({success: true,message: "Thank You for registering",user});
     } catch (err) {
         if (err.code === 11000) {
-            return res.json({success: false,message: "Email already exists"});
+            return res.json({success: false,message: "Phone number already exists"});
         }
         return res.json({success: false,error: err.message});
     }

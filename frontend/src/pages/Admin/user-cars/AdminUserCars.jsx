@@ -25,7 +25,7 @@ const AdminUserCars = () => {
         item.brand?.toLowerCase().includes(search.toLowerCase()) ||
         item.model?.toLowerCase().includes(search.toLowerCase()) ||
         item.userId?.name?.toLowerCase().includes(search.toLowerCase()) ||
-        item.userId?.email?.toLowerCase().includes(search.toLowerCase())
+        item.userId?.phone?.toLowerCase().includes(search.toLowerCase())
     );
 
     return (
@@ -60,7 +60,7 @@ const AdminUserCars = () => {
                                 <tr>
                                     <th>#</th>
                                     <th>User Name</th>
-                                    <th>Email</th>
+                                    <th>Phone</th>
                                     <th>Brand</th>
                                     <th>Model</th>
                                     <th>Year</th>
@@ -76,9 +76,7 @@ const AdminUserCars = () => {
                                             <td>{index + 1}</td>
                                             <td>{item.userId?.name || "-"}</td>
                                             <td>
-                                                <a href={`mailto:${item.userId?.email}`} className="text-info text-decoration-none">
-                                                    {item.userId?.email || "-"}
-                                                </a>
+                                                {item.userId?.phone || "-"}
                                             </td>
                                             <td>{item.brand}</td>
                                             <td>{item.model}</td>

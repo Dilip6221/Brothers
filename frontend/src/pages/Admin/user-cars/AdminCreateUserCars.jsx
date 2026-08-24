@@ -95,7 +95,7 @@ const AdminCreateUserCars = () => {
                             <option value="">Select Customer...</option>
                             {users.map(u => (
                                 <option key={u._id} value={u._id}>
-                                    {u.name} ({u.email})
+                                    {u.name} ({u.phone})
                                 </option>
                             ))}
                         </select>

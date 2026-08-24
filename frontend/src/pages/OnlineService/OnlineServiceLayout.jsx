@@ -141,7 +141,7 @@ const OnlineServiceLayout = () => {
               </div>
               <div>
                 <h6>{user.name}</h6>
-                <small>{user.email || user.phone}</small>
+                <small>{user.phone}</small>
               </div>
             </div>
 

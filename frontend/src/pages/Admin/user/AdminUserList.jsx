@@ -20,13 +20,11 @@ const AdminUserList = () => {
 
     const [newUser, setNewUser] = useState({//Create new user
         name: "",
-        email: "",
         phone: "",
         role: "USER"
     });
     const createUserRef = {
         name: useRef(),
-        email: useRef(),
         phone: useRef(),
         role: useRef(),
     };
@@ -52,7 +50,7 @@ const AdminUserList = () => {
                     toast.success(res.data.message);
                     setShowCreateModal(false);
                     fetchData();
-                    setNewUser({ name: "", email: "", phone: "", role: "USER" });
+                    setNewUser({ name: "", phone: "", role: "USER" });
                 } else {
                     toast.error(res.data.message);
                 }
@@ -110,7 +108,6 @@ const AdminUserList = () => {
             const text = search.toLowerCase();
             return (
                 item.name?.toLowerCase().includes(text) ||
-                item.email?.toLowerCase().includes(text) ||
                 item.phone?.toLowerCase().includes(text) ||
                 item.role?.toLowerCase().includes(text) ||
                 item.status?.toLowerCase().includes(text)
@@ -119,7 +116,7 @@ const AdminUserList = () => {
     /* For update user and staff upadte status */
     const handleUserStatus = async (id, currentStatus) => {
         try {
-            const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+            const newStatus = currentStatus === "ACTIVE" ? "BLOCKED" : "ACTIVE";
             const res = await axios.post(
                 "user/admin/update-status",
                 { userId: id, status: newStatus }
@@ -181,7 +178,7 @@ const AdminUserList = () => {
                         </ul>
 
                         {/* RIGHT BUTTON */}
-                        <button className="btn btn-outline-danger d-flex align-items-center gap-2 px-3" onClick={() => { setShowCreateModal(true); setModalMode('CREATE'); setNewUser({ name: "", email: "", phone: "", role: "USER" }); }}>
+                        <button className="btn btn-outline-danger d-flex align-items-center gap-2 px-3" onClick={() => { setShowCreateModal(true); setModalMode('CREATE'); setNewUser({ name: "", phone: "", role: "USER" }); }}>
                             <i className="bi bi-plus-circle"></i>
                             Create
                         </button>
@@ -220,7 +217,6 @@ const AdminUserList = () => {
                                 <tr className="table-secondary text-dark">
                                     <th>#</th>
                                     <th>Full Name</th>
-                                    <th>Email</th>
                                     <th>Phone</th>
                                     <th>Role</th>
                                     <th>Status</th>
@@ -233,7 +229,6 @@ const AdminUserList = () => {
                                         <tr key={item._id}>
                                             <td>{index + 1}</td>
                                             <td>{item.name}</td>
-                                            <td><a href={`mailto:${item.email}`} className="text-info text-decoration-none" style={{ cursor: "pointer" }}>{item.email}</a></td>
                                             <td>{item.phone}</td>
                                             <td>
                                                 {item.role === "STAFF" && (
@@ -285,7 +280,7 @@ const AdminUserList = () => {
                                                             cursor: "pointer",
                                                             fontSize: "18px",
                                                     }}
-                                                    onClick={() => { setShowCreateModal(true); setModalMode('EDIT'); setNewUser({ name: item.name, email: item.email, phone: item.phone, role: item.role, _id: item._id }); }}
+                                                    onClick={() => { setShowCreateModal(true); setModalMode('EDIT'); setNewUser({ name: item.name, phone: item.phone, role: item.role, _id: item._id }); }}
 
                                                     ></i>
                                                 )}
@@ -294,7 +289,7 @@ const AdminUserList = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="7" className="text-center text-white">No Data Found...</td>
+                                        <td colSpan="6" className="text-center text-white">No Data Found...</td>
                                     </tr>
                                 )}
                             </tbody>
@@ -336,19 +331,6 @@ const AdminUserList = () => {
                                     />
                                 </div>
 
-                                <div className="mb-3">
-                                    <label>Email</label>
-                                    <input
-                                        type="email"
-                                        className="form-control bg-dark text-white"
-                                        placeholder="user@example.com"
-                                        value={newUser.email}
-                                        onChange={(e) =>
-                                            setNewUser({ ...newUser, email: e.target.value })
-                                        }
-                                        ref={createUserRef.email}
-                                    />
-                                </div>
                                 <div className="mb-3">
                                     <label>Phone Number</label>
                                     <input

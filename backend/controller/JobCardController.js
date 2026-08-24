@@ -11,7 +11,7 @@ const cloudinary = require("../config/cloudinary");
 const getUserCars = async (req, res) => {
   try {
     const cars = await UserCars.find()
-      .populate("userId", "name email")
+      .populate("userId", "name phone")
       .sort({ createdAt: -1 });
     res.json({ success: true, data: cars });
   } catch (err) {
@@ -88,7 +88,7 @@ const adminJobCardList = async (req, res) => {
     const jobs = await ServiceJobs.find()
       .populate({
         path: "userId",
-        select: "name email"
+        select: "name phone"
       })
       .populate({
         path: "carId",
@@ -105,7 +105,7 @@ const adminJobCardList = async (req, res) => {
 const getJobCardById = async (req, res) => {
   try {
     const job = await ServiceJobs.findById(req.params.id)
-      .populate("userId", "name email")
+      .populate("userId", "name phone")
       .populate("carId", "brand model registrationNumber year vinNumber");
 
     if (!job) {

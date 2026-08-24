@@ -33,17 +33,11 @@
 // });
 // module.exports = { User, transporter};
 const mongoose = require('mongoose');
-const nodemailer = require('nodemailer');
+// const nodemailer = require('nodemailer');
 
 const UserSchema = new mongoose.Schema({
     name: { type: String, trim: true },
-    email: { 
-        type: String, 
-        lowercase: true, 
-        trim: true,
-        sparse: true,
-        unique: true
-    },
+    // email: { type: String, lowercase: true, trim: true, sparse: true, unique: true },
     phone: { 
         type: String, 
         required: true, 
@@ -68,12 +62,9 @@ const UserSchema = new mongoose.Schema({
     loginCount: { type: Number, default: 0 }
 }, { timestamps: true, versionKey: false });
 
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD,
-    },
-});
+// const transporter = nodemailer.createTransport({
+//     service: "gmail",
+//     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD },
+// });
 const User = mongoose.model('User',UserSchema);
-module.exports = {User, transporter};
+module.exports = {User};
