@@ -19,6 +19,7 @@ const serviceRoute = express.Router();
 const {
   createService,
   getAllInquiries,
+  getPublicServices,
   getSlugService,
   updateServiceStatus,
   deleteService,
@@ -43,7 +44,13 @@ serviceRoute.post(
 );
 serviceRoute.get(
   "/admin/services",
+  authAdminRole,
   getAllInquiries
+);
+
+serviceRoute.get(
+  "/services",
+  getPublicServices
 );
 
 serviceRoute.get(

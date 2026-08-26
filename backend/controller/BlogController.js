@@ -1,9 +1,19 @@
-const { Blog } = require("../model/blog.js");
+const { Blog } = require("../model/Blog.js");
 const { Subscription } = require('../model/Subscribe.js');
 const { EmailTracking } = require("../model/EmailTracking.js");
 const { sendSubscribeMail } = require("../mail/BlogMail.js");
 const cloudinary = require("../config/cloudinary");
 const slugify = require('slugify');
+const sanitizeHtml = require('sanitize-html');
+
+const sanitizeBlogContent = (content = '') => sanitizeHtml(content, {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+    allowedAttributes: {
+        ...sanitizeHtml.defaults.allowedAttributes,
+        img: ['src', 'alt', 'width', 'height'],
+    },
+    allowedSchemes: ['http', 'https'],
+});
 
 // Create Blog for admin side
 //router.post("/admin/create-blog", creteAdminBlog);
@@ -43,7 +53,7 @@ const creteAdminBlog = async (req, res) => {
             }
             blog.title = title;
             blog.slug = slug;
-            blog.contentHTML = content;
+            blog.contentHTML = sanitizeBlogContent(content);
             blog.category = category;
             blog.tags = tags;
             blog.metaTitle = metaTitle;
@@ -64,7 +74,7 @@ const creteAdminBlog = async (req, res) => {
             blog = await Blog.create({
                 title,
                 slug,
-                contentHTML: content,
+                contentHTML: sanitizeBlogContent(content),
                 category,
                 tags,
                 metaTitle,
@@ -91,6 +101,23 @@ const displayBlog = async (req, res) => {
     }
 };
 
+const displayPublishedBlogs = async (req, res) => {
+    try {
+        const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
+        const limit = Math.min(Math.max(Number.parseInt(req.query.limit, 10) || 12, 1), 50);
+        const blogs = await Blog.find({ status: "PUBLISHED" })
+            .select("title slug category metaTitle metaDescription readTime thumbnail tags createdAt updatedAt")
+            .sort({ createdAt: -1 })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .lean();
+        res.json({ success: true, data: blogs, page, limit });
+    } catch (error) {
+        console.error("Published blogs error:", error);
+        res.status(500).json({ success: false, message: "Unable to load blogs" });
+    }
+};
+
 //  Get Single Blog via Slug aur id
 //router.get("/blogs/:slug", displayBlog);
 const showSlugWiseBlog = async (req, res) => {
@@ -101,6 +128,7 @@ const showSlugWiseBlog = async (req, res) => {
     } else {
         findCondition = { slug: value };
     }
+    if (findCondition.slug) findCondition.status = 'PUBLISHED';
     const blog = await Blog.findOne(findCondition);
     if (!blog) {
         return res.json({ success: false, message: "Blog not found" });
@@ -163,11 +191,15 @@ const changeBlogStatus = async (req, res) => {
 const likeBlogToggle = async (req, res) => {
     try {
         const { id } = req.params;
-        const { userId } = req.body;
-        const blog = await Blog.findOne({ _id: id });
+        const mongoose = require('mongoose');
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: 'Invalid blog ID' });
+        }
+        const userId = req.user._id.toString();
+        const blog = await Blog.findOne({ _id: id, status: 'PUBLISHED' });
         if (!blog) return res.json({ success: false, message: "Blog not found" });
         let liked = false;
-        if (blog.likedBy.includes(userId)) {
+        if (blog.likedBy.some((likedUserId) => likedUserId.toString() === userId)) {
             blog.likes -= 1;
             blog.likedBy = blog.likedBy.filter(id => id.toString() !== userId);
             liked = false;
@@ -185,4 +217,4 @@ const likeBlogToggle = async (req, res) => {
 };
 
 
-module.exports = { creteAdminBlog, displayBlog, showSlugWiseBlog, changeBlogStatus, likeBlogToggle };
+module.exports = { creteAdminBlog, displayBlog, displayPublishedBlogs, showSlugWiseBlog, changeBlogStatus, likeBlogToggle };

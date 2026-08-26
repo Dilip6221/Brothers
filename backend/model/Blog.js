@@ -34,5 +34,7 @@ blogSchema.pre("save", function (next) {
     next();
 });
 
-const Blog = mongoose.model('Blog', blogSchema);
+blogSchema.index({ status: 1, createdAt: -1 });
+
+const Blog = mongoose.models.Blog || mongoose.model('Blog', blogSchema);
 module.exports = {Blog};

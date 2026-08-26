@@ -5,6 +5,14 @@ import axios from "axios";
 // ✅ Global Axios Config
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000/api";
 axios.defaults.withCredentials = true; // required for secure cookie sessions
+axios.interceptors.request.use((config) => {
+  const csrfCookie = document.cookie.split('; ').find((cookie) => cookie.startsWith('csrfToken='));
+  const csrfToken = csrfCookie?.split('=')[1];
+  if (csrfToken && ['post', 'put', 'patch', 'delete'].includes(config.method?.toLowerCase())) {
+    config.headers['x-csrf-token'] = decodeURIComponent(csrfToken);
+  }
+  return config;
+});
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {

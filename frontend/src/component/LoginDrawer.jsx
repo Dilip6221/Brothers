@@ -32,6 +32,7 @@ const LoginDrawer = forwardRef((props, ref) => {
   const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [name, setName] = useState("");
+  const [profileToken, setProfileToken] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(60);
@@ -180,6 +181,7 @@ const LoginDrawer = forwardRef((props, ref) => {
 
       if (res.data.success) {
         if (res.data.isNewUser) {
+          setProfileToken(res.data.profileToken || "");
           setLoginStep("PROFILE");
           setName("");
         } else {
@@ -242,6 +244,7 @@ const LoginDrawer = forwardRef((props, ref) => {
       const res = await axios.post("auth/complete-profile", {
         phone: mobile,
         name,
+        profileToken,
       }, {
         skipGlobalLoader: true,
       });

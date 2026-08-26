@@ -248,6 +248,21 @@ const getAllInquiries = async (req, res) => {
 };
 
 
+const getPublicServices = async (req, res) => {
+  try {
+    const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(Math.max(Number.parseInt(req.query.limit, 10) || 20, 1), 50);
+    const services = await Services.find({ status: "ACTIVE" })
+      .sort({ displayOrder: 1, createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+    return res.json({ success: true, data: services, page, limit });
+  } catch (error) {
+    console.error("Public services error:", error);
+    return res.status(500).json({ success: false, message: "Unable to load services" });
+  }
+};
 
 // ================= GET SINGLE SERVICE =================
 
@@ -449,6 +464,7 @@ const uploadServiceMedia = async (req, res) => {
 module.exports = {
   createService,
   getAllInquiries,
+  getPublicServices,
   getSlugService,
   updateServiceStatus,
   deleteService,

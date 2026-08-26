@@ -27,13 +27,8 @@ const Blog = () => {
     const fetchBlogs = async () => {
         try {
             setLoading(true);
-            const res = await axios.post("blog/admin/blogs");
-            const publishedBlogs =
-                res.data.data.filter(
-                    (blog) =>
-                        blog.status === "PUBLISHED"
-                );
-            setBlogs(publishedBlogs);
+            const res = await axios.get("blog/published");
+            setBlogs(res.data.data || []);
         } catch (err) {
             console.error(err);
             toast.error("Error fetching blogs");
@@ -146,9 +141,9 @@ const Blog = () => {
                         <span></span>
                     </div>
 
-                    <h2 className="services-title">
+                    <h1 className="services-title">
                         Automotive <span>Stories & Insights</span>
-                    </h2>
+                    </h1>
                     {/* <p className="services-subtitle">
                         Discover expert car care tips, premium detailing guides,
                         performance upgrades, and the latest trends in luxury automotive culture.

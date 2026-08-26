@@ -10,7 +10,7 @@ const ServiceCard = () => {
 
   const fetchServices = async () => {
     try {
-      const res = await axios.get("service/admin/services");
+      const res = await axios.get("service/services");
 
       if (res.data.success) {
         const activeServices = res.data.data.filter(
@@ -37,9 +37,9 @@ const ServiceCard = () => {
           <span></span>
         </div>
 
-        <h2 className="services-title">
+        <h1 className="services-title">
           Our <span>Services</span>
-        </h2>
+        </h1>
 
         <p className="services-subtitle">
           Professional car care services delivered by certified experts
@@ -58,6 +58,7 @@ const ServiceCard = () => {
               <img
                 src={service.image?.url}
                 alt={service.title}
+                loading="lazy"
                 className="premium-service-img"
               />
               <div className="service-img-overlay"></div>

@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { UserContext } from "../context/UserContext.jsx";
 import "../css/blog.css";
 import LoginDrawer from "../component/LoginDrawer.jsx";
+import { Seo } from "../component/Seo.jsx";
 
 const BlogView = () => {
   const loginDrawerRef = useRef(null);
@@ -98,9 +99,16 @@ const BlogView = () => {
   if (loading) return <SmallLoader />;
 
   const isLiked = blog.likedBy?.includes(user?._id);
+  const blogDescription = blog.metaDescription || blog.title;
 
   return (
     <div className="premium-blog-view bg-black text-white">
+      <Seo
+        title={`${blog.metaTitle || blog.title} | RYDAX Studio`}
+        description={blogDescription}
+        image={blog.thumbnail?.url}
+        type="article"
+      />
       <section className="blog-view-hero">
         <Link to="/blog" className="premium-back-btn">
           <i className="bi bi-arrow-left"></i>

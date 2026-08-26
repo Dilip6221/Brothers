@@ -45,7 +45,7 @@ const Navbar = () => {
 
   const fetchServices = async () => {
     try {
-      const res = await axios.get("service/admin/services");
+      const res = await axios.get("service/services");
       if (res.data.success) {
         const activeServices = res.data.data.filter(
           (item) => item.status === "ACTIVE"
@@ -116,12 +116,6 @@ const Navbar = () => {
       document.documentElement.classList.remove("menu-lock");
     };
   }, [isMobileMenuOpen]);
-
-  const handleOtpKeyDown = (e, index) => {
-    if (e.key === "Backspace" && !otp[index] && otpRefs.current[index - 1]) {
-      otpRefs.current[index - 1].focus();
-    }
-  };
 
   const MegaDropdown = ({ title, isActive, items, mainLink = null }) => (
     <li className="nav-item mega-dropdown">
@@ -252,6 +246,7 @@ const Navbar = () => {
                   <button
                     type="button"
                     className="mobile-user-icon-btn"
+                    aria-label="Open account menu"
                     onClick={() => setUserMenuOpen(true)}
                   >
                     {user.name?.charAt(0)?.toUpperCase()}
@@ -264,7 +259,7 @@ const Navbar = () => {
       </div>
       {userMenuOpen && (
         <>
-          <div className="os-user-backdrop" onClick={() => setUserMenuOpen(false)} />
+          <div className="os-user-backdrop" onClick={() => setUserMenuOpen(false)} aria-hidden="true" />
 
           <div className="os-user-dropdown">
             <div className="os-user-info">
@@ -272,7 +267,7 @@ const Navbar = () => {
                 {user.name?.charAt(0)?.toUpperCase()}
               </div>
               <div>
-                <h6>{user.name}</h6>
+                <h6>{user.name || "RYDAX User"}</h6>
                 <small>{user.phone}</small>
               </div>
             </div>
@@ -298,6 +293,7 @@ const Navbar = () => {
             </Link>
 
             <button
+              type="button"
               className="os-user-item os-logout"
               onClick={() => {
                 setUserMenuOpen(false);

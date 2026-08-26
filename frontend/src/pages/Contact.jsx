@@ -191,9 +191,9 @@ const Contact = () => {
                         <span></span>
                     </div>
 
-                    <h2 className="services-title">
+                    <h1 className="services-title">
                         Contact <span>Us</span>
-                    </h2>
+                    </h1>
 
                     <p className="services-subtitle">
                         Have questions about detailing, ceramic coating, PPF, or premium car care?

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { lazy, Suspense, useContext, useEffect } from 'react'
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { UserContext } from "./context/UserContext.jsx";
 import Home from './pages/Home.jsx'
@@ -22,44 +22,40 @@ import Faq from './pages/Faq.jsx'
 // import CarWash from './pages/Service/CarWash.jsx'
 
 // import ServiceIcon from "./component/ServiceIcon.jsx";
-import AdminLayout from './pages/Admin/AdminLayout.jsx'
-import AdminDashboard from './pages/Admin/dashboard/AdminDashboard.jsx'
-import AdminUserList from './pages/Admin/user/AdminUserList.jsx'
-import AdminBlogs from './pages/Admin/blog/AdminBlogs.jsx'
-import AdminCreateBlog from './pages/Admin/blog/AdminCreateBlog.jsx'
-import AdminInquery from './pages/Admin/inquery/AdminInquery.jsx'
-import AdminNewsLatters from './pages/Admin/news-latter/AdminNewsLatters.jsx'
-
-import AdminServiceList from './pages/Admin/service/AdminServiceList.jsx'
-import AdminCreateService from './pages/Admin/service/AdminCreateService.jsx'
-
-import AdminGallery from './pages/Admin/gallery/AdminGallery.jsx'
-
-
-import AdminUserCars from './pages/Admin/user-cars/AdminUserCars.jsx'
-import AdminCreateUserCars from './pages/Admin/user-cars/AdminCreateUserCars.jsx'
-import AdminJobCards from './pages/Admin/job-card/AdminJobCards.jsx'
-import AdminCreateJobCards from './pages/Admin/job-card/AdminCreateJobCards.jsx'
-import AdminUpdateJobCards from './pages/Admin/job-card/AdminUpdateJobCards.jsx'
-import AdminJobCardTimeLine from './pages/Admin/job-card/AdminJobCardTimeLine.jsx'
-import AdminJobServices from './pages/Admin/job-card/AdminJobServices.jsx'
-import AdminJobMedia from './pages/Admin/job-card/AdminJobMedia.jsx';
+const AdminLayout = lazy(() => import('./pages/Admin/AdminLayout.jsx'))
+const AdminDashboard = lazy(() => import('./pages/Admin/dashboard/AdminDashboard.jsx'))
+const AdminUserList = lazy(() => import('./pages/Admin/user/AdminUserList.jsx'))
+const AdminBlogs = lazy(() => import('./pages/Admin/blog/AdminBlogs.jsx'))
+const AdminCreateBlog = lazy(() => import('./pages/Admin/blog/AdminCreateBlog.jsx'))
+const AdminInquery = lazy(() => import('./pages/Admin/inquery/AdminInquery.jsx'))
+const AdminNewsLatters = lazy(() => import('./pages/Admin/news-latter/AdminNewsLatters.jsx'))
+const AdminServiceList = lazy(() => import('./pages/Admin/service/AdminServiceList.jsx'))
+const AdminCreateService = lazy(() => import('./pages/Admin/service/AdminCreateService.jsx'))
+const AdminGallery = lazy(() => import('./pages/Admin/gallery/AdminGallery.jsx'))
+const AdminUserCars = lazy(() => import('./pages/Admin/user-cars/AdminUserCars.jsx'))
+const AdminCreateUserCars = lazy(() => import('./pages/Admin/user-cars/AdminCreateUserCars.jsx'))
+const AdminJobCards = lazy(() => import('./pages/Admin/job-card/AdminJobCards.jsx'))
+const AdminCreateJobCards = lazy(() => import('./pages/Admin/job-card/AdminCreateJobCards.jsx'))
+const AdminUpdateJobCards = lazy(() => import('./pages/Admin/job-card/AdminUpdateJobCards.jsx'))
+const AdminJobCardTimeLine = lazy(() => import('./pages/Admin/job-card/AdminJobCardTimeLine.jsx'))
+const AdminJobServices = lazy(() => import('./pages/Admin/job-card/AdminJobServices.jsx'))
+const AdminJobMedia = lazy(() => import('./pages/Admin/job-card/AdminJobMedia.jsx'))
 import MyCarVault from './pages/MyCarVault.jsx';
 import CustomerJobCard from './pages/CustomerJobCard.jsx';
 import ScrollToTop from './component/ScrollToTop.jsx';
-import AdminCustomerReview from './pages/Admin/customer-review/AdminCustomerReview.jsx';
-import AdminAboutTimeLine from './pages/Admin/about-time-line/AdminAboutTimeLine.jsx';
-import AdminCreateAboutTimeLine from './pages/Admin/about-time-line/AdminCreateAboutTimeLine.jsx';
+const AdminCustomerReview = lazy(() => import('./pages/Admin/customer-review/AdminCustomerReview.jsx'))
+const AdminAboutTimeLine = lazy(() => import('./pages/Admin/about-time-line/AdminAboutTimeLine.jsx'))
+const AdminCreateAboutTimeLine = lazy(() => import('./pages/Admin/about-time-line/AdminCreateAboutTimeLine.jsx'))
 
-import OnlineServiceLayout from './pages/OnlineService/OnlineServiceLayout.jsx';  
-import AdminOnlineServiceCategory from './pages/OnlineService/admin/category/AdminOnlineServiceCategory.jsx';
-import AdminCreateOnlineServiceCategory from './pages/OnlineService/admin/category/AdminCreateOnlineServiceCategory.jsx';
-import AdminOnlineService from './pages/OnlineService/admin/service/AdminOnlineService.jsx';
-import AdminCreateOnlineService from './pages/OnlineService/admin/service/AdminCreateOnlineService.jsx';
-import AdminCreateOnlineServicePackages from './pages/OnlineService/admin/packges/AdminCreateOnlineServicePackages.jsx';
-import AdminOnlineServicePackages from './pages/OnlineService/admin/packges/AdminOnlineServicePackages.jsx';
-import AdminOnlineAddonService from './pages/OnlineService/admin/addon/AdminOnlineAddonService.jsx';
-import AdminCreateOnlineAddonService from './pages/OnlineService/admin/addon/AdminCreateOnlineAddonService.jsx';
+const OnlineServiceLayout = lazy(() => import('./pages/OnlineService/OnlineServiceLayout.jsx'))
+const AdminOnlineServiceCategory = lazy(() => import('./pages/OnlineService/admin/category/AdminOnlineServiceCategory.jsx'))
+const AdminCreateOnlineServiceCategory = lazy(() => import('./pages/OnlineService/admin/category/AdminCreateOnlineServiceCategory.jsx'))
+const AdminOnlineService = lazy(() => import('./pages/OnlineService/admin/service/AdminOnlineService.jsx'))
+const AdminCreateOnlineService = lazy(() => import('./pages/OnlineService/admin/service/AdminCreateOnlineService.jsx'))
+const AdminCreateOnlineServicePackages = lazy(() => import('./pages/OnlineService/admin/packges/AdminCreateOnlineServicePackages.jsx'))
+const AdminOnlineServicePackages = lazy(() => import('./pages/OnlineService/admin/packges/AdminOnlineServicePackages.jsx'))
+const AdminOnlineAddonService = lazy(() => import('./pages/OnlineService/admin/addon/AdminOnlineAddonService.jsx'))
+const AdminCreateOnlineAddonService = lazy(() => import('./pages/OnlineService/admin/addon/AdminCreateOnlineAddonService.jsx'))
 import ScrollToTopArrow from './component/ScrollToTopArrow.jsx';
 import GlobalLoader from './component/GlobalLoader.jsx';
 import ServiceCard from './pages/ServiceCard.jsx';
@@ -67,6 +63,7 @@ import ServiceDetail from './pages/ServiceDetail.jsx';
 import Profile from './pages/Profile.jsx';
 import { useLoader } from './context/LoaderContext.jsx';
 import { attachGlobalLoader } from './utils/loader.js';
+import RouteSeo from './component/Seo.jsx';
 
 const App = () => {
   const location = useLocation();
@@ -118,9 +115,11 @@ const App = () => {
       <GlobalLoader />
       <ScrollToTop />
       <ScrollToTopArrow />
+      <RouteSeo />
       {/* {!shouldHideNavbar && <ServiceIcon />} */}
       {!shouldHideNavbar && <Navbar />}
 
+      <Suspense fallback={<GlobalLoader />}>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
@@ -190,6 +189,7 @@ const App = () => {
 
         <Route path="/online-services" element={<OnlineServiceLayout />} />
       </Routes>
+      </Suspense>
       {!shouldHideNavbar && <Footer />}
       {!shouldHideNavbar && <WhatsappButton />}
     </>

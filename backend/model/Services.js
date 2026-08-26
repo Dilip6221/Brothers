@@ -148,6 +148,8 @@ const serviceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+serviceSchema.index({ status: 1, displayOrder: 1, createdAt: -1 });
+
 const Services = mongoose.model("Services", serviceSchema);
 
 module.exports = { Services };

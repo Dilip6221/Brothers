@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import "../css/service-detail.css";
 import HomeCta from "./HomeCta";
 import HomeGallery from "./HomeGallery";
+import { Seo } from "../component/Seo.jsx";
 
 const ServiceDetail = () => {
   const { slug } = useParams();
@@ -56,12 +57,27 @@ const ServiceDetail = () => {
 
   return (
     <main className="service-detail-page">
+      <Seo
+        title={`${service.metaTitle || service.heroTitle || service.title} | RYDAX Studio`}
+        description={service.metaDescription || service.shortDescription || service.description}
+        image={service.image?.url}
+        type="website"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: service.title,
+          description: service.shortDescription || service.description,
+          image: service.image?.url,
+          provider: { "@type": "AutomotiveBusiness", name: "RYDAX Studio" },
+          url: window.location.href,
+        }}
+      />
       <section className="service-hero-section">
         <div className="service-hero-media">
           {heroVideoUrl ? (
             <video src={heroVideoUrl} autoPlay muted loop playsInline />
           ) : (
-            <img src={heroImageUrl} alt={service.title} />
+            <img src={heroImageUrl} alt={service.title} fetchPriority="high" />
           )}
         </div>
 
@@ -186,6 +202,7 @@ const ServiceDetail = () => {
                   <img
                     src={activeImageUrl}
                     alt={activeSection?.title || service.title}
+                    loading="lazy"
                   />
                 )}
               </div>

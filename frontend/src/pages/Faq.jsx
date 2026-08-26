@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import cars from "../assets/images/rydax-car.png";
 import { useNavigate } from "react-router-dom";
 import hornSound from "../assets/vidoes/horn-sound.mp3";
+import { Seo } from "../component/Seo.jsx";
 
 const Faq = () => {
     const navigate = useNavigate();
@@ -39,6 +40,15 @@ const Faq = () => {
 
     return (
         <div className="faq-wrapper bg-black text-white">
+            <Seo structuredData={{
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: faqs.map((faq) => ({
+                    "@type": "Question",
+                    name: faq.question,
+                    acceptedAnswer: { "@type": "Answer", text: faq.answer },
+                })),
+            }} />
             {/* HEADER */}
             <div className="faq-header text-center">
                 <div className="services-heading text-center">
@@ -47,9 +57,9 @@ const Faq = () => {
                         <p>Everything You Need To Know</p>
                         <span></span>
                     </div>
-                    <h2 className="services-title">
+                    <h1 className="services-title">
                         RyDAX <span>FAQs</span>
-                    </h2>
+                    </h1>
                     <p className="services-subtitle">
                         Find answers to common questions about our premium detailing,
                         ceramic coating, PPF, washing, and automotive care services.

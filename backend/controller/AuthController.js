@@ -11,6 +11,12 @@ const generateToken = (user) => {
     return jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn });
 };
 
+const generateProfileToken = (phone) => jwt.sign(
+    { phone, purpose: 'PROFILE_COMPLETION' },
+    process.env.JWT_SECRET,
+    { expiresIn: '10m' }
+);
+
 const generateOtp = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
@@ -18,6 +24,9 @@ const generateOtp = () => {
 const sendOtp = async (req, res) => {
     try {
         const { phone } = req.body;
+        if (!/^[6-9]\d{9}$/.test(phone || '')) {
+            return res.status(400).json({ success: false, message: 'Invalid phone number' });
+        }
 
         const lastOtp = await Otp.findOne({ phone }).sort({ createdAt: -1 });
 
@@ -78,18 +87,15 @@ const sendOtp = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
     try {
-        const { phone, otp, name } = req.body;
+        const { phone, otp } = req.body;
+        if (!/^[6-9]\d{9}$/.test(phone || '') || !/^\d{6}$/.test(otp || '')) {
+            return res.status(400).json({ success: false, message: 'Invalid phone or OTP' });
+        }
         const otpDoc = await Otp.findOne({
             phone,
             isUsed: false
         }).sort({ createdAt: -1 });
 
-        if (!phone || phone.length !== 10) {
-            return res.json({ success: false, message: "Invalid phone" });
-        }
-        if (!otp) {
-            return res.json({ success: false, message: "OTP required" });
-        }
         if (!otpDoc) {
             return res.json({ success: false, message: 'OTP not found' });
         }
@@ -115,8 +121,8 @@ const verifyOtp = async (req, res) => {
             const isAdmin = user.role === "ADMIN";
             res.cookie("token", token, {
                 httpOnly: true,
-                secure: false,
-                sameSite: process.env.NODE_ENV === "PRODUCTION" ? "none" : "lax",
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
                 maxAge: isAdmin ? 1 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000,
             });
             user.lastLoginAt = new Date();
@@ -125,7 +131,7 @@ const verifyOtp = async (req, res) => {
             await user.save();
             return res.json({success: true,isNewUser: false});
         }
-        return res.json({success: true,isNewUser: true});
+        return res.json({ success: true, isNewUser: true, profileToken: generateProfileToken(phone) });
     } catch (err) {
         console.error("OTP Verification Error:", err);
         res.json({ success: false, error: err.message });
@@ -133,7 +139,17 @@ const verifyOtp = async (req, res) => {
 };
 const completeProfile = async (req, res) => {
     try {
-        const { phone, name, role, isAdminCreate } = req.body;
+        const { phone, name, profileToken, role, isAdminCreate } = req.body;
+        if (!/^[6-9]\d{9}$/.test(phone || '') || !name?.trim()) {
+            return res.status(400).json({ success: false, message: 'Valid phone and name are required' });
+        }
+        const adminRole = ['USER', 'STAFF', 'ADMIN'].includes(role) ? role : 'USER';
+        if (!isAdminCreate) {
+            const decoded = jwt.verify(profileToken || '', process.env.JWT_SECRET);
+            if (decoded.purpose !== 'PROFILE_COMPLETION' || decoded.phone !== phone) {
+                return res.status(401).json({ success: false, message: 'OTP verification required' });
+            }
+        }
         const existingUsers = await User.find({ phone });
 
         let user = null;
@@ -147,11 +163,12 @@ const completeProfile = async (req, res) => {
             user = await User.create({
                 phone,
                 name,
-                role: role || "USER",
+                role: isAdminCreate && req.user?.role === 'ADMIN' ? adminRole : 'USER',
                 isProfileComplete: true
             });
         } else {
             user.name = name;
+            if (isAdminCreate && req.user?.role === 'ADMIN') user.role = adminRole;
             user.isProfileComplete = true;
             await user.save();
         }
@@ -161,8 +178,8 @@ const completeProfile = async (req, res) => {
             const isAdmin = user.role === "ADMIN";
             res.cookie("token", token, {
                 httpOnly: true,
-                secure: false,
-                sameSite: process.env.NODE_ENV === "PRODUCTION" ? "none" : "lax",
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
                 maxAge: isAdmin ? 1 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000,
             });
         }

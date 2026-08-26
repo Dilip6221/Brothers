@@ -206,9 +206,9 @@ const Gallery = () => {
             <span></span>
           </div>
 
-          <h2 className="services-title">
+          <h1 className="services-title">
             Our <span>Gallery</span>
-          </h2>
+          </h1>
         </div>
       </div>
 
