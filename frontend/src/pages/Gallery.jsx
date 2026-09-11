@@ -1,43 +1,62 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import "../css/gallery.css";
 import "../css/about.css";
+
+const PAGE_SIZE = 12;
 
 const Gallery = () => {
   const [images, setImages] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null);
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [categories, setCategories] = useState(["ALL"]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const requestIdRef = useRef(0);
+  const loadMoreRef = useRef(null);
   const modalHistoryRef = useRef(false);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
-  const fetchImages = async (category) => {
+  const fetchImages = useCallback(async (category, nextPage = 1, replace = false) => {
     const requestId = ++requestIdRef.current;
+    setIsLoading(true);
 
     try {
       const res = await axios.get("gallery/gallery", {
         params: {
           service: category !== "ALL" ? category : undefined,
           type: "SINGLE",
+          page: nextPage,
+          limit: PAGE_SIZE,
         },
       });
 
       if (requestId !== requestIdRef.current) return;
 
       if (res.data.success) {
-        setImages(res.data.data || []);
+        const nextImages = res.data.data || [];
+        setImages((currentImages) => {
+          if (replace) return nextImages;
+
+          const existingIds = new Set(currentImages.map((image) => image._id));
+          return [...currentImages, ...nextImages.filter((image) => !existingIds.has(image._id))];
+        });
+        setPage(nextPage);
+        setHasMore(res.data.pagination?.hasMore ?? nextImages.length === PAGE_SIZE);
       } else {
         toast.error(res.data.message);
       }
     } catch (error) {
       console.error("Error fetching images:", error);
       toast.error("Error loading images");
+    } finally {
+      if (requestId === requestIdRef.current) setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -60,8 +79,27 @@ const Gallery = () => {
   useEffect(() => {
     setImages([]);
     setActiveIndex(null);
-    fetchImages(activeCategory);
-  }, [activeCategory]);
+    setPage(1);
+    setHasMore(true);
+    fetchImages(activeCategory, 1, true);
+  }, [activeCategory, fetchImages]);
+
+  useEffect(() => {
+    const loadMore = loadMoreRef.current;
+    if (!loadMore || !hasMore || images.length === 0) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isLoading) {
+          fetchImages(activeCategory, page + 1);
+        }
+      },
+      { rootMargin: "480px 0px" }
+    );
+
+    observer.observe(loadMore);
+    return () => observer.disconnect();
+  }, [activeCategory, fetchImages, hasMore, images.length, isLoading, page]);
 
   const openModal = (index) => {
     setActiveIndex(index);
@@ -229,6 +267,13 @@ const Gallery = () => {
 
       <div className="container pb-5">
         <div className="row g-4">
+          {isLoading && images.length === 0 &&
+            Array.from({ length: PAGE_SIZE }, (_, index) => (
+              <div key={`gallery-skeleton-${index}`} className="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div className="gallery-skeleton" aria-hidden="true" />
+              </div>
+            ))}
+
           {images.map((item, index) => (
             <div key={item._id} className="col-12 col-sm-6 col-md-4 col-lg-3">
               <div
@@ -252,6 +297,15 @@ const Gallery = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {!isLoading && images.length === 0 && (
+          <div className="gallery-empty-state">No work found in this category.</div>
+        )}
+
+        <div ref={loadMoreRef} className="gallery-load-status" aria-live="polite">
+          {isLoading && images.length > 0 && <span className="gallery-loader" />}
+          {!isLoading && images.length > 0 && !hasMore && <span>You've reached the end of our work.</span>}
         </div>
       </div>
 

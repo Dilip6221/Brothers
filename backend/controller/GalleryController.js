@@ -139,12 +139,35 @@ const uploadGalleryImage = async (req, res) => {
 const getGalleryImages = async (req, res) => {
   try {
     const { service, type, featured } = req.query;
+    const shouldPaginate = req.query.page !== undefined || req.query.limit !== undefined;
     const filter = { isActive: true };
     if (service) filter.service = service;
     if (type) filter.type = type;
     if (featured === "true") filter.isFeatured = true;
-    const images = await Gallery.find(filter).sort({ createdAt: -1 });
-    res.json({success: true,data: images,});
+    if (!shouldPaginate) {
+      const images = await Gallery.find(filter).sort({ createdAt: -1 });
+      return res.json({ success: true, data: images });
+    }
+
+    const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(Math.max(Number.parseInt(req.query.limit, 10) || 12, 1), 48);
+    const [images, total] = await Promise.all([
+      Gallery.find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      Gallery.countDocuments(filter),
+    ]);
+    res.json({
+      success: true,
+      data: images,
+      pagination: {
+        page,
+        limit,
+        total,
+        hasMore: page * limit < total,
+      },
+    });
   } catch (error) {
     console.error("Gallery fetch error:", error);
     res.json({success: false,message: "Failed to fetch gallery",});

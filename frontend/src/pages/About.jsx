@@ -203,7 +203,7 @@ const About = () => {
           </h1>
 
           <p className="about-main-subtitle">
-            From premium detailing to advanced automotive protection, RyDAX is
+            From premium detailing to advanced automotive protection, RYDAX is
             built with passion, precision and trust.
           </p>
         </div>
@@ -221,7 +221,7 @@ const About = () => {
               RYDAX <span>Journey</span>
             </h2>
             <p className="services-subtitle">
-              A visual story of how RyDAX evolved with trust, quality and
+              A visual story of how RYDAX evolved with trust, quality and
               premium automotive care.
             </p>
           </div>
@@ -230,9 +230,14 @@ const About = () => {
             <>
               <div className="journey-showcase desktop-journey-view">
                 <div className="journey-feature-card">
+                  {/* <div className="journey-feature-kicker">
+                    <span><i className="bi bi-record-circle-fill"></i> RYDAX ARCHIVE</span>
+                    <span className="journey-feature-index">
+                      {String(Math.max(timeline.findIndex((item) => item._id === activeStory._id), 0) + 1).padStart(2, "0")} / {String(timeline.length).padStart(2, "0")}
+                    </span>
+                  </div> */}
                   <div className="journey-card-header">
                     <div>
-                      <span className="journey-year">{activeStory.year}</span>
                       <h3>{activeStory.title}</h3>
                     </div>
 
@@ -242,7 +247,7 @@ const About = () => {
                     </div>
                   </div>
 
-                  <p>{activeStory.description}</p>
+                  <p className="journey-feature-description">{activeStory.description}</p>
 
                   {activeImage && (
                     <div
@@ -250,10 +255,11 @@ const About = () => {
                       onClick={() => openPreview(activeImage)}
                     >
                       <img src={activeImage} alt={activeStory.title} />
-                      <div className="journey-image-overlay">
+                        <div className="journey-image-overlay">
                         <i className="bi bi-arrows-fullscreen"></i>
-                        View Image
+                          Expand story image
                       </div>
+                        <span className="journey-image-label">RYDAX / {activeStory.year}</span>
                     </div>
                   )}
 

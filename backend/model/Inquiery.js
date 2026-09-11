@@ -4,7 +4,7 @@ const InquirySchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     name: String,
     phone: String,
-    email: String,
+    // email: String,
     // city: String,
     // carBrand: String,
     // carModel: String,

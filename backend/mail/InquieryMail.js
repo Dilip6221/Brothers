@@ -22,7 +22,7 @@ const sendInqueryMail = async (user) => {
             <div style="background:#fafafa; padding:15px; border-radius:8px; margin-top:10px;">
               <p><strong>Name:</strong> ${user.name}</p>
               <p><strong>Phone:</strong> ${user.phone}</p>
-              <p><strong>Email:</strong> ${user.email}</p>
+              <!-- <p><strong>Email:</strong> ${user.email}</p> -->
             </div>
           </div>
 

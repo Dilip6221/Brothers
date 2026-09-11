@@ -46,7 +46,7 @@ const AdminInquery = () => {
         const text = search.toLowerCase();
         return (
             item.name?.toLowerCase().includes(text) ||
-            item.email?.toLowerCase().includes(text) ||
+            // item.email?.toLowerCase().includes(text) ||
             item.phone?.toLowerCase().includes(text) ||
             // item.carBrand?.toLowerCase().includes(text) ||
             // item.carModel?.toLowerCase().includes(text) ||
@@ -160,7 +160,7 @@ const AdminInquery = () => {
                                 <tr>
                                     <th>#</th>
                                     <th>Full Name</th>
-                                    <th>Email</th>
+                                    {/* <th>Email</th> */}
                                     <th>Phone</th>
                                     {/* <th>Brand</th>
                                     <th>Model</th> */}
@@ -176,7 +176,7 @@ const AdminInquery = () => {
                                         <tr key={index}>
                                             <td>{index + 1}</td>
                                             <td>{item.name}</td>
-                                            <td><a href={`mailto:${item.email}`} className="text-info text-decoration-none" style={{ cursor: "pointer" }}>{item.email}</a></td>
+                                            {/* <td><a href={`mailto:${item.email}`} className="text-info text-decoration-none" style={{ cursor: "pointer" }}>{item.email}</a></td> */}
                                             <td>{item.phone}</td>
                                             {/* <td>{item.carBrand}</td>
                                             <td>{item.carModel}</td> */}
@@ -246,7 +246,7 @@ const AdminInquery = () => {
                                 <div className="mb-3">
                                     <h6 className="text-warning">Customer Info</h6>
                                     <p><strong>Name:</strong> {selectedInquiry?.name}</p>
-                                    <p><strong>Email:</strong> {selectedInquiry?.email}</p>
+                                    {/* <p><strong>Email:</strong> {selectedInquiry?.email}</p> */}
                                     <p><strong>Phone:</strong> {selectedInquiry?.phone}</p>
                                 </div>
 
@@ -318,7 +318,7 @@ const AdminInquery = () => {
                                     <div className="row">
                                         <div className="col-md-6">
                                             <p><strong>Name:</strong> {editingInquiry?.name}</p>
-                                            <p><strong>Email:</strong> {editingInquiry?.email}</p>
+                                            {/* <p><strong>Email:</strong> {editingInquiry?.email}</p> */}
                                         </div>
                                         <div className="col-md-6">
                                             <p><strong>Phone:</strong> {editingInquiry?.phone}</p>

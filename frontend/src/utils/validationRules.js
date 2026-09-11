@@ -8,7 +8,7 @@ export const completeProfileValidationRules  = {
 export const submitInquiryValidationRules = {
     name: { required: true, minLength: 3, message: "Name is required", minLengthMessage: "Name must be 3 characters" },
     phone: { required: true, message: "Mobile Number is required", pattern: /^\d{10}$/, patternMessage: "Mobile Number must be 10 digits" },
-    email: { required: true, message: "Email is required", pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
+    // email: { required: true, message: "Email is required", pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
     // city: { required: true, message: "City is required" },
     // address: { required: true, message: "Address is required" },
     // carBrand: { required: true, message: "Car brand is required" },
