@@ -134,129 +134,143 @@ const AdminUserList = () => {
 
     return (
         <AdminLayout>
-            <div className="container-fluid">
-                <div className="bg-dark rounded p-3 mb-3">
-                    <div className="d-flex justify-content-between align-items-center">
-                        <ul className="nav nav-pills text-danger m-0">
+            <div className="container-fluid p-0 p-sm-2">
+                {/* Top Filter & Create Bar */}
+                <div className="bg-dark rounded p-3 mb-3 border border-secondary border-opacity-25">
+                    <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <ul className="nav nav-pills text-danger m-0 flex-nowrap overflow-auto pb-1 pb-sm-0">
                             <li className="nav-item">
                                 <button
-                                    className={`text-danger nav-link ${filter === "USER" ? "active bg-danger text-white" : ""
+                                    className={`text-danger nav-link px-3 py-2 ${filter === "USER" ? "active bg-danger text-white" : ""
                                         }`}
                                     onClick={() => {
                                         setFilter("USER");
                                         fetchData();
                                     }}
                                 >
-                                    USER
+                                    <i className="bi bi-person me-1"></i> USER
                                 </button>
                             </li>
 
                             <li className="nav-item">
                                 <button
-                                    className={`text-danger nav-link ${filter === "STAFF" ? "active bg-danger text-white" : ""
+                                    className={`text-danger nav-link px-3 py-2 ${filter === "STAFF" ? "active bg-danger text-white" : ""
                                         }`}
                                     onClick={() => {
                                         setFilter("STAFF");
                                         fetchData();
                                     }}
                                 >
-                                    STAFF
+                                    <i className="bi bi-person-gear me-1"></i> STAFF
                                 </button>
                             </li>
                             <li className="nav-item">
                                 <button
-                                    className={`text-danger nav-link ${filter === "ALL" ? "active bg-danger text-white" : ""
+                                    className={`text-danger nav-link px-3 py-2 ${filter === "ALL" ? "active bg-danger text-white" : ""
                                         }`}
                                     onClick={() => {
                                         setFilter("ALL");
                                         fetchData();
                                     }}
                                 >
-                                    ALL
+                                    <i className="bi bi-people me-1"></i> ALL
                                 </button>
                             </li>
                         </ul>
 
-                        {/* RIGHT BUTTON */}
-                        <button className="btn btn-outline-danger d-flex align-items-center gap-2 px-3" onClick={() => { setShowCreateModal(true); setModalMode('CREATE'); setNewUser({ name: "", phone: "", role: "USER" }); }}>
-                            <i className="bi bi-plus-circle"></i>
-                            Create
+                        {/* CREATE BUTTON */}
+                        <button
+                            className="btn btn-outline-danger d-flex align-items-center justify-content-center gap-2 px-3 py-2 ms-auto ms-sm-0 w-sm-auto btn-sm"
+                            onClick={() => {
+                                setShowCreateModal(true);
+                                setModalMode('CREATE');
+                                setNewUser({ name: "", phone: "", role: "USER" });
+                            }}
+                        >
+                            <i className="bi-plus-circle"></i>
+                            <span>Create Member</span>
                         </button>
-
                     </div>
                 </div>
-                <div className="bg-dark rounded p-4">
-                    <h4 className="text-white border-bottom pb-2 mb-3 d-flex justify-content-between align-items-center">
-                        <span>
-                            <i className="bi bi-person-badge-fill me-2"></i>
-                            Our Team
-                        </span>
-                        <div className="d-flex align-items-center gap-3">
+
+                {/* Team List Table Card */}
+                <div className="bg-dark rounded p-3 p-md-4 border border-secondary border-opacity-25">
+                    <div className="border-bottom border-secondary border-opacity-50 pb-3 mb-3 d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3">
+                        <h4 className="text-white m-0 d-flex align-items-center">
+                            <i className="bi bi-person-badge-fill me-2 text-danger"></i>
+                            Our Team List
+                        </h4>
+
+                        <div className="d-flex align-items-center gap-2 flex-grow-1 flex-md-grow-0 justify-content-between justify-content-md-end">
                             <button
-                                className="btn btn-outline-danger d-flex align-items-center p-2"
+                                className="btn btn-outline-danger d-flex align-items-center justify-content-center flex-shrink-0"
                                 onClick={() => downloadCSV("/user/admin/user-export", `${filter.toLowerCase()}-Team`, { filter })}
                                 title="Export CSV"
+                                style={{ width: "36px", height: "36px" }}
                             >
                                 <i className="fa fa-download"></i>
                             </button>
-                            <div className="input-group" style={{ width: "260px" }}>
+
+                            <div className="input-group flex-grow-1" style={{ maxWidth: "340px", minWidth: "160px" }}>
                                 <input
                                     type="search"
-                                    className="form-control bg-dark text-white border-white"
+                                    className="form-control bg-dark text-white border-secondary"
                                     name="text"
-                                    placeholder="Search..."
+                                    placeholder="Search name, phone, role..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                 />
                             </div>
                         </div>
-                    </h4>
-                    <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
-                        <table className="table table-dark table-hover table-bordered align-middle">
+                    </div>
+
+                    <div className="table-responsive" style={{ maxHeight: "65vh", overflowY: "auto", overflowX: "auto" }}>
+                        <table className="table table-dark table-hover table-bordered align-middle m-0" style={{ minWidth: "680px" }}>
                             <thead className="sticky-top">
                                 <tr className="table-secondary text-dark">
-                                    <th>#</th>
+                                    <th style={{ width: "50px" }}>#</th>
                                     <th>Full Name</th>
                                     <th>Phone</th>
                                     <th>Role</th>
                                     <th>Status</th>
-                                    <th className="text-center">Action</th>
+                                    <th className="text-center" style={{ width: "120px" }}>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredData.length > 0 ? (
                                     filteredData.map((item, index) => (
                                         <tr key={item._id}>
-                                            <td>{index + 1}</td>
-                                            <td>{item.name}</td>
+                                            <td className="text-muted">{index + 1}</td>
+                                            <td className="fw-medium text-white">{item.name}</td>
                                             <td>{item.phone}</td>
                                             <td>
                                                 {item.role === "STAFF" && (
-                                                    <span className="badge bg-warning text-dark">
+                                                    <span className="badge bg-warning text-dark px-2 py-1">
                                                         STAFF
                                                     </span>
                                                 )}
 
                                                 {item.role === "USER" && (
-                                                    <span className="badge bg-success">
+                                                    <span className="badge bg-success px-2 py-1">
                                                         USER
                                                     </span>
                                                 )}
 
                                                 {item.role === "ADMIN" && (
-                                                    <span className="badge bg-danger">
+                                                    <span className="badge bg-danger px-2 py-1">
                                                         ADMIN
                                                     </span>
                                                 )}
                                             </td>
                                             <td>
                                                 <span
-                                                    className={`badge ${item.status === "ACTIVE"
+                                                    className={`badge px-2 py-1 ${item.status === "ACTIVE"
                                                         ? "bg-success"
                                                         : "bg-danger"
                                                         }`}
-                                                    style={{ cursor: "pointer" }}
-                                                   onClick={() => {
+                                                    style={{ cursor: item.role === "ADMIN" ? "default" : "pointer" }}
+                                                    title={item.role === "ADMIN" ? "Admin status cannot be changed" : "Click to toggle status"}
+                                                    onClick={() => {
                                                         if (item.role !== "ADMIN") {
                                                             handleUserStatus(item._id, item.status);
                                                         }
@@ -265,31 +279,36 @@ const AdminUserList = () => {
                                                     {item.status}
                                                 </span>
                                             </td>
-                                            <td className="text-center">
-                                                <i
-                                                    className="fa-solid fa-eye text-info me-3"
-                                                    style={{
-                                                        cursor: "pointer",
-                                                        fontSize: "18px",
-                                                    }}
-                                                ></i>
+                                            <td className="text-center text-nowrap">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-sm btn-outline-info me-2 p-1 px-2"
+                                                    title="View Member"
+                                                    aria-label="View member"
+                                                >
+                                                    <i className="fa-solid fa-eye"></i>
+                                                </button>
                                                 {item.role !== "ADMIN" && (
-                                                    <i
-                                                        className="fa-solid fa-pen-to-square text-warning"
-                                                        style={{
-                                                            cursor: "pointer",
-                                                            fontSize: "18px",
-                                                    }}
-                                                    onClick={() => { setShowCreateModal(true); setModalMode('EDIT'); setNewUser({ name: item.name, phone: item.phone, role: item.role, _id: item._id }); }}
-
-                                                    ></i>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-warning p-1 px-2"
+                                                        title="Edit Member"
+                                                        aria-label="Edit member"
+                                                        onClick={() => {
+                                                            setShowCreateModal(true);
+                                                            setModalMode('EDIT');
+                                                            setNewUser({ name: item.name, phone: item.phone, role: item.role, _id: item._id });
+                                                        }}
+                                                    >
+                                                        <i className="fa-solid fa-pen-to-square"></i>
+                                                    </button>
                                                 )}
                                             </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="text-center text-white">No Data Found...</td>
+                                        <td colSpan="6" className="text-center text-white py-4">No Members Found...</td>
                                     </tr>
                                 )}
                             </tbody>
@@ -297,31 +316,35 @@ const AdminUserList = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Create/Edit Modal */}
             {showCreateModal && (
                 <div
                     className="modal fade show"
-                    style={{ display: "block", background: "rgba(0,0,0,0.7)" }}
+                    style={{ display: "block", background: "rgba(0,0,0,0.75)" }}
                 >
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content bg-dark text-white border-secondary">
-                            <div className="modal-header border-secondary">
-                                <h5 className="modal-title">
-                                    <i className="bi bi-person-plus me-2 text-info"></i>
-                                    Create User
+                    <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable" style={{ maxWidth: "500px", margin: "1rem auto" }}>
+                        <div className="modal-content bg-dark text-white border-secondary shadow-lg">
+                            <div className="modal-header border-secondary py-3">
+                                <h5 className="modal-title d-flex align-items-center">
+                                    <i className={`bi ${modalMode === 'CREATE' ? 'bi-person-plus text-danger' : 'bi-pencil-square text-warning'} me-2 fs-5`}></i>
+                                    {modalMode === 'CREATE' ? 'Create Team Member' : 'Edit Member'}
                                 </h5>
                                 <button
+                                    type="button"
                                     className="btn-close btn-close-white"
                                     onClick={() => setShowCreateModal(false)}
+                                    aria-label="Close"
                                 ></button>
                             </div>
 
                             {/* Body */}
-                            <div className="modal-body">
+                            <div className="modal-body py-3">
                                 <div className="mb-3">
-                                    <label>Name</label>
+                                    <label className="form-label text-light small mb-1">Full Name</label>
                                     <input
                                         type="text"
-                                        className="form-control bg-dark text-white"
+                                        className="form-control bg-dark text-white border-secondary"
                                         placeholder="Full name"
                                         value={newUser.name}
                                         onChange={(e) =>
@@ -332,11 +355,11 @@ const AdminUserList = () => {
                                 </div>
 
                                 <div className="mb-3">
-                                    <label>Phone Number</label>
+                                    <label className="form-label text-light small mb-1">Phone Number</label>
                                     <input
-                                        type="text"
-                                        className="form-control bg-dark text-white"
-                                        placeholder="e.g. +1234567890"
+                                        type="tel"
+                                        className="form-control bg-dark text-white border-secondary"
+                                        placeholder="e.g. +91 9876543210"
                                         value={newUser.phone}
                                         onChange={(e) =>
                                             setNewUser({ ...newUser, phone: e.target.value })
@@ -346,18 +369,18 @@ const AdminUserList = () => {
                                 </div>
 
                                 <div className="mb-3">
-                                    <label>User Role</label>
+                                    <label className="form-label text-light small mb-1">Role</label>
                                     <div className="position-relative">
                                         <select
-                                            className="form-control bg-dark text-white pe-5"
+                                            className="form-control bg-dark text-white border-secondary pe-5"
                                             value={newUser.role}
                                             onChange={(e) =>
                                                 setNewUser({ ...newUser, role: e.target.value })
                                             }
                                             ref={createUserRef.role}
                                         >
-                                            <option value="USER">USER</option>
-                                            <option value="STAFF">STAFF</option>
+                                            <option value="USER">USER (Customer)</option>
+                                            <option value="STAFF">STAFF (Technician/Staff)</option>
                                         </select>
                                         <span className="position-absolute end-0 top-50 translate-middle-y pe-3 text-white-50" style={{ pointerEvents: 'none' }}>
                                             <i className="bi bi-chevron-down"></i>
@@ -367,9 +390,21 @@ const AdminUserList = () => {
                             </div>
 
                             {/* Footer */}
-                            <div className="modal-footer border-secondary">
-                                <button className="btn btn-outline-secondary" onClick={() => setShowCreateModal(false)}>Cancel</button>
-                                <button className="btn btn-danger" onClick={handleCreateUser}> {modalMode === "CREATE" ? "Save" : "Update"}</button>
+                            <div className="modal-footer border-secondary py-2 d-flex justify-content-end gap-2">
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-secondary px-3 py-2"
+                                    onClick={() => setShowCreateModal(false)}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-danger px-4 py-2"
+                                    onClick={handleCreateUser}
+                                >
+                                    {modalMode === "CREATE" ? "Save Member" : "Update Member"}
+                                </button>
                             </div>
                         </div>
                     </div>

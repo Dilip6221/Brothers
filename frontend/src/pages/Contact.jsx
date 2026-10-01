@@ -7,66 +7,97 @@ import { UserContext } from "../context/UserContext.jsx";
 import { validateForm } from "../utils/formValidation.js";
 import { submitInquiryValidationRules } from "../utils/validationRules.js";
 import rydaxAnimation from "../assets/vidoes/rydaxCarAnimation.gif";
+import { Seo } from "../component/Seo.jsx";
 
 const Contact = () => {
     const { user } = useContext(UserContext);
-    const [carBrandOptions, setCarBrandOptions] = useState([]);
-    const [carModelOptions, setCarModelOptions] = useState([]);
     const [serviceOptions, setServiceOptions] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [copiedPhone, setCopiedPhone] = useState(false);
 
     const reactSelectStyles = {
         control: (base, state) => ({
             ...base,
-            background: "rgba(255,255,255,0.08)",
-            border: "1px solid rgba(255,255,255,0.2)",
-            boxShadow: "none",
+            background: "rgba(255, 255, 255, 0.04)",
+            borderColor: state.isFocused ? "#ff4d4d" : "rgba(255, 255, 255, 0.1)",
+            borderRadius: "12px",
+            minHeight: "48px",
+            boxShadow: state.isFocused ? "0 0 0 2px rgba(255, 77, 77, 0.15)" : "none",
             cursor: "pointer",
+            transition: "all 0.2s ease",
             "&:hover": {
-                border: "1px solid rgba(255,255,255,0.2)",
+                borderColor: state.isFocused ? "#ff4d4d" : "rgba(255, 255, 255, 0.2)",
             }
         }),
         singleValue: (base) => ({
             ...base,
-            color: "white",
+            color: "#ffffff",
+        }),
+        multiValue: (base) => ({
+            ...base,
+            backgroundColor: "rgba(255, 77, 77, 0.15)",
+            borderRadius: "6px",
+            border: "1px solid rgba(255, 77, 77, 0.3)",
+        }),
+        multiValueLabel: (base) => ({
+            ...base,
+            color: "#ffffff",
+            fontSize: "12px",
+            padding: "2px 6px",
+        }),
+        multiValueRemove: (base) => ({
+            ...base,
+            color: "#ff6b6b",
+            cursor: "pointer",
+            ":hover": {
+                backgroundColor: "rgba(255, 77, 77, 0.35)",
+                color: "#ffffff",
+            },
         }),
         menu: (base) => ({
             ...base,
-            background: "#222",
-            borderRadius: "6px",
+            background: "#141414",
+            borderRadius: "12px",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            boxShadow: "0 15px 30px rgba(0, 0, 0, 0.7)",
+            overflow: "hidden",
+            zIndex: 9999,
+        }),
+        menuList: (base) => ({
+            ...base,
+            padding: "6px",
         }),
         option: (base, state) => ({
             ...base,
             backgroundColor: state.isSelected
-                ? "#254c87"
+                ? "#ff4d4d"
                 : state.isFocused
-                    ? "#444"
-                    : "#222",
-            color: "white",
+                    ? "rgba(255, 255, 255, 0.08)"
+                    : "transparent",
+            color: "#ffffff",
+            borderRadius: "6px",
             cursor: "pointer",
+            fontSize: "13px",
+            transition: "all 0.15s ease",
         }),
         placeholder: (base) => ({
             ...base,
-            color: "#ccc",
+            color: "rgba(255, 255, 255, 0.3)",
+            fontSize: "13px",
         }),
-
         indicatorSeparator: () => ({ display: "none" }),
         dropdownIndicator: (base) => ({
             ...base,
-            color: "#ccc",
-        }),
-        multiValueRemove: (base) => ({
-            ...base,
-            color: "black",
+            color: "rgba(255, 255, 255, 0.4)",
+            "&:hover": {
+                color: "#ff4d4d",
+            }
         }),
     };
+
     const [serviceEnquery, setServiceEnquery] = useState({
-        name: user ? user.name : "",
-        phone: user ? user.phone : "",
-        // email: "",
-        // city: "",
-        // address: "",
-        // carBrand: "",
-        // carModel: "",
+        name: user ? user.name || "" : "",
+        phone: user ? user.phone || "" : "",
         services: [],
         notes: ""
     });
@@ -74,82 +105,106 @@ const Contact = () => {
     const inputRefs = {
         name: useRef(),
         phone: useRef(),
-        // email: useRef(),
-        // city: useRef(),
-        // address: useRef(),
-        // carBrand: useRef(),
-        // carModel: useRef(),
         services: useRef(),
         notes: useRef()
     };
 
-    // useEffect(() => {
-    //     const fetchCompanies = async () => {
-    //         try {
-    //             const res = await axios.get("car-companies/companies");
-    //             const options = res.data.data.map(c => ({
-    //                 value: c._id,
-    //                 label: c.name
-    //             }));
-    //             setCarBrandOptions(options);
-    //         } catch (err) {
-    //             console.error("Frontend Error Fetching Companies:", err);
-    //             toast.error(err.message || "Failed to load car companies");
-    //         }
-    //     };
-    //     fetchCompanies();
-    // }, []);
+    useEffect(() => {
+        if (user) {
+            setServiceEnquery(prev => ({
+                ...prev,
+                name: prev.name || user.name || "",
+                phone: prev.phone || user.phone || ""
+            }));
+        }
+    }, [user]);
 
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const res = await axios.get("service/admin/services");
-                const options = [
-                    ...res.data.data.map(c => ({
-                        value: c.title,
-                        label: c.title
-                    })),
-                    {
-                        value: "Other Service",
-                        label: "Other Service"
-                    }
-                ];
-                setServiceOptions(options);
+                let res;
+                try {
+                    res = await axios.get("service/services");
+                } catch {
+                    res = await axios.get("service/admin/services");
+                }
+                const data = res.data?.data;
+                if (Array.isArray(data) && data.length > 0) {
+                    const options = [
+                        ...data.map(c => ({
+                            value: c.title,
+                            label: c.title
+                        })),
+                        { value: "Other Service", label: "Other Service" }
+                    ];
+                    setServiceOptions(options);
+                }
             } catch (err) {
                 console.error("Frontend Error Fetching Services:", err);
-                toast.error(err.message || "Failed to load services");
             }
         };
         fetchServices();
     }, []);
 
-    // const handleBrandChange = async (selected) => {
-    //     const companyId = selected?.value || "";
-    //     setServiceEnquery(prev => ({
-    //         ...prev,
-    //         carBrand: selected?.label || "",
-    //         carModel: ""
-    //     }));
-    //     setCarModelOptions([]);
-    //     if (!companyId) return;
-    //     try {
-    //         const res = await axios.get(`car-companies/${companyId}/car-models`);
-    //         const options = res.data.data.map(m => ({
-    //             value: m.name,
-    //             label: m.name
-    //         }));
-    //         setCarModelOptions(options);
-    //     } catch (err) {
-    //         console.error("Frontend Error Fetching Models:", err);
-    //         toast.error(err.message || "Failed to load car models");
-    //     }
-    // };
-
-    const handleEnquiryInputChange = (e) => {
-        const { name, value } = e.target;
-        setServiceEnquery((prev) => ({ ...prev, [name]: value }));
+    const toggleQuickTag = (tagValue) => {
+        setServiceEnquery(prev => {
+            const isSelected = prev.services.includes(tagValue);
+            const updated = isSelected
+                ? prev.services.filter(s => s !== tagValue)
+                : [...prev.services, tagValue];
+            return { ...prev, services: updated };
+        });
     };
-    const handleEnquirySubmit = async (e) => {
+
+    const handleCopyPhone = async (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        const textToCopy = "+919313015917";
+        let success = false;
+
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(textToCopy);
+                success = true;
+            }
+        } catch (err) {
+            console.warn("navigator.clipboard failed, using fallback", err);
+        }
+
+        if (!success) {
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                textArea.style.top = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                success = document.execCommand("copy");
+                document.body.removeChild(textArea);
+            } catch (fallbackErr) {
+                console.error("Fallback copy failed", fallbackErr);
+            }
+        }
+
+        if (success) {
+            setCopiedPhone(true);
+            toast.success("Phone copied: +91 93130 15917");
+            setTimeout(() => setCopiedPhone(false), 2200);
+        } else {
+            toast.error("Unable to copy number");
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setServiceEnquery(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const isValid = validateForm({
             values: serviceEnquery,
@@ -157,96 +212,197 @@ const Contact = () => {
             inputRefs
         });
         if (!isValid) return;
+
+        setIsSubmitting(true);
         try {
             const res = await axios.post("inquery/service-inquiry", {
                 name: serviceEnquery.name,
                 phone: serviceEnquery.phone,
-                // email: serviceEnquery.email,
-                // city: serviceEnquery.city,
-                // address: serviceEnquery.address,
-                // carBrand: serviceEnquery.carBrand,
-                // carModel: serviceEnquery.carModel,
                 services: serviceEnquery.services,
                 notes: serviceEnquery.notes,
             });
-            if (res.data.success) {
-                toast.success(res.data.message);
-                setServiceEnquery({ name: user ? user.name : "", phone: user ? user.phone : "", /* email: "", */ city: "", address: "", carBrand: "", carModel: "", services: [], notes: "" });
+            if (res.data?.success) {
+                toast.success(res.data.message || "Consultation request sent successfully!");
+                setServiceEnquery({
+                    name: user ? user.name || "" : "",
+                    phone: user ? user.phone || "" : "",
+                    services: [],
+                    notes: ""
+                });
             } else {
-                toast.error(res.data.message);
+                toast.error(res.data?.message || "Failed to submit inquiry");
             }
         } catch (error) {
             console.error("Frontend Error submitting enquiry:", error);
-            toast.error("Something went wrong");
+            toast.error("Something went wrong. Please call or WhatsApp our helpline.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
+
     return (
-        <div className="premium-contact-page text-white">
-            <div className="contact-hero text-center">
-               
-                <div className="services-heading text-center">
-                    <div className="section-top-title">
-                        <span></span>
-                        <p>Get In Touch With RyDAX</p>
-                        <span></span>
+        <div className="contact-page">
+            <Seo
+                title="Contact RYDAX Studio | Car Detailing & PPF Ahmedabad"
+                description="Get in touch with RYDAX Studio for car detailing, ceramic coating, and PPF in Ahmedabad. Quick response, transparent consultation."
+            />
+
+            {/* HERO SECTION */}
+            <div className="contact-hero">
+                <div className="container">
+                    <div className="contact-top-badge">
+                        <span className="live-dot-indicator"></span>
+                        <span>Get In Touch</span>
                     </div>
 
-                    <h1 className="services-title">
+                    <h1 className="contact-hero-title">
                         Contact <span>Us</span>
                     </h1>
 
-                    <p className="services-subtitle">
-                        Have questions about detailing, ceramic coating, PPF, or premium car care?
-                        Our experts are here to help you choose the perfect service for your vehicle.
+                    <p className="contact-hero-desc">
+                        Have questions about ceramic coating, PPF, or car care? Reach out to us or book a consultation below.
                     </p>
                 </div>
             </div>
 
+            {/* 4 QUICK CONNECT CARDS */}
             <div className="container">
-                <div className="contact-info-grid">
-                    <a
-                        href="mailto:beradilip39@gmail.com"
-                        className="top-info-card"
-                    >
-                        <div className="top-info-icon">
-                            <i className="bi bi-envelope-fill"></i>
-                        </div>
-                        <div className="top-info-text">
-                            <p>beradilip39@gmail.com</p>
-                        </div>
-                    </a>
-                    <a
-                        href="tel:919313015917"
-                        className="top-info-card"
-                    >
-                        <div className="top-info-icon">
+                <div className="contact-cards-grid">
+                    {/* PHONE */}
+                    <div className="contact-card-item">
+                        <a
+                            href="tel:+919313015917"
+                            className="card-icon-box text-decoration-none"
+                            title="Click to call +91 93130 15917"
+                        >
                             <i className="bi bi-telephone-fill"></i>
+                        </a>
+                        <div className="card-meta-text">
+                            <div className="card-label-small">Call Us</div>
+                            <a
+                                href="tel:+919313015917"
+                                className="card-main-val text-white text-decoration-none d-block"
+                                title="Click to call +91 93130 15917"
+                            >
+                                +91 93130 15917
+                            </a>
+                            <div className="card-sub-info">
+                                <span>Mon-Sat 9AM - 7PM</span>
+                            </div>
+                            <button
+                                type="button"
+                                className="card-copy-pill border-0"
+                                onClick={handleCopyPhone}
+                                title="Copy phone number to clipboard"
+                            >
+                                <i className={`bi ${copiedPhone ? "bi-check2 text-success" : "bi-clipboard"}`}></i>
+                                <span>{copiedPhone ? "Copied" : "Copy"}</span>
+                            </button>
                         </div>
-                        <div className="top-info-text">
-                            <p>+91 9313015917</p>
+                    </div>
+
+                    {/* WHATSAPP */}
+                    <a
+                        href="https://wa.me/919313015917?text=Hello%20RYDAX%20Studio%2C%20I%20would%20like%20to%20inquire%20about%20car%20detailing"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="contact-card-item"
+                    >
+                        <div className="card-icon-box whatsapp-box">
+                            <i className="bi bi-whatsapp"></i>
+                        </div>
+                        <div className="card-meta-text">
+                            <div className="card-label-small">WhatsApp</div>
+                            <p className="card-main-val">Chat Directly</p>
+                            <div className="card-sub-info text-success">
+                                <span className="live-dot-indicator"></span>
+                                <span>Online Now</span>
+                            </div>
                         </div>
                     </a>
+
+                    {/* LOCATION */}
                     <a
                         href="https://www.google.com/maps?q=Navi+Veraval,+Gujarat,+India"
                         target="_blank"
                         rel="noreferrer"
-                        className="top-info-card"
+                        className="contact-card-item"
                     >
-                        <div className="top-info-icon">
+                        <div className="card-icon-box">
                             <i className="bi bi-geo-alt-fill"></i>
                         </div>
-                        <div className="top-info-text">
-                            <p>Ground Floor, Parthana Complex,<br />Shyamal Manek Baug Road, Satellite, Ahmedabad</p>
+                        <div className="card-meta-text">
+                            <div className="card-label-small">Studio Location</div>
+                            <p className="card-main-val">Satellite, Ahmedabad</p>
+                            <div className="card-sub-info">
+                                <span>Directions →</span>
+                            </div>
                         </div>
                     </a>
-                    <div className="top-info-card social-card">
-                        <div className="top-info-text">
-                            <p className="social-label">Connect With Us</p>
-                            <div className="footer-social-icons">
+
+                    {/* TIMING */}
+                    <div className="contact-card-item">
+                        <div className="card-icon-box">
+                            <i className="bi bi-clock-fill"></i>
+                        </div>
+                        <div className="card-meta-text">
+                            <div className="card-label-small">Workshop Hours</div>
+                            <p className="card-main-val">09:00 AM - 07:00 PM</p>
+                            <div className="card-sub-info text-warning">
+                                <span>Open Today</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* MAIN 2-COLUMN SECTION */}
+            <div className="container">
+                <div className="contact-main-grid">
+                    {/* LEFT COLUMN */}
+                    <div className="contact-left-card">
+                        <h2 className="contact-left-title">
+                            Welcome to <span>RYDAX Studio</span>
+                        </h2>
+                        <p className="contact-left-desc">
+                            World-class detailing, ceramic coatings, and self-healing paint protection for your vehicle.
+                        </p>
+
+                        {/* CAR ANIMATION */}
+                        <div className="contact-car-container">
+                            <img
+                                loading="lazy"
+                                src={rydaxAnimation}
+                                alt="RYDAX Studio"
+                                className="contact-car-img"
+                            />
+                        </div>
+
+                        {/* 3 CLEAN HIGHLIGHT CHIPS */}
+                        <div className="contact-features-strip">
+                            <div className="feature-pill">
+                                <i className="bi bi-check-circle-fill"></i>
+                                <span>Dust-Free Coating Bay</span>
+                            </div>
+                            <div className="feature-pill">
+                                <i className="bi bi-check-circle-fill"></i>
+                                <span>Certified Master Detailers</span>
+                            </div>
+                            <div className="feature-pill">
+                                <i className="bi bi-check-circle-fill"></i>
+                                <span>Digital Warranty</span>
+                            </div>
+                        </div>
+
+                        {/* SOCIAL ICONS */}
+                        <div className="contact-social-strip">
+                            <span>Connect With Us</span>
+                            <div className="social-icons-wrap">
                                 <a
                                     href="https://youtube.com/@dilipahir6221"
                                     target="_blank"
                                     rel="noreferrer"
+                                    className="social-circle-btn"
                                     title="YouTube"
                                 >
                                     <i className="bi bi-youtube"></i>
@@ -255,6 +411,7 @@ const Contact = () => {
                                     href="https://wa.me/919313015917"
                                     target="_blank"
                                     rel="noreferrer"
+                                    className="social-circle-btn"
                                     title="WhatsApp"
                                 >
                                     <i className="bi bi-whatsapp"></i>
@@ -263,6 +420,7 @@ const Contact = () => {
                                     href="https://www.instagram.com/"
                                     target="_blank"
                                     rel="noreferrer"
+                                    className="social-circle-btn"
                                     title="Instagram"
                                 >
                                     <i className="bi bi-instagram"></i>
@@ -271,205 +429,158 @@ const Contact = () => {
                                     href="https://x.com/DilipBe00479036"
                                     target="_blank"
                                     rel="noreferrer"
-                                    title="Twitter"
+                                    className="social-circle-btn"
+                                    title="Twitter / X"
                                 >
                                     <i className="bi bi-twitter-x"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div className="premium-contact-layout container">
-                <div className="contact-left-section">
-                    <h2 className="contact-left-title">Welcome To RYDAX Studio</h2>
-                    <div className="contact-left-image">
-                        <img loading="lazy" src={rydaxAnimation} alt="RYDAX Studio" title="RYDAX Studio" />
-                    </div>
-                </div>
-                <div className="contact-right-section">
-                    <form
-                        className="premium-contact-form"
-                        onSubmit={handleEnquirySubmit}
-                    >
-                        <h3 className="form-title">Book Your Premium Car Service</h3>
-                        <div className="row g-3">
-                        <div className="col-md-6">
-                            <input
-                                type="text"
-                                name="name"
-                                className="form-control service-input shadow-none"
-                                placeholder="Full Name*"
-                                autoComplete="off"
-                                ref={inputRefs.name}
-                                value={serviceEnquery.name}
-                                onChange={handleEnquiryInputChange}
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <input
-                                type="tel"
-                                name="phone"
-                                inputMode="numeric"
-                                className="form-control service-input shadow-none"
-                                placeholder="Phone Number*"
-                                autoComplete="off"
-                                ref={inputRefs.phone}
-                                value={serviceEnquery.phone}
-                                onChange={handleEnquiryInputChange}
-                            />
-                        </div>
-                        {/* <div className="col-12">
-                            <input
-                                type="email"
-                                name="email"
-                                className="form-control service-input shadow-none"
-                                placeholder="Email Address*"
-                                autoComplete="off"
-                                ref={inputRefs.email}
-                                value={serviceEnquery.email}
-                                onChange={handleEnquiryInputChange}
-                            />
-                        </div> */}
-                        {/* <div className="col-md-4">
-                            <input
-                                type="text"
-                                name="city"
-                                className="form-control service-input shadow-none"
-                                placeholder="City*"
-                                autoComplete="off"
-                                ref={inputRefs.city}
-                                value={serviceEnquery.city}
-                                onChange={handleEnquiryInputChange}
-                            />
-                        </div>
-                        <div className="col-md-8">
-                            <input
-                                type="text"
-                                name="address"
-                                className="form-control service-input shadow-none"
-                                placeholder="Address"
-                                autoComplete="off"
-                                ref={inputRefs.address}
-                                value={serviceEnquery.address}
-                                onChange={handleEnquiryInputChange}
-                            />
-                        </div> */}
-                        {/* <div className="col-md-6">
-                            <Select
-                                options={carBrandOptions}
-                                classNamePrefix="react-select"
-                                placeholder="Car Manufacturer*"
-                                styles={reactSelectStyles}
-                                ref={inputRefs.carBrand}
-                                maxMenuHeight={180}
-                                value={carBrandOptions.find(
-                                    opt =>
-                                        opt.label ===
-                                        serviceEnquery.carBrand
-                                )}
-                                onChange={handleBrandChange}
-                            />
-                        </div> */}
-                        {/* <div className="col-md-6">
-                            <Select
-                                options={carModelOptions}
-                                classNamePrefix="react-select"
-                                key={serviceEnquery.carBrand}
-                                placeholder="Car Model*"
-                                styles={reactSelectStyles}
-                                ref={inputRefs.carModel}
-                                maxMenuHeight={180}
-                                value={carModelOptions.find(
-                                    opt =>
-                                        opt.value ===
-                                        serviceEnquery.carModel
-                                )}
-                                onChange={(selected) =>
-                                    handleEnquiryInputChange({
-                                        target: {
-                                            name: "carModel",
-                                            value: selected
-                                                ? selected.value
-                                                : ""
+                    {/* RIGHT COLUMN: CLEAN FORM */}
+                    <div className="contact-form-box">
+                        <h3 className="form-top-title">Book Consultation</h3>
+                        <p className="form-top-sub">
+                            Select services or leave details below and we will contact you.
+                        </p>
+
+                        {/* DYNAMIC QUICK SELECT TAGS - 100% FROM DATABASE */}
+                        {serviceOptions.length > 0 && (
+                            <div className="quick-tags-wrap">
+                                <div className="quick-tags-label">Quick Select Services:</div>
+                                <div className="quick-tags-container">
+                                    {serviceOptions.map((opt) => {
+                                        const isSelected = serviceEnquery.services.includes(opt.value);
+                                        return (
+                                            <span
+                                                key={opt.value}
+                                                className={`quick-tag-item ${isSelected ? "active" : ""}`}
+                                                onClick={() => toggleQuickTag(opt.value)}
+                                                role="button"
+                                                tabIndex={0}
+                                            >
+                                                <i className={`bi ${isSelected ? "bi-check2" : "bi-plus"}`}></i>
+                                                {opt.label}
+                                            </span>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* FORM FIELDS */}
+                        <form onSubmit={handleSubmit}>
+                            <div className="row g-3">
+                                <div className="col-md-6">
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        className="clean-input"
+                                        placeholder="Full Name*"
+                                        autoComplete="name"
+                                        ref={inputRefs.name}
+                                        value={serviceEnquery.name}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <div className="col-md-6">
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        inputMode="numeric"
+                                        className="clean-input"
+                                        placeholder="Phone Number (10 Digits)*"
+                                        autoComplete="tel"
+                                        ref={inputRefs.phone}
+                                        value={serviceEnquery.phone}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <div className="col-12">
+                                    <Select
+                                        isMulti
+                                        options={serviceOptions}
+                                        classNamePrefix="react-select"
+                                        placeholder="Select Required Services*"
+                                        ref={inputRefs.services}
+                                        maxMenuHeight={200}
+                                        value={serviceOptions.filter(opt =>
+                                            serviceEnquery.services.includes(opt.value)
+                                        )}
+                                        onChange={(selected) =>
+                                            setServiceEnquery(prev => ({
+                                                ...prev,
+                                                services: selected ? selected.map(s => s.value) : [],
+                                            }))
                                         }
-                                    })
-                                }
-                            />
-                        </div> */}
-                        <div className="col-12">
-                            <Select
-                                isMulti
-                                options={serviceOptions}
-                                classNamePrefix="react-select"
-                                placeholder="Required Services*"
-                                ref={inputRefs.services}
-                                maxMenuHeight={120}
-                                value={serviceOptions.filter(opt =>
-                                    serviceEnquery.services.includes(
-                                        opt.value
-                                    )
+                                        styles={reactSelectStyles}
+                                    />
+                                </div>
+                                <div className="col-12">
+                                    <textarea
+                                        name="notes"
+                                        rows="2"
+                                        className="clean-textarea"
+                                        placeholder="Car model or special requirements (optional)..."
+                                        ref={inputRefs.notes}
+                                        value={serviceEnquery.notes}
+                                        onChange={handleInputChange}
+                                    ></textarea>
+                                </div>
+                            </div>
+
+                            <div className="form-safe-note">
+                                <i className="bi bi-shield-check"></i>
+                                <span>Your details are 100% secure</span>
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="clean-submit-btn"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                                        <span>Submitting...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>Book Premium Consultation</span>
+                                        <i className="bi bi-arrow-right"></i>
+                                    </>
                                 )}
-                                onChange={(selected) =>
-                                    setServiceEnquery(prev => ({
-                                        ...prev,
-                                        services: selected
-                                            ? selected.map(
-                                                s => s.value
-                                            )
-                                            : [],
-                                    }))
-                                }
-                                styles={reactSelectStyles}
-                            />
-                        </div>
-                        <div className="col-12">
-                            <textarea
-                                name="notes"
-                                rows="2"
-                                className="form-control service-input shadow-none"
-                                placeholder="Comments or Special Requirements"
-                                ref={inputRefs.notes}
-                                value={serviceEnquery.notes}
-                                onChange={handleEnquiryInputChange}
-                            ></textarea>
-
-                        </div>
-
+                            </button>
+                        </form>
                     </div>
-                    <div className="booking-note">
-                        <i className="bi bi-shield-check"></i>
-                        Your details are securely protected
-                    </div>
-                    <button
-                        type="submit"
-                        className="cta-primary-btn w-100"
-                    >
-                        <span>
-                            Book Premium Consultation
-                        </span>
-                        <i className="bi bi-arrow-right"></i>
-                    </button>
-                    </form>
                 </div>
             </div>
 
-            {/* MAP */}
-            <div className="container pb-5">
-                <div className="map-container">
+            {/* BOTTOM MAP */}
+            <div className="container">
+                <div className="contact-map-wrapper">
+                    <div className="map-bar-top">
+                        <div className="map-bar-left">
+                            <i className="bi bi-geo-alt-fill"></i>
+                            <span>RYDAX Studio — Satellite, Ahmedabad</span>
+                        </div>
+                        <a
+                            href="https://www.google.com/maps?q=Navi+Veraval,+Gujarat,+India"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="map-direct-btn"
+                        >
+                            <span>Open In Maps</span>
+                            <i className="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    </div>
                     <iframe
-                        title="map"
+                        title="RYDAX Studio Location"
                         src="https://www.google.com/maps?q=Navi+Veraval,+Gujarat,+India&output=embed"
-                        style={{
-                            border: 0,
-                            width: "100%",
-                            height: "420px"
-                        }}
                         loading="lazy"
                         allowFullScreen
                     ></iframe>
-
                 </div>
             </div>
         </div>

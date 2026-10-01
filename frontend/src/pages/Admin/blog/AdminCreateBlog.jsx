@@ -1,4 +1,4 @@
-import React, { useState,useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AdminLayout from "../AdminLayout.jsx";
@@ -23,6 +23,7 @@ const AdminCreateBlog = () => {
     });
 
     const [preview, setPreview] = useState("");
+    const [submitting, setSubmitting] = useState(false);
     const titleRef = useRef(null);
     const categoryRef = useRef(null);
     const thumbnailRef = useRef(null);
@@ -30,8 +31,7 @@ const AdminCreateBlog = () => {
 
     const fetchBlog = async () => {
         try {
-            const res = await axios.get(`blog/blogs/${id}`
-            );
+            const res = await axios.get(`blog/blogs/${id}`);
             if (res.data.success) {
                 const b = res.data.data;
                 setForm({
@@ -49,6 +49,7 @@ const AdminCreateBlog = () => {
             toast.error("Failed to load blog");
         }
     };
+
     useEffect(() => {
         if (isEdit) fetchBlog();
     }, [id]);
@@ -67,6 +68,7 @@ const AdminCreateBlog = () => {
         if (!isValid) return;
 
         try {
+            setSubmitting(true);
             const formData = new FormData();
             formData.append("title", form.title);
             formData.append("category", form.category);
@@ -87,11 +89,11 @@ const AdminCreateBlog = () => {
             const res = await axios.post(`blog/admin/create-blog`,
                 formData,
                 {
-                    headers: {"Content-Type": "multipart/form-data"}
+                    headers: { "Content-Type": "multipart/form-data" }
                 }
             );
             if (res.data.success) {
-                toast.success(res.data.message);
+                toast.success(res.data.message || (isEdit ? "Blog updated" : "Blog created"));
                 navigate("/admin/blogs");
             } else {
                 toast.error(res.data.message);
@@ -99,141 +101,183 @@ const AdminCreateBlog = () => {
         } catch (err) {
             console.error(err);
             toast.error(err.response?.data?.message || "Error submitting the form");
+        } finally {
+            setSubmitting(false);
         }
     };
 
     return (
         <AdminLayout>
-            <div className="container py-4">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h4 className="section-title">
-                        <span className="first-letter">{isEdit ? "U" : "C"}</span>
-                        {isEdit ? "pdate Blog" : "reate Blog"}
-                    </h4>
-                    <button className="btn btn-outline-danger" onClick={() => navigate("/admin/blogs")}>
-                        ← Back
-                    </button>
-                </div>
-                <form
-                    className="row g-3 bg-dark rounded text-white p-3"
-                    onSubmit={handleSubmit}
-                >
-                    {/* Title */}
-                    <div className="col-md-4">
-                        <input
-                            type="text"
-                            className="form-control bg-dark text-white border-secondary"
-                            placeholder="Title*"
-                            value={form.title}
-                            onChange={(e) => setForm({ ...form, title: e.target.value })}
-                            ref={titleRef}
-                        />
-                    </div>
+            <div className="container-fluid p-0 p-sm-2">
+                <div className="bg-dark rounded p-3 p-md-4 shadow-sm border border-secondary border-opacity-25">
 
-                    {/* Category */}
-                    <div className="col-md-4">
-                        <input
-                            type="text"
-                            className="form-control bg-dark text-white border-secondary"
-                            placeholder="Category"
-                            value={form.category}
-                            onChange={(e) => setForm({ ...form, category: e.target.value })}
-                            ref={categoryRef}
-                        />
-                    </div>
-
-                    {/* Meta Title */}
-                    <div className="col-md-4">
-                        <input
-                            type="text"
-                            className="form-control bg-dark text-white border-secondary"
-                            placeholder="Meta Title"
-                            value={form.metaTitle}
-                            onChange={(e) =>
-                                setForm({ ...form, metaTitle: e.target.value })
-                            }
-                        />
-                    </div>
-
-                    {/* Meta Description */}
-                    <div className="col-md-4">
-                        <input
-                            type="text"
-                            className="form-control bg-dark text-white border-secondary"
-                            placeholder="Meta Description"
-                            value={form.metaDescription}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    metaDescription: e.target.value
-                                })
-                            }
-                        />
-                    </div>
-
-                    {/* Tags */}
-                    <div className="col-md-4">
-                        <input
-                            type="text"
-                            className="form-control bg-dark text-white border-secondary"
-                            placeholder="Tags (comma separated)"
-                            value={form.tags}
-                            onChange={(e) =>
-                                setForm({ ...form, tags: e.target.value })
-                            }
-                        />
-                    </div>
-
-                    {/* Thumbnail Upload */}
-                    <div className="col-md-4">
-                        <input
-                            type="file"
-                            className="form-control bg-dark text-white border-secondary"
-                            onChange={(e) => {
-                                const file = e.target.files[0];
-                                setForm({ ...form, thumbnail: file });
-                                if (file) setPreview(URL.createObjectURL(file));
-                            }}
-                            ref={thumbnailRef}
-                        />
-                        {preview && (
-                            <img
-                                src={preview}
-                                alt="preview"
-                                className="mt-2 rounded"
-                                width="120"
-                            />
-                        )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="col-12 mt-4">
-                        <h5>✍️ Blog Content</h5>
-                        <div
-                            style={{
-                                border: "1px solid #444",
-                                borderRadius: "8px",
-                                padding: "10px",
-                                background: "#0f0f0f"
-                            }}
-                            ref={contentRef}
+                    {/* Header */}
+                    <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4 pb-2 border-bottom border-secondary">
+                        <div>
+                            <h4 className="text-white mb-1 d-flex align-items-center gap-2">
+                                <i className="bi bi-journal-plus text-danger"></i>
+                                <span>{isEdit ? "Update Blog Post" : "Create Blog Post"}</span>
+                            </h4>
+                            <small className="text-secondary">
+                                {isEdit ? "Edit and update your existing article" : "Write and publish articles, car maintenance advice, or workshop news"}
+                            </small>
+                        </div>
+                        <button
+                            type="button"
+                            className="btn btn-outline-danger d-flex align-items-center gap-2"
+                            onClick={() => navigate("/admin/blogs")}
                         >
-                            <TextEditor
-                                value={form.content}
-                                onChange={(value) =>
-                                    setForm({ ...form, content: value })
+                            <i className="bi bi-arrow-left"></i> Back to Blogs
+                        </button>
+                    </div>
+
+                    <form className="row g-3" onSubmit={handleSubmit}>
+                        {/* Title */}
+                        <div className="col-12 col-md-6">
+                            <label className="form-label text-light fw-semibold">
+                                Blog Title <span className="text-danger">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control bg-dark text-white border-secondary"
+                                placeholder="e.g. Essential Car Care Tips Before Monsoon"
+                                value={form.title}
+                                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                                ref={titleRef}
+                            />
+                        </div>
+
+                        {/* Category */}
+                        <div className="col-12 col-md-6">
+                            <label className="form-label text-light fw-semibold">
+                                Category <span className="text-danger">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control bg-dark text-white border-secondary"
+                                placeholder="e.g. Maintenance, Detailing, Tips"
+                                value={form.category}
+                                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                                ref={categoryRef}
+                            />
+                        </div>
+
+                        {/* SEO Meta Title */}
+                        <div className="col-12 col-md-6">
+                            <label className="form-label text-light fw-semibold">SEO Meta Title</label>
+                            <input
+                                type="text"
+                                className="form-control bg-dark text-white border-secondary"
+                                placeholder="Optimized SEO Title"
+                                value={form.metaTitle}
+                                onChange={(e) =>
+                                    setForm({ ...form, metaTitle: e.target.value })
                                 }
                             />
                         </div>
-                    </div>
 
-                    {/* Submit */}
-                    <div className="col-12">
-                        <button className="btn btn-primary">
-                            {isEdit ? "Update Blog" : "Create Blog"}
-                        </button>
-                    </div>
-                </form>
+                        {/* SEO Meta Description */}
+                        <div className="col-12 col-md-6">
+                            <label className="form-label text-light fw-semibold">SEO Meta Description</label>
+                            <input
+                                type="text"
+                                className="form-control bg-dark text-white border-secondary"
+                                placeholder="Brief summary for search engine snippet..."
+                                value={form.metaDescription}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        metaDescription: e.target.value
+                                    })
+                                }
+                            />
+                        </div>
+
+                        {/* Tags */}
+                        <div className="col-12 col-md-6">
+                            <label className="form-label text-light fw-semibold">Tags (comma separated)</label>
+                            <input
+                                type="text"
+                                className="form-control bg-dark text-white border-secondary"
+                                placeholder="car care, oil service, engine repair"
+                                value={form.tags}
+                                onChange={(e) =>
+                                    setForm({ ...form, tags: e.target.value })
+                                }
+                            />
+                        </div>
+
+                        {/* Thumbnail Upload */}
+                        <div className="col-12 col-md-6">
+                            <label className="form-label text-light fw-semibold">
+                                Thumbnail Image {!isEdit && <span className="text-danger">*</span>}
+                            </label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                className="form-control bg-dark text-white border-secondary"
+                                onChange={(e) => {
+                                    const file = e.target.files[0];
+                                    setForm({ ...form, thumbnail: file });
+                                    if (file) setPreview(URL.createObjectURL(file));
+                                }}
+                                ref={thumbnailRef}
+                            />
+                            {preview && (
+                                <div className="mt-2">
+                                    <img
+                                        src={preview}
+                                        alt="preview"
+                                        className="rounded border border-secondary"
+                                        style={{ maxHeight: "100px", maxWidth: "160px", objectFit: "cover" }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Content */}
+                        <div className="col-12 mt-3">
+                            <label className="form-label text-light fw-semibold mb-2">
+                                ✍️ Blog Article Content <span className="text-danger">*</span>
+                            </label>
+                            <div
+                                style={{
+                                    border: "1px solid #444",
+                                    borderRadius: "8px",
+                                    padding: "4px",
+                                    background: "#0c0c0c"
+                                }}
+                                ref={contentRef}
+                            >
+                                <TextEditor
+                                    value={form.content}
+                                    onChange={(value) =>
+                                        setForm({ ...form, content: value })
+                                    }
+                                />
+                            </div>
+                        </div>
+
+                        {/* Submit Buttons */}
+                        <div className="col-12 pt-3 border-top border-secondary d-flex flex-column flex-sm-row gap-2">
+                            <button
+                                type="submit"
+                                className="btn btn-danger px-4 d-flex align-items-center justify-content-center gap-2"
+                                disabled={submitting}
+                            >
+                                <i className="bi bi-check-circle"></i>
+                                <span>{submitting ? "Saving..." : (isEdit ? "Update Blog" : "Publish Blog")}</span>
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary px-4"
+                                onClick={() => navigate("/admin/blogs")}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </AdminLayout>
     );

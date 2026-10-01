@@ -9,6 +9,7 @@ const SKIPPED_LOADER_ENDPOINTS = [
   "/auth/send-otp",
   "/auth/verify-otp",
   "/auth/complete-profile",
+  "blog/like-toggle",
 ];
 
 const shouldSkipGlobalLoader = (config = {}) => {

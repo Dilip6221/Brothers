@@ -81,47 +81,71 @@ const AdminServiceList = () => {
 
   return (
     <AdminLayout>
-      <div className="container-fluid">
-        <div className="bg-dark rounded p-4">
-          <h4 className="text-white border-bottom pb-2 mb-3 d-flex justify-content-between align-items-center">
-            <span>
-              <i className="bi bi-tools me-2"></i>
+      <div className="container-fluid p-0 p-sm-2">
+        <div className="bg-dark rounded p-3 p-md-4 border border-secondary border-opacity-25">
+          {/* Responsive Header Bar */}
+          <div className="border-bottom border-secondary border-opacity-50 pb-3 mb-3 d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3">
+            <h4 className="text-white m-0 d-flex align-items-center">
+              <i className="bi bi-tools me-2 text-danger"></i>
               Our Services
-            </span>
+              <span className="badge bg-secondary ms-2 fs-6">
+                {filteredServices.length}
+              </span>
+            </h4>
 
-            <div className="d-flex align-items-center gap-3">
-              <div className="input-group" style={{ width: "220px" }}>
+            <div className="d-flex align-items-center gap-2 flex-grow-1 flex-md-grow-0 justify-content-between justify-content-md-end">
+              <div
+                className="input-group flex-grow-1"
+                style={{ maxWidth: "340px", minWidth: "160px" }}
+              >
                 <input
                   type="search"
-                  className="form-control bg-dark text-white border-white"
-                  placeholder="Search..."
+                  className="form-control bg-dark text-white border-secondary"
+                  placeholder="Search services..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
 
-              <Link to="/admin/services/create" className="text-decoration-none">
-                <button className="btn btn-outline-danger d-flex align-items-center gap-2 px-3">
+              <Link
+                to="/admin/services/create"
+                className="text-decoration-none flex-shrink-0"
+              >
+                <button className="btn btn-outline-danger d-flex align-items-center justify-content-center gap-2 px-3 py-2">
                   <i className="bi bi-plus-circle"></i>
-                  Create
+                  <span>Create Service</span>
                 </button>
               </Link>
             </div>
-          </h4>
-          <div style={{ maxHeight: "65vh", overflowY: "auto" }}>
-            <table className="table table-dark table-hover table-bordered align-middle">
-              <thead className="table-secondary text-dark sticky-top">
-                <tr>
-                  <th>#</th>
-                  <th>Image</th>
-                  <th>Name</th>
+          </div>
+
+          {/* Table Container */}
+          <div
+            className="table-responsive"
+            style={{
+              maxHeight: "65vh",
+              overflowY: "auto",
+              overflowX: "auto",
+            }}
+          >
+            <table
+              className="table table-dark table-hover table-bordered align-middle m-0"
+              style={{ minWidth: "820px" }}
+            >
+              <thead className="sticky-top">
+                <tr className="table-secondary text-dark">
+                  <th style={{ width: "50px" }}>#</th>
+                  <th style={{ width: "90px" }}>Image</th>
+                  <th>Service Details</th>
                   <th>Category</th>
                   <th>Duration</th>
-                  <th>Order</th>
+                  <th style={{ width: "70px" }}>Order</th>
                   <th>Featured</th>
                   <th>Card Features</th>
                   <th>Status</th>
-                  <th className="text-center">Action</th>
+                  <th className="text-center" style={{ width: "110px" }}>
+                    Action
+                  </th>
                 </tr>
               </thead>
 
@@ -129,7 +153,7 @@ const AdminServiceList = () => {
                 {filteredServices.length > 0 ? (
                   filteredServices.map((item, index) => (
                     <tr key={item._id}>
-                      <td>{index + 1}</td>
+                      <td className="text-muted">{index + 1}</td>
 
                       <td>
                         {item.image?.url ? (
@@ -141,70 +165,103 @@ const AdminServiceList = () => {
                               height: "50px",
                               objectFit: "cover",
                               borderRadius: "8px",
+                              border: "1px solid rgba(255,255,255,0.15)",
                             }}
                           />
                         ) : (
-                          "-"
+                          <div
+                            className="bg-secondary bg-opacity-25 rounded d-flex align-items-center justify-content-center text-muted"
+                            style={{ width: "75px", height: "50px" }}
+                          >
+                            <i className="bi bi-image"></i>
+                          </div>
                         )}
                       </td>
 
                       <td>
-                        <strong>{item.title}</strong>
+                        <strong className="text-white">{item.title}</strong>
                         <br />
                         <small className="text-secondary">{item.slug}</small>
                       </td>
 
-                      <td>{item.category || "-"}</td>
+                      <td>
+                        <span className="badge bg-dark border border-secondary text-light">
+                          {item.category || "-"}
+                        </span>
+                      </td>
+
                       <td>{item.duration || "-"}</td>
-                      <td>{item.displayOrder || 0}</td>
+                      <td className="text-center">{item.displayOrder || 0}</td>
 
                       <td>
                         {item.featured ? (
-                          <span className="badge bg-warning text-dark">YES</span>
+                          <span className="badge bg-warning text-dark px-2 py-1">
+                            YES
+                          </span>
                         ) : (
-                          <span className="badge bg-secondary">NO</span>
+                          <span className="badge bg-secondary text-light px-2 py-1">
+                            NO
+                          </span>
                         )}
                       </td>
 
                       <td>
-                        {(item.cardFeatures || []).slice(0, 2).map((f, i) => (
-                          <span className="badge bg-secondary me-1 mb-1" key={i}>
-                            {f}
-                          </span>
-                        ))}
+                        <div className="d-flex flex-wrap gap-1">
+                          {(item.cardFeatures || []).slice(0, 2).map((f, i) => (
+                            <span
+                              className="badge bg-secondary bg-opacity-50 text-white"
+                              key={i}
+                            >
+                              {f}
+                            </span>
+                          ))}
+                        </div>
                       </td>
 
                       <td>
                         <span
-                          className={`badge ${
-                            item.status === "ACTIVE" ? "bg-success" : "bg-danger"
+                          className={`badge px-2 py-1 ${
+                            item.status === "ACTIVE"
+                              ? "bg-success"
+                              : "bg-danger"
                           }`}
                           style={{ cursor: "pointer" }}
+                          title="Click to toggle status"
                           onClick={() => handleUserStatus(item._id, item.status)}
                         >
                           {item.status}
                         </span>
                       </td>
 
-                      <td className="text-center">
-                        <i
-                          className="fa-solid fa-pen-to-square text-warning me-3"
-                          style={{ cursor: "pointer", fontSize: "18px" }}
-                          onClick={() => navigate(`/admin/services/edit/${item._id}`)}
-                        ></i>
+                      <td className="text-center text-nowrap">
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-warning me-2 p-1 px-2"
+                          title="Edit Service"
+                          aria-label="Edit Service"
+                          onClick={() =>
+                            navigate(`/admin/services/edit/${item._id}`)
+                          }
+                        >
+                          <i className="fa-solid fa-pen-to-square"></i>
+                        </button>
 
-                        <i
-                          className="bi bi-trash text-danger"
-                          style={{ cursor: "pointer", fontSize: "18px" }}
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger p-1 px-2"
+                          title="Delete Service"
+                          aria-label="Delete Service"
                           onClick={() => deleteService(item._id)}
-                        ></i>
+                        >
+                          <i className="bi bi-trash"></i>
+                        </button>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="10" className="text-center text-white">
-                      No Data Found...
+                    <td colSpan="10" className="text-center text-white py-4">
+                      No Services Found...
                     </td>
                   </tr>
                 )}

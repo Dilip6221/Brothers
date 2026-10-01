@@ -18,25 +18,30 @@ const AdminCreateAboutTimeLine = () => {
 
     const [images, setImages] = useState([]); // new images
     const [preview, setPreview] = useState([]); // mixed preview (old + new)
+    const [submitting, setSubmitting] = useState(false);
+    const [loadingData, setLoadingData] = useState(isEdit);
 
-    // 🔥 FETCH DATA
+    // FETCH DATA
     const fetchTimeline = async () => {
         try {
+            setLoadingData(true);
             const res = await axios.get(
                 `${import.meta.env.VITE_BACKEND_URL}/about-timeline/about-timeline/${id}`
             );
             if (res.data.success) {
                 const data = res.data.data;
                 setForm({
-                    year: data.year,
-                    title: data.title,
-                    description: data.description,
-                    order: data.order
+                    year: data.year || "",
+                    title: data.title || "",
+                    description: data.description || "",
+                    order: data.order || 0
                 });
                 setPreview(data.images || []);
             }
         } catch {
             toast.error("Failed to load timeline");
+        } finally {
+            setLoadingData(false);
         }
     };
 
@@ -55,9 +60,19 @@ const AdminCreateAboutTimeLine = () => {
         setPreview(prev => [...prev, ...previewUrls]);
     };
 
+    const handleRemovePreview = (index) => {
+        setPreview(prev => prev.filter((_, i) => i !== index));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!form.year || !form.title) {
+            toast.error("Please fill in required fields (Year and Title)");
+            return;
+        }
+
         try {
+            setSubmitting(true);
             const formData = new FormData();
             formData.append("year", form.year);
             formData.append("title", form.title);
@@ -90,124 +105,203 @@ const AdminCreateAboutTimeLine = () => {
         } catch (err) {
             console.error(err);
             toast.error("Something went wrong");
+        } finally {
+            setSubmitting(false);
         }
     };
 
     return (
         <AdminLayout>
-            <div className="container py-4">
-
-                {/* HEADER */}
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h4 className="section-title">
-                        <span className="first-letter">{isEdit ? "U" : "C"}</span>
-                        {isEdit ? "pdate Timeline" : "reate Timeline"}
-                    </h4>
-
-                    <button
-                        type="button"
-                        className="btn btn-outline-danger"
-                        onClick={() => navigate("/admin/about-timeline")}
-                    >
-                        ← Back
-                    </button>
-                </div>
-
-                {/* FORM */}
-                <form
-                    onSubmit={handleSubmit}
-                    className="row g-3 bg-dark rounded text-white p-4"
-                >
-
-                    {/* Year */}
-                    <div className="col-md-4">
-                        <label className="form-label">Year *</label>
-                        <input
-                            type="text"
-                            placeholder="Enter Year(Ex. 2025)"
-                            className="form-control bg-dark text-white border-secondary"
-                            value={form.year}
-                            onChange={(e) =>
-                                setForm({ ...form, year: e.target.value })
-                            }
-                        />
-                    </div>
-
-                    {/* Title */}
-                    <div className="col-md-4">
-                        <label className="form-label">Title *</label>
-                        <input
-                            type="text"
-                            placeholder="Enter Title"
-                            className="form-control bg-dark text-white border-secondary"
-                            value={form.title}
-                            onChange={(e) =>
-                                setForm({ ...form, title: e.target.value })
-                            }
-                        />
-                    </div>
-
-                    {/* Order */}
-                    <div className="col-md-4">
-                        <label className="form-label">Order *</label>
-                        <input
-                            type="number"
-                            placeholder="Enter Order"
-                            className="form-control bg-dark text-white border-secondary"
-                            value={form.order}
-                            onChange={(e) =>
-                                setForm({ ...form, order: e.target.value })
-                            }
-                        />
-                    </div>
-
-                    {/* Description */}
-                    <div className="col-12">
-                        <textarea
-                            rows={3}
-                            placeholder="Enter Description"
-                            className="form-control bg-dark text-white border-secondary"
-                            value={form.description}
-                            onChange={(e) =>
-                                setForm({ ...form, description: e.target.value })
-                            }
-                        />
-                    </div>
-                    <div className="col-12">
-                        <input
-                            type="file"
-                            multiple
-                            className="form-control bg-dark text-white border-secondary"
-                            onChange={handleImageChange}
-                        />
-                        <div className="d-flex gap-3 mt-3 flex-wrap">
-                            {preview.map((img, index) => (
-                                <div
-                                    key={index}
-                                    style={{ position: "relative" }}
-                                >
-                                    <img
-                                        src={img.url || img}
-                                        alt=""
-                                        width="100"
-                                        height="100"
-                                        className="rounded"
-                                        style={{ objectFit: "cover" }}
-                                    />
-                                </div>
-                            ))}
-
+            <div className="container-fluid p-0 p-sm-3 py-3">
+                <div className="bg-dark rounded p-3 p-md-4 shadow-sm border border-secondary border-opacity-25">
+                    {/* Header */}
+                    <div className="d-flex flex-column flex-sm-row justify-content-between align-items-stretch align-items-sm-center gap-3 mb-4 pb-3 border-bottom border-secondary">
+                        <div>
+                            <h4 className="text-white mb-1 d-flex align-items-center gap-2">
+                                <i className="bi bi-clock-history text-danger"></i>
+                                <span>{isEdit ? "Update Timeline Milestone" : "Create Timeline Milestone"}</span>
+                            </h4>
+                            <span className="text-secondary small">
+                                {isEdit ? "Modify milestone details and showcase photos" : "Add a key milestone to the garage journey"}
+                            </span>
                         </div>
-                    </div>
 
-                    {/* Submit */}
-                    <div className="col-12">
-                        <button className="btn btn-primary">
-                            {isEdit ? "Update Timeline" : "Create Timeline"}
+                        <button
+                            type="button"
+                            className="btn btn-outline-secondary text-white d-flex align-items-center justify-content-center gap-2"
+                            onClick={() => navigate("/admin/about-timeline")}
+                        >
+                            <i className="bi bi-arrow-left"></i>
+                            <span>Back to Timeline</span>
                         </button>
                     </div>
 
-                </form>
+                    {loadingData ? (
+                        <div className="py-5 text-center text-secondary">
+                            <div className="spinner-border text-danger spinner-border-sm me-2" role="status"></div>
+                            <span>Loading milestone details...</span>
+                        </div>
+                    ) : (
+                        /* Form */
+                        <form onSubmit={handleSubmit} className="row g-3">
+                            {/* Year */}
+                            <div className="col-12 col-md-4">
+                                <label className="form-label text-white fw-semibold">
+                                    Year <span className="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter Year (e.g. 2025)"
+                                    className="form-control bg-dark text-white border-secondary"
+                                    value={form.year}
+                                    required
+                                    onChange={(e) =>
+                                        setForm({ ...form, year: e.target.value })
+                                    }
+                                />
+                            </div>
+
+                            {/* Title */}
+                            <div className="col-12 col-md-4">
+                                <label className="form-label text-white fw-semibold">
+                                    Milestone Title <span className="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter Title"
+                                    className="form-control bg-dark text-white border-secondary"
+                                    value={form.title}
+                                    required
+                                    onChange={(e) =>
+                                        setForm({ ...form, title: e.target.value })
+                                    }
+                                />
+                            </div>
+
+                            {/* Order */}
+                            <div className="col-12 col-md-4">
+                                <label className="form-label text-white fw-semibold">
+                                    Display Order
+                                </label>
+                                <input
+                                    type="number"
+                                    placeholder="Enter Order (0, 1, 2...)"
+                                    className="form-control bg-dark text-white border-secondary"
+                                    value={form.order}
+                                    onChange={(e) =>
+                                        setForm({ ...form, order: e.target.value })
+                                    }
+                                />
+                            </div>
+
+                            {/* Description */}
+                            <div className="col-12">
+                                <label className="form-label text-white fw-semibold">
+                                    Milestone Description
+                                </label>
+                                <textarea
+                                    rows={4}
+                                    placeholder="Describe this milestone, achievement, or major turning point..."
+                                    className="form-control bg-dark text-white border-secondary"
+                                    value={form.description}
+                                    onChange={(e) =>
+                                        setForm({ ...form, description: e.target.value })
+                                    }
+                                />
+                            </div>
+
+                            {/* Images Upload */}
+                            <div className="col-12">
+                                <label className="form-label text-white fw-semibold d-flex align-items-center justify-content-between">
+                                    <span>Milestone Images <span className="text-secondary fw-normal small">(Max 5 images)</span></span>
+                                    {preview.length > 0 && (
+                                        <span className="badge bg-secondary">{preview.length} images selected</span>
+                                    )}
+                                </label>
+                                <input
+                                    type="file"
+                                    multiple
+                                    accept="image/*"
+                                    className="form-control bg-dark text-white border-secondary"
+                                    onChange={handleImageChange}
+                                />
+
+                                {/* Previews Grid */}
+                                {preview.length > 0 && (
+                                    <div className="d-flex gap-3 mt-3 flex-wrap">
+                                        {preview.map((img, index) => (
+                                            <div
+                                                key={index}
+                                                style={{ position: "relative" }}
+                                                className="d-inline-block"
+                                            >
+                                                <img
+                                                    src={img.url || img}
+                                                    alt="preview"
+                                                    width="90"
+                                                    height="90"
+                                                    className="rounded border border-secondary"
+                                                    style={{ objectFit: "cover" }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemovePreview(index)}
+                                                    style={{
+                                                        position: "absolute",
+                                                        top: "-6px",
+                                                        right: "-6px",
+                                                        background: "#dc3545",
+                                                        color: "white",
+                                                        border: "none",
+                                                        borderRadius: "50%",
+                                                        width: "20px",
+                                                        height: "20px",
+                                                        fontSize: "12px",
+                                                        lineHeight: "1",
+                                                        padding: 0,
+                                                        cursor: "pointer"
+                                                    }}
+                                                    title="Remove image"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Submit and Cancel Buttons */}
+                            <div className="col-12 d-flex flex-column flex-sm-row gap-2 mt-4 pt-3 border-top border-secondary">
+                                <button
+                                    type="submit"
+                                    className="btn btn-danger px-4 py-2 d-flex align-items-center justify-content-center gap-2"
+                                    disabled={submitting}
+                                >
+                                    {submitting ? (
+                                        <>
+                                            <div className="spinner-border spinner-border-sm" role="status"></div>
+                                            <span>Saving...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="bi bi-check-circle-fill"></i>
+                                            <span>{isEdit ? "Update Milestone" : "Create Milestone"}</span>
+                                        </>
+                                    )}
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-secondary text-white px-4 py-2"
+                                    onClick={() => navigate("/admin/about-timeline")}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    )}
+                </div>
             </div>
         </AdminLayout>
     );

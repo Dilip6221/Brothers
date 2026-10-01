@@ -2,35 +2,40 @@ import React, { useEffect, useState } from 'react';
 import AdminLayout from "../AdminLayout.jsx";
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AdminBlogs = () => {
     const navigate = useNavigate();
-    const location = useLocation();
     const [blogs, setBlogs] = useState([]);
     const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
 
     const fetchData = async () => {
         try {
+            setLoading(true);
             const res = await axios.post(`blog/admin/blogs`);
-            setBlogs(res.data.data);
+            setBlogs(res.data.data || []);
         } catch (error) {
             toast.error("Error fetching blog data");
             console.error("Fetch blog data error", error);
+        } finally {
+            setLoading(false);
         }
     };
+
     useEffect(() => {
         fetchData();
         const handler = () => fetchData();
         window.addEventListener("ourBlogClick", handler);
         return () => window.removeEventListener("ourBlogClick", handler);
     }, []);
+
     /* On change status */
     const handleStatusChange = async (blogId, newStatus) => {
         try {
-            const res = await axios.post(`blog/admin/update-status`,{ id: blogId,newStatus });
+            const res = await axios.post(`blog/admin/update-status`, { id: blogId, newStatus });
             if (res.data.success) {
-                toast.success(res.data.message);
+                toast.success(res.data.message || "Status updated");
                 fetchData();
             } else {
                 toast.error(res.data.message);
@@ -49,125 +54,186 @@ const AdminBlogs = () => {
             item.title?.toLowerCase().includes(text) ||
             item.slug?.toLowerCase().includes(text) ||
             item.category?.toLowerCase().includes(text) ||
-            item.status?.toLowerCase().includes(text)
+            item.status?.toLowerCase().includes(text) ||
+            (Array.isArray(item.tags) && item.tags.join(" ").toLowerCase().includes(text))
         );
     });
 
     return (
         <AdminLayout>
-            <div className="container-fluid">
-                <div className="bg-dark rounded p-4">
-                    <h4 className="text-white border-bottom pb-2 mb-3 d-flex justify-content-between align-items-center">
-                        <span>
-                            <i className="fa fa-keyboard me-2"></i>
-                            Our Blogs
-                        </span>
-                        <div className="d-flex align-items-center gap-3">
-                            <div className="input-group" style={{ width: "200px" }}>
+            <div className="container-fluid p-0 p-sm-2">
+                <div className="bg-dark rounded p-3 p-md-4 shadow-sm border border-secondary border-opacity-25">
+
+                    {/* Responsive Header */}
+                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3 mb-4 pb-2 border-bottom border-secondary">
+                        <div>
+                            <h4 className="text-white mb-1 d-flex align-items-center gap-2">
+                                <i className="bi bi-journal-text text-danger"></i>
+                                <span>Our Blogs</span>
+                            </h4>
+                            <span className="badge bg-secondary text-white">
+                                Total: {filteredBlogs.length} {filteredBlogs.length === 1 ? 'Blog' : 'Blogs'}
+                            </span>
+                        </div>
+
+                        <div className="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2">
+                            <div className="input-group" style={{ minWidth: "220px" }}>
+                                <span className="input-group-text bg-dark text-secondary border-secondary">
+                                    <i className="bi bi-search"></i>
+                                </span>
                                 <input
                                     type="search"
-                                    className="form-control bg-dark text-white border-white"
+                                    className="form-control bg-dark text-white border-secondary"
                                     name="text"
-                                    placeholder="Search..."
+                                    placeholder="Search title, category, tag..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                 />
                             </div>
-                            <Link to="/admin/blogs/create" className="text-decoration-none">
-                                <button className="btn btn-outline-danger d-flex align-items-center gap-2 px-3"> <i className="bi bi-plus-circle"></i>Create</button>
+
+                            <Link to="/admin/blogs/create" className="btn btn-outline-danger text-nowrap d-flex align-items-center justify-content-center gap-2">
+                                <i className="bi bi-plus-circle"></i>
+                                <span>Create Blog</span>
                             </Link>
                         </div>
-                    </h4>
-                    <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
-                        <table className="table table-dark table-hover table-bordered align-middle">
+                    </div>
+
+                    {/* Touch Scroll Table */}
+                    <div className="table-responsive" style={{ maxHeight: "65vh", overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+                        <table className="table table-dark table-hover table-bordered align-middle mb-0" style={{ minWidth: "880px" }}>
                             <thead className="table-secondary text-dark sticky-top">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Title</th>
-                                    <th>Slug</th>
+                                    <th style={{ width: "50px" }}>#</th>
+                                    <th>Blog Post</th>
                                     <th>Category</th>
                                     <th>Tags</th>
                                     <th>Status</th>
                                     <th>Created At</th>
-                                    <th className="text-center">Action</th>
+                                    <th className="text-center" style={{ width: "120px" }}>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredBlogs.length > 0 ? (
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan="7" className="text-center text-white py-4">
+                                            <div className="spinner-border spinner-border-sm text-danger me-2" role="status"></div>
+                                            Loading blogs...
+                                        </td>
+                                    </tr>
+                                ) : filteredBlogs.length > 0 ? (
                                     filteredBlogs.map((item, index) => (
-                                        <tr key={index}>
+                                        <tr key={item._id || index}>
                                             <td>{index + 1}</td>
-                                            <td>{item.title}</td>
-                                            <td>{item.slug}</td>
-                                            <td>{item.category}</td>
-                                            <td>{item.tags?.join(", ")}</td>
                                             <td>
-                                                <div className="d-flex align-items-center gap-1">
-                                                    <div className="dropdown">
-                                                        <button
-                                                            className={`btn btn-sm dropdown-toggle d-flex align-items-center justify-content-between`}
-                                                            type="button"
-                                                            id={`statusDropdown${item._id}`}
-                                                            data-bs-toggle="dropdown"
-                                                            aria-expanded="false"
-                                                            style={{
-                                                                backgroundColor:item.status === "DRAFT" ? "#ffc107": item.status === "PUBLISHED"? "#198754": "black",
-                                                                color: 'white',
-                                                                minWidth: "90px",
-                                                            }}
-                                                        >
-                                                            {item.status}
-                                                        </button>
-
-                                                        <ul className="dropdown-menu" aria-labelledby={`statusDropdown${item._id}`}>
-                                                            {item.status !== "DRAFT" && (
-                                                                <li>
-                                                                    <button
-                                                                        className="dropdown-item"
-                                                                        onClick={() => handleStatusChange(item._id, "DRAFT")}
-                                                                    >
-                                                                        DRAFT
-                                                                    </button>
-                                                                </li>
-                                                            )}
-                                                            {item.status !== "PUBLISHED" && (
-                                                                <li>
-                                                                    <button
-                                                                        className="dropdown-item"
-                                                                        onClick={() => handleStatusChange(item._id, "PUBLISHED")}
-                                                                    >
-                                                                        PUBLISHED
-                                                                    </button>
-                                                                </li>
-                                                            )}
-                                                            {item.status !== "ARCHIVED" && (
-                                                                <li>
-                                                                    <button
-                                                                        className="dropdown-item"
-                                                                        onClick={() => handleStatusChange(item._id, "ARCHIVED")}
-                                                                    >
-                                                                        ARCHIVED
-                                                                    </button>
-                                                                </li>
-                                                            )}
-                                                        </ul>
+                                                <div className="fw-semibold text-white">{item.title || "Untitled"}</div>
+                                                {item.slug && (
+                                                    <small className="text-secondary font-monospace d-block mt-1">
+                                                        /{item.slug}
+                                                    </small>
+                                                )}
+                                            </td>
+                                            <td>
+                                                <span className="badge bg-dark border border-secondary text-warning">
+                                                    {item.category || "General"}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {Array.isArray(item.tags) && item.tags.length > 0 ? (
+                                                    <div className="d-flex flex-wrap gap-1">
+                                                        {item.tags.map((t, idx) => (
+                                                            <span key={idx} className="badge bg-secondary font-monospace" style={{ fontSize: "11px" }}>
+                                                                {t}
+                                                            </span>
+                                                        ))}
                                                     </div>
+                                                ) : (
+                                                    <span className="text-muted small">-</span>
+                                                )}
+                                            </td>
+                                            <td>
+                                                <div className="dropdown">
+                                                    <button
+                                                        className={`btn btn-sm dropdown-toggle d-inline-flex align-items-center gap-1 ${
+                                                            item.status === "PUBLISHED" ? "btn-success" : item.status === "DRAFT" ? "btn-warning text-dark" : "btn-secondary"
+                                                        }`}
+                                                        type="button"
+                                                        id={`statusDropdown${item._id}`}
+                                                        data-bs-toggle="dropdown"
+                                                        aria-expanded="false"
+                                                        style={{ fontSize: "12px", minWidth: "95px" }}
+                                                    >
+                                                        {item.status || "DRAFT"}
+                                                    </button>
+
+                                                    <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby={`statusDropdown${item._id}`}>
+                                                        {item.status !== "DRAFT" && (
+                                                            <li>
+                                                                <button
+                                                                    className="dropdown-item"
+                                                                    onClick={() => handleStatusChange(item._id, "DRAFT")}
+                                                                >
+                                                                    DRAFT
+                                                                </button>
+                                                            </li>
+                                                        )}
+                                                        {item.status !== "PUBLISHED" && (
+                                                            <li>
+                                                                <button
+                                                                    className="dropdown-item"
+                                                                    onClick={() => handleStatusChange(item._id, "PUBLISHED")}
+                                                                >
+                                                                    PUBLISHED
+                                                                </button>
+                                                            </li>
+                                                        )}
+                                                        {item.status !== "ARCHIVED" && (
+                                                            <li>
+                                                                <button
+                                                                    className="dropdown-item"
+                                                                    onClick={() => handleStatusChange(item._id, "ARCHIVED")}
+                                                                >
+                                                                    ARCHIVED
+                                                                </button>
+                                                            </li>
+                                                        )}
+                                                    </ul>
                                                 </div>
                                             </td>
-                                            <td>{new Date(item.createdAt).toLocaleString()}</td>
-                                            <td className="text-center">
-                                                <i
-                                                    className="fa-solid fa-pen-to-square text-warning"
-                                                    style={{ cursor: "pointer", fontSize: "18px" }}
-                                                    onClick={() => navigate(`/admin/blogs/edit/${item._id}`)}
-                                                ></i>
+                                            <td className="text-nowrap">
+                                                <small className="text-light">
+                                                    {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "-"}
+                                                </small>
+                                            </td>
+                                            <td className="text-center text-nowrap">
+                                                <div className="d-flex justify-content-center gap-1">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-warning p-1 px-2"
+                                                        title="Edit Blog"
+                                                        onClick={() => navigate(`/admin/blogs/edit/${item._id}`)}
+                                                    >
+                                                        <i className="fa-solid fa-pen-to-square"></i>
+                                                    </button>
+                                                    {item.slug && (
+                                                        <Link
+                                                            to={`/blog/${item.slug}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="btn btn-sm btn-outline-info p-1 px-2"
+                                                            title="View Public Post"
+                                                        >
+                                                            <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                                                        </Link>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="text-center text-white">
-                                            No Data Found...
+                                        <td colSpan="7" className="text-center text-secondary py-5">
+                                            <i className="bi bi-journal-x fs-2 d-block mb-2 text-secondary"></i>
+                                            No Blogs Found
                                         </td>
                                     </tr>
                                 )}

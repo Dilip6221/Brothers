@@ -1,4 +1,4 @@
-import React, { useEffect, useState ,useContext} from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import AdminLayout from '../AdminLayout';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -10,33 +10,44 @@ const AdminInquery = () => {
     const [inqueries, setInqueries] = useState([]);
     const [filter, setFilter] = useState("ALL");
     const [selectedInquiry, setSelectedInquiry] = useState(null);
-    const [showModal, setShowModal] = useState(false);    const [editingInquiry, setEditingInquiry] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [editingInquiry, setEditingInquiry] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
-    const [editFormData, setEditFormData] = useState({ status: "", adminNotes: "" });    const [search, setSearch] = useState(""); //For search functionality
-    const { downloadCSV } = useContext(UserContext);//For Download csv
+    const [editFormData, setEditFormData] = useState({ status: "", adminNotes: "" });
+    const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [updating, setUpdating] = useState(false);
+    const { downloadCSV } = useContext(UserContext);
 
     const fetchData = async () => {
         try {
+            setLoading(true);
             const res = await axios.post(`inquery/admin/admin-inquery-data`);
-            setInqueries(res.data.data);
+            setInqueries(res.data.data || []);
         } catch (error) {
             toast.error("Error fetching inquiry data");
             console.error("Fetch inquiry data error", error);
+        } finally {
+            setLoading(false);
         }
     };
-  
+
     useEffect(() => {
         fetchData();
         const handler = () => fetchData();
         window.addEventListener("inquieryClick", handler);
         return () => window.removeEventListener("inquieryClick", handler);
     }, []);
-    
+
     useEffect(() => {
         if (location.state?.openTab) {
             setFilter(location.state.openTab);
         }
     }, [location.state]);
+
+    const pendingCount = inqueries.filter(item => item.status === "PENDING").length;
+    const completedCount = inqueries.filter(item => item.status === "COMPLETED").length;
+    const totalCount = inqueries.length;
 
     const filteredData = inqueries.filter((item) => {
         if (filter === "ALL") return true;
@@ -46,16 +57,13 @@ const AdminInquery = () => {
         const text = search.toLowerCase();
         return (
             item.name?.toLowerCase().includes(text) ||
-            // item.email?.toLowerCase().includes(text) ||
             item.phone?.toLowerCase().includes(text) ||
-            // item.carBrand?.toLowerCase().includes(text) ||
-            // item.carModel?.toLowerCase().includes(text) ||
             item.status?.toLowerCase().includes(text) ||
             (Array.isArray(item.services) &&
-                item.services.join(" ").toLowerCase().includes(text)) ||
-            item.status?.toLowerCase().includes(text)
+                item.services.join(" ").toLowerCase().includes(text))
         );
-    });;
+    });
+
     const viewInquiry = async (id) => {
         try {
             const res = await axios.post(`inquery/admin/inquiry-details`, { id });
@@ -82,10 +90,11 @@ const AdminInquery = () => {
 
     const updateInquiry = async () => {
         try {
-            if (!editingInquiry._id) {
+            if (!editingInquiry?._id) {
                 toast.error("Inquiry ID not found");
                 return;
             }
+            setUpdating(true);
             const res = await axios.post("inquery/admin/update-inquiry", {
                 id: editingInquiry._id,
                 status: editFormData.status,
@@ -93,124 +102,209 @@ const AdminInquery = () => {
             });
 
             if (res.data.success) {
-                toast.success(res.data.message);
+                toast.success(res.data.message || "Inquiry updated successfully");
                 setShowEditModal(false);
-                fetchData(); 
+                fetchData();
             } else {
-                toast.error(res.data.message);
+                toast.error(res.data.message || "Update failed");
             }
         } catch (error) {
             toast.error("Error updating inquiry");
             console.error("Update inquiry error", error);
+        } finally {
+            setUpdating(false);
         }
     };
+
     return (
         <AdminLayout>
-            <div className="container-fluid">
-                <div className="bg-dark rounded p-3 mb-3">
-                    <ul className="nav nav-pills text-danger">
-                        <li className="nav-item">
-                            <button className={`text-danger nav-link ${filter === "PENDING" ? "active bg-danger text-white" : ""}`} onClick={() => { setFilter("PENDING"); fetchData(); }}>
-                                PENDING
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button className={`text-danger nav-link ${filter === "COMPLETED" ? "active bg-danger text-white" : ""}`} onClick={() => { setFilter("COMPLETED"); fetchData(); }}>
-                                COMPLETED
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button className={`text-danger nav-link ${filter === "ALL" ? "active bg-danger text-white" : ""}`} onClick={() => { setFilter("ALL"); fetchData(); }}>
-                                ALL
-                            </button>
-                        </li>
-                    </ul>
+            <div className="container-fluid p-0 p-sm-2">
+
+                {/* Filter Pills Bar */}
+                <div className="bg-dark rounded p-3 mb-3 shadow-sm border border-secondary border-opacity-25">
+                    <div className="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                        <ul className="nav nav-pills flex-nowrap overflow-x-auto pb-1 pb-sm-0" style={{ WebkitOverflowScrolling: "touch" }}>
+                            <li className="nav-item me-2">
+                                <button
+                                    className={`nav-link text-nowrap d-flex align-items-center gap-2 ${filter === "PENDING" ? "active bg-danger text-white" : "text-danger"}`}
+                                    onClick={() => setFilter("PENDING")}
+                                >
+                                    <i className="bi bi-clock-history"></i>
+                                    <span>PENDING</span>
+                                    <span className={`badge ${filter === "PENDING" ? "bg-white text-dark" : "bg-secondary text-white"}`}>
+                                        {pendingCount}
+                                    </span>
+                                </button>
+                            </li>
+                            <li className="nav-item me-2">
+                                <button
+                                    className={`nav-link text-nowrap d-flex align-items-center gap-2 ${filter === "COMPLETED" ? "active bg-danger text-white" : "text-danger"}`}
+                                    onClick={() => setFilter("COMPLETED")}
+                                >
+                                    <i className="bi bi-check2-all"></i>
+                                    <span>COMPLETED</span>
+                                    <span className={`badge ${filter === "COMPLETED" ? "bg-white text-dark" : "bg-secondary text-white"}`}>
+                                        {completedCount}
+                                    </span>
+                                </button>
+                            </li>
+                            <li className="nav-item">
+                                <button
+                                    className={`nav-link text-nowrap d-flex align-items-center gap-2 ${filter === "ALL" ? "active bg-danger text-white" : "text-danger"}`}
+                                    onClick={() => setFilter("ALL")}
+                                >
+                                    <i className="bi bi-list-stars"></i>
+                                    <span>ALL</span>
+                                    <span className={`badge ${filter === "ALL" ? "bg-white text-dark" : "bg-secondary text-white"}`}>
+                                        {totalCount}
+                                    </span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                {/* Inquiry Table */}
 
+                {/* Main Inquiry Card */}
+                <div className="bg-dark rounded p-3 p-md-4 shadow-sm border border-secondary border-opacity-25">
 
-                <div className="bg-dark rounded p-4">
-                    <h4 className="text-white border-bottom pb-2 mb-3 d-flex justify-content-between align-items-center">
-                        <span>
-                            <i className="bi bi-clipboard-check-fill me-2"></i>
-                            Customer Inquiry
-                        </span>
-                        <div className="d-flex align-items-center gap-3">
+                    {/* Responsive Header */}
+                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3 mb-4 pb-2 border-bottom border-secondary">
+                        <div>
+                            <h4 className="text-white mb-1 d-flex align-items-center gap-2">
+                                <i className="bi bi-clipboard-check-fill text-danger"></i>
+                                <span>Customer Inquiry</span>
+                            </h4>
+                            <span className="badge bg-secondary text-white">
+                                Showing: {filteredData.length} {filteredData.length === 1 ? 'Inquiry' : 'Inquiries'}
+                            </span>
+                        </div>
+
+                        <div className="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2">
                             <button
-                                className="btn btn-outline-danger d-flex align-items-center p-2"
+                                className="btn btn-outline-success text-nowrap d-flex align-items-center justify-content-center gap-2"
                                 onClick={() => downloadCSV("/inquery/admin/inquiry-export", `${filter.toLowerCase()}-inquiry`, { filter })}
+                                title="Export current list as CSV"
                             >
                                 <i className="fa fa-download"></i>
+                                <span>Export CSV</span>
                             </button>
-                            <div className="input-group" style={{ width: "200px" }}>
+
+                            <div className="input-group" style={{ minWidth: "220px" }}>
+                                <span className="input-group-text bg-dark text-secondary border-secondary">
+                                    <i className="bi bi-search"></i>
+                                </span>
                                 <input
                                     type="search"
-                                    className="form-control bg-dark text-white border-white"
+                                    className="form-control bg-dark text-white border-secondary"
                                     name="text"
-                                    placeholder="Search..."
+                                    placeholder="Search name, phone, service..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                 />
                             </div>
                         </div>
-                    </h4>
-                    <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
-                        <table className="table table-dark table-hover table-bordered align-middle">
-                            <thead className="table-secondary text-dark sticky-top" >
+                    </div>
+
+                    {/* Touch Scroll Table */}
+                    <div className="table-responsive" style={{ maxHeight: "65vh", overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+                        <table className="table table-dark table-hover table-bordered align-middle mb-0" style={{ minWidth: "750px" }}>
+                            <thead className="table-secondary text-dark sticky-top">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Full Name</th>
-                                    {/* <th>Email</th> */}
+                                    <th style={{ width: "50px" }}>#</th>
+                                    <th>Customer</th>
                                     <th>Phone</th>
-                                    {/* <th>Brand</th>
-                                    <th>Model</th> */}
-                                    <th>Service</th>
+                                    <th>Services Requested</th>
                                     <th>Status</th>
-                                    <th className="text-center">Action</th>
+                                    <th className="text-center" style={{ width: "110px" }}>Action</th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                {filteredData.length > 0 ? (
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan="6" className="text-center text-white py-4">
+                                            <div className="spinner-border spinner-border-sm text-danger me-2" role="status"></div>
+                                            Loading inquiries...
+                                        </td>
+                                    </tr>
+                                ) : filteredData.length > 0 ? (
                                     filteredData.map((item, index) => (
-                                        <tr key={index}>
+                                        <tr key={item._id || index}>
                                             <td>{index + 1}</td>
-                                            <td>{item.name}</td>
-                                            {/* <td><a href={`mailto:${item.email}`} className="text-info text-decoration-none" style={{ cursor: "pointer" }}>{item.email}</a></td> */}
-                                            <td>{item.phone}</td>
-                                            {/* <td>{item.carBrand}</td>
-                                            <td>{item.carModel}</td> */}
-                                            <td>{item.services?.join(", ")}</td>
-
                                             <td>
-                                                {item.status === "PENDING" && (
-                                                    <span className="badge bg-warning text-dark">Pending</span>
-                                                )}
-                                                {item.status === "COMPLETED" && (
-                                                    <span className="badge bg-success">Completed</span>
+                                                <div className="fw-semibold text-white">{item.name || "N/A"}</div>
+                                                {item.createdAt && (
+                                                    <small className="text-secondary d-flex align-items-center gap-1 mt-1">
+                                                        <i className="bi bi-clock"></i>
+                                                        {new Date(item.createdAt).toLocaleDateString()}
+                                                    </small>
                                                 )}
                                             </td>
-
-                                            <td className="text-center">
-                                                <i
-                                                    className="fa-solid fa-eye text-info me-3"
-                                                    style={{ cursor: "pointer", fontSize: "18px" }}
-                                                    onClick={() => viewInquiry(item._id)}
-                                                ></i>
-
-
-                                                <i
-                                                    className="fa-solid fa-pen-to-square text-warning"
-                                                    style={{ cursor: "pointer", fontSize: "18px" }}
-                                                    onClick={() => editInquiry(item)}
-                                                ></i>
+                                            <td>
+                                                {item.phone ? (
+                                                    <a href={`tel:${item.phone}`} className="text-info text-decoration-none d-flex align-items-center gap-1 font-monospace">
+                                                        <i className="bi bi-telephone text-secondary"></i>
+                                                        {item.phone}
+                                                    </a>
+                                                ) : (
+                                                    <span className="text-muted">-</span>
+                                                )}
+                                            </td>
+                                            <td>
+                                                {Array.isArray(item.services) && item.services.length > 0 ? (
+                                                    <div className="d-flex flex-wrap gap-1">
+                                                        {item.services.map((svc, sIdx) => (
+                                                            <span key={sIdx} className="badge bg-secondary font-monospace" style={{ fontSize: "11px" }}>
+                                                                {svc}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-secondary small fst-italic">General Inquiry</span>
+                                                )}
+                                            </td>
+                                            <td>
+                                                {item.status === "PENDING" && (
+                                                    <span className="badge bg-warning text-dark d-inline-flex align-items-center gap-1">
+                                                        <i className="bi bi-clock"></i> Pending
+                                                    </span>
+                                                )}
+                                                {item.status === "COMPLETED" && (
+                                                    <span className="badge bg-success d-inline-flex align-items-center gap-1">
+                                                        <i className="bi bi-check-circle"></i> Completed
+                                                    </span>
+                                                )}
+                                                {item.status !== "PENDING" && item.status !== "COMPLETED" && (
+                                                    <span className="badge bg-secondary">{item.status || "Unknown"}</span>
+                                                )}
+                                            </td>
+                                            <td className="text-center text-nowrap">
+                                                <div className="d-flex justify-content-center gap-1">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-info p-1 px-2"
+                                                        title="View Inquiry Details"
+                                                        onClick={() => viewInquiry(item._id)}
+                                                    >
+                                                        <i className="fa-solid fa-eye"></i>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-warning p-1 px-2"
+                                                        title="Edit Status / Notes"
+                                                        onClick={() => editInquiry(item)}
+                                                    >
+                                                        <i className="fa-solid fa-pen-to-square"></i>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="9" className="text-center text-white">
-                                            No Data Found...
+                                        <td colSpan="6" className="text-center text-secondary py-5">
+                                            <i className="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>
+                                            No inquiries found matching criteria
                                         </td>
                                     </tr>
                                 )}
@@ -219,71 +313,134 @@ const AdminInquery = () => {
                     </div>
                 </div>
             </div>
+
+            {/* View Inquiry Modal */}
             {showModal && (
                 <div
                     className="modal fade show"
                     style={{ display: "block", background: "rgba(0,0,0,0.7)" }}
+                    tabIndex="-1"
                 >
-                    <div className="modal-dialog modal-dialog-centered modal-lg">
+                    <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                         <div className="modal-content bg-dark text-white border-secondary">
 
                             {/* Modal Header */}
                             <div className="modal-header border-secondary">
-                                <h5 className="modal-title">
-                                    <i className="fa-solid fa-circle-info me-2 text-info"></i>
-                                    Inquiry Details
+                                <h5 className="modal-title d-flex align-items-center gap-2">
+                                    <i className="fa-solid fa-circle-info text-info"></i>
+                                    <span>Inquiry Details</span>
                                 </h5>
                                 <button
+                                    type="button"
                                     className="btn-close btn-close-white"
                                     onClick={() => setShowModal(false)}
+                                    aria-label="Close"
                                 ></button>
                             </div>
 
                             {/* Modal Body */}
-                            <div className="modal-body p-4" style={{ maxHeight: "60vh", overflowY: "auto" }}>
+                            <div className="modal-body p-3 p-md-4">
+                                <div className="row g-3">
+                                    {/* Customer Card */}
+                                    <div className="col-12 col-md-6">
+                                        <div className="bg-black bg-opacity-25 rounded p-3 border border-secondary h-100">
+                                            <h6 className="text-warning border-bottom border-secondary pb-2 mb-3">
+                                                <i className="bi bi-person me-2"></i>Customer Info
+                                            </h6>
+                                            <p className="mb-2"><strong>Name:</strong> {selectedInquiry?.name || "N/A"}</p>
+                                            <p className="mb-2">
+                                                <strong>Phone:</strong>{" "}
+                                                {selectedInquiry?.phone ? (
+                                                    <a href={`tel:${selectedInquiry?.phone}`} className="text-info font-monospace text-decoration-none">
+                                                        {selectedInquiry?.phone}
+                                                    </a>
+                                                ) : "-"}
+                                            </p>
+                                            <p className="mb-0">
+                                                <strong>Status:</strong>{" "}
+                                                {selectedInquiry?.status === "PENDING" && (
+                                                    <span className="badge bg-warning text-dark ms-1">Pending</span>
+                                                )}
+                                                {selectedInquiry?.status === "COMPLETED" && (
+                                                    <span className="badge bg-success ms-1">Completed</span>
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
 
-                                {/* Customer Info */}
-                                <div className="mb-3">
-                                    <h6 className="text-warning">Customer Info</h6>
-                                    <p><strong>Name:</strong> {selectedInquiry?.name}</p>
-                                    {/* <p><strong>Email:</strong> {selectedInquiry?.email}</p> */}
-                                    <p><strong>Phone:</strong> {selectedInquiry?.phone}</p>
-                                </div>
+                                    {/* Services & Metadata Card */}
+                                    <div className="col-12 col-md-6">
+                                        <div className="bg-black bg-opacity-25 rounded p-3 border border-secondary h-100">
+                                            <h6 className="text-warning border-bottom border-secondary pb-2 mb-3">
+                                                <i className="bi bi-gear me-2"></i>Services & Timing
+                                            </h6>
+                                            <div className="mb-3">
+                                                <strong>Requested Services:</strong>
+                                                <div className="d-flex flex-wrap gap-1 mt-2">
+                                                    {Array.isArray(selectedInquiry?.services) && selectedInquiry?.services.length > 0 ? (
+                                                        selectedInquiry.services.map((s, idx) => (
+                                                            <span key={idx} className="badge bg-info text-dark font-monospace">{s}</span>
+                                                        ))
+                                                    ) : (
+                                                        <span className="text-secondary small fst-italic">No specific services selected</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <p className="mb-0 small text-secondary">
+                                                <strong>Created At:</strong>{" "}
+                                                {selectedInquiry?.createdAt ? new Date(selectedInquiry?.createdAt).toLocaleString() : "-"}
+                                            </p>
+                                        </div>
+                                    </div>
 
-                                {/* Vehicle Info */}
-                                <div className="mb-3">
-                                    {/* <h6 className="text-warning">Vehicle Info</h6>
-                                    <p><strong>Brand:</strong> {selectedInquiry?.carBrand}</p>
-                                    <p><strong>Model:</strong> {selectedInquiry?.carModel}</p> */}
-                                    <p><strong>Services:</strong>
-                                        {selectedInquiry?.services?.map((s, idx) => (
-                                            <span key={idx} className="badge bg-info ms-2">{s}</span>
-                                        ))}
-                                    </p>
-                                </div>
-                                <div className="mb-3">
-                                    {/* <h6 className="text-warning">Address & Status</h6>
-                                    <p><strong>Address:</strong> {selectedInquiry?.address}</p>
-                                    <p><strong>City:</strong> {selectedInquiry?.city}</p> */}
-                                    <p><strong>Status:</strong>
-                                        {selectedInquiry?.status === "PENDING" && (
-                                            <span className="badge bg-warning text-dark ms-2">Pending</span>
-                                        )}
-                                        {selectedInquiry?.status === "COMPLETED" && (
-                                            <span className="badge bg-success ms-2">Completed</span>
-                                        )}
-                                    </p>
-                                </div>
-                                <div className="mb-3">
-                                    <h6 className="text-warning">Note Section</h6>
-                                    <p><strong>Customer Notes:</strong> {selectedInquiry?.notes}</p>
-                                    <p><strong>Admin Notes:</strong> {selectedInquiry?.adminNotes}</p>
-                                </div>
-                                <div>
-                                    <h6 className="text-warning">Metadata</h6>
-                                    <p><strong>Created At:</strong> {new Date(selectedInquiry?.createdAt).toLocaleString()}</p>
+                                    {/* Customer Notes Card */}
+                                    <div className="col-12">
+                                        <div className="bg-black bg-opacity-25 rounded p-3 border border-secondary">
+                                            <h6 className="text-warning border-bottom border-secondary pb-2 mb-2">
+                                                <i className="bi bi-chat-left-text me-2"></i>Customer Message / Notes
+                                            </h6>
+                                            <div className="p-2 text-light rounded" style={{ backgroundColor: "#1c1c1c", minHeight: "60px" }}>
+                                                {selectedInquiry?.notes || <span className="text-muted fst-italic">No message provided by customer</span>}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Admin Notes Card */}
+                                    <div className="col-12">
+                                        <div className="bg-black bg-opacity-25 rounded p-3 border border-secondary">
+                                            <h6 className="text-info border-bottom border-secondary pb-2 mb-2">
+                                                <i className="bi bi-journal-text me-2"></i>Admin Follow-up Notes
+                                            </h6>
+                                            <div className="p-2 text-light rounded" style={{ backgroundColor: "#1c1c1c", minHeight: "60px" }}>
+                                                {selectedInquiry?.adminNotes || <span className="text-muted fst-italic">No follow-up notes recorded yet</span>}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
+                            {/* Modal Footer */}
+                            <div className="modal-footer border-secondary d-flex justify-content-between">
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-warning btn-sm d-flex align-items-center gap-1"
+                                    onClick={() => {
+                                        setShowModal(false);
+                                        editInquiry(selectedInquiry);
+                                    }}
+                                >
+                                    <i className="fa-solid fa-pen-to-square"></i>
+                                    <span>Update Status</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary btn-sm"
+                                    onClick={() => setShowModal(false)}
+                                >
+                                    Close
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -294,96 +451,115 @@ const AdminInquery = () => {
                 <div
                     className="modal fade show"
                     style={{ display: "block", background: "rgba(0,0,0,0.7)" }}
+                    tabIndex="-1"
                 >
-                    <div className="modal-dialog modal-dialog-centered modal-lg">
+                    <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
                         <div className="modal-content bg-dark text-white border-secondary">
 
                             <div className="modal-header border-secondary">
-                                <h5 className="modal-title">
-                                    <i className="fa-solid fa-pen-to-square me-2 text-warning"></i>
-                                    Edit Inquiry - {editingInquiry?.name}
+                                <h5 className="modal-title d-flex align-items-center gap-2">
+                                    <i className="fa-solid fa-pen-to-square text-warning"></i>
+                                    <span>Edit Inquiry - {editingInquiry?.name}</span>
                                 </h5>
                                 <button
+                                    type="button"
                                     className="btn-close btn-close-white"
                                     onClick={() => setShowEditModal(false)}
+                                    aria-label="Close"
                                 ></button>
                             </div>
 
                             {/* Modal Body */}
-                            <div className="modal-body p-4">
+                            <div className="modal-body p-3 p-md-4">
 
                                 {/* Customer Info Display */}
-                                <div className="mb-4">
-                                    <h6 className="text-info border-bottom pb-2">Customer Information</h6>
-                                    <div className="row">
-                                        <div className="col-md-6">
-                                            <p><strong>Name:</strong> {editingInquiry?.name}</p>
-                                            {/* <p><strong>Email:</strong> {editingInquiry?.email}</p> */}
-                                        </div>
-                                        <div className="col-md-6">
-                                            <p><strong>Phone:</strong> {editingInquiry?.phone}</p>
-                                            <p><strong>Services:</strong>
-                                                {editingInquiry?.services?.map((s, idx) => (
-                                                    <span key={idx} className="badge bg-info ms-2">{s}</span>
-                                                ))}
+                                <div className="bg-black bg-opacity-25 rounded p-3 mb-3 border border-secondary">
+                                    <div className="row g-2">
+                                        <div className="col-12 col-sm-6">
+                                            <p className="mb-1"><strong>Name:</strong> {editingInquiry?.name || "N/A"}</p>
+                                            <p className="mb-1">
+                                                <strong>Phone:</strong>{" "}
+                                                <a href={`tel:${editingInquiry?.phone}`} className="text-info font-monospace text-decoration-none">
+                                                    {editingInquiry?.phone || "-"}
+                                                </a>
                                             </p>
+                                        </div>
+                                        <div className="col-12 col-sm-6">
+                                            <strong className="d-block mb-1">Services:</strong>
+                                            <div className="d-flex flex-wrap gap-1">
+                                                {Array.isArray(editingInquiry?.services) && editingInquiry?.services.length > 0 ? (
+                                                    editingInquiry.services.map((s, idx) => (
+                                                        <span key={idx} className="badge bg-info text-dark font-monospace">{s}</span>
+                                                    ))
+                                                ) : (
+                                                    <span className="text-muted small">None</span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Customer Notes */}
-                                <div className="mb-4">
-                                    <h6 className="text-info border-bottom pb-2">Customer Notes</h6>
-                                    <div className="p-2 text-white bg-dark border-secondary">
-                                        {editingInquiry?.notes || <span className="text-muted">No notes provided</span>}
+                                {/* Customer Notes Display */}
+                                <div className="mb-3">
+                                    <label className="form-label text-light fw-semibold small">Customer Message / Note</label>
+                                    <div className="p-2 rounded border border-secondary text-secondary small bg-black bg-opacity-25">
+                                        {editingInquiry?.notes || "No notes provided by customer"}
                                     </div>
                                 </div>
 
                                 {/* Status Field */}
                                 <div className="mb-3">
-                                    <label className="form-label text-warning">Status</label>
+                                    <label className="form-label text-warning fw-semibold">
+                                        Inquiry Status <span className="text-danger">*</span>
+                                    </label>
                                     <select 
                                         className="form-control text-white bg-dark border-secondary"
                                         value={editFormData.status}
                                         onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
                                     >
-                                        <option value="PENDING">Pending</option>
-                                        <option value="COMPLETED">Completed</option>
+                                        <option value="PENDING">PENDING</option>
+                                        <option value="COMPLETED">COMPLETED</option>
                                     </select>
                                 </div>
+
+                                {/* Admin Follow-up Notes */}
                                 <div className="mb-3">
-                                    <label className="form-label text-warning">Admin Notes (Follow-up & Discussion)</label>
+                                    <label className="form-label text-warning fw-semibold">
+                                        Admin Follow-up & Discussion Notes
+                                    </label>
                                     <textarea 
                                         className="form-control text-white bg-dark border-secondary"
-                                        rows="5"
-                                        placeholder="Add notes about follow-up, discussion, and resolution..."
+                                        rows="4"
+                                        placeholder="Add notes about call discussion, pricing offered, vehicle schedule, or follow-up details..."
                                         value={editFormData.adminNotes}
                                         onChange={(e) => setEditFormData({ ...editFormData, adminNotes: e.target.value })}
                                     ></textarea>
-                                    <small className="text-white d-block mt-1">
-                                        <i className="fa-solid fa-circle-info me-1"></i>
-                                        Keep track of conversations, follow-ups, and any important details discussed with the customer.
+                                    <small className="text-secondary d-block mt-1">
+                                        <i className="fa-solid fa-circle-info me-1 text-info"></i>
+                                        Keep track of conversations, follow-ups, and any specific requirements discussed with the customer.
                                     </small>
                                 </div>
 
                             </div>
 
                             {/* Modal Footer */}
-                            <div className="modal-footer border-secondary">
+                            <div className="modal-footer border-secondary d-flex flex-column flex-sm-row gap-2 justify-content-end">
                                 <button
                                     type="button"
-                                    className="btn btn-secondary"
+                                    className="btn btn-secondary px-4"
                                     onClick={() => setShowEditModal(false)}
+                                    disabled={updating}
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="button"
-                                    className="btn btn-warning"
+                                    className="btn btn-warning px-4 d-flex align-items-center justify-content-center gap-2"
                                     onClick={updateInquiry}
+                                    disabled={updating}
                                 >
-                                    <i className="fa-solid fa-floppy-disk me-2"></i>
-                                    Save Changes
+                                    <i className="fa-solid fa-floppy-disk"></i>
+                                    <span>{updating ? "Saving..." : "Save Changes"}</span>
                                 </button>
                             </div>
                         </div>

@@ -426,16 +426,16 @@ const AdminCreateService = () => {
 
   return (
     <AdminLayout>
-      <div className="container-fluid">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h4 className="section-title">
+      <div className="container-fluid p-0 p-sm-2">
+        <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
+          <h4 className="section-title m-0">
             <span className="first-letter">{isEdit ? "E" : "C"}</span>
             {isEdit ? "dit Service" : "reate Service"}
           </h4>
 
           <button
             type="button"
-            className="btn btn-outline-danger d-flex align-items-center gap-2"
+            className="btn btn-outline-danger d-flex align-items-center gap-2 px-3 py-2"
             onClick={() => navigate("/admin/services")}
           >
             <i className="bi bi-arrow-left"></i>
@@ -443,7 +443,7 @@ const AdminCreateService = () => {
           </button>
         </div>
 
-        <form className="bg-dark rounded text-white p-4" onSubmit={handleSubmit}>
+        <form className="bg-dark rounded text-white p-3 p-md-4 border border-secondary border-opacity-25" onSubmit={handleSubmit}>
           <h5 className="text-danger mb-3">Basic Info</h5>
 
           <div className="row g-3">
@@ -1120,16 +1120,16 @@ const AdminCreateService = () => {
             </div>
           </div>
 
-          <div className="col-12 d-flex justify-content-end gap-2 mt-4">
+          <div className="col-12 d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4">
             <button
               type="button"
-              className="btn btn-outline-secondary"
+              className="btn btn-outline-secondary px-4 py-2"
               onClick={() => navigate("/admin/services")}
             >
               Cancel
             </button>
 
-            <button type="submit" className="btn btn-danger">
+            <button type="submit" className="btn btn-danger px-4 py-2">
               <i className="bi bi-save me-2"></i>
               {isEdit ? "Update Service" : "Create Service"}
             </button>

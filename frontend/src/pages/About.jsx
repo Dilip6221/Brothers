@@ -1,9 +1,12 @@
-import "../css/about.css";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
+import "../css/about.css";
+import { Seo } from "../component/Seo.jsx";
 
 const About = () => {
+  const canvasRef = useRef(null);
   const [timeline, setTimeline] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
@@ -12,7 +15,6 @@ const About = () => {
   const fetchTimeline = async () => {
     try {
       const res = await axios.get("about-timeline/about-timeline");
-
       if (res.data.success) {
         setTimeline(res.data.data || []);
       }
@@ -105,44 +107,214 @@ const About = () => {
       window.removeEventListener("keydown", handleKeydown);
     };
   }, [preview, previewImages]);
-  const coreValues = [
+
+  // Interactive Aerodynamic Particle Canvas Simulation
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    let animationFrameId;
+    let width = (canvas.width = canvas.offsetWidth);
+    let height = (canvas.height = canvas.offsetHeight);
+
+    const handleResize = () => {
+      if (!canvas) return;
+      width = canvas.width = canvas.offsetWidth;
+      height = canvas.height = canvas.offsetHeight;
+    };
+    window.addEventListener("resize", handleResize);
+
+    const mouse = {
+      x: -1000,
+      y: -1000,
+      radius: 130,
+      isActive: false,
+    };
+
+    const handleMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.isActive = true;
+    };
+
+    const handleTouchMove = (e) => {
+      if (e.touches && e.touches.length > 0) {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.touches[0].clientX - rect.left;
+        mouse.y = e.touches[0].clientY - rect.top;
+        mouse.isActive = true;
+      }
+    };
+
+    const handleMouseLeave = () => {
+      mouse.isActive = false;
+      mouse.x = -1000;
+      mouse.y = -1000;
+    };
+
+    canvas.addEventListener("mousemove", handleMouseMove);
+    canvas.addEventListener("touchmove", handleTouchMove, { passive: true });
+    canvas.addEventListener("mouseleave", handleMouseLeave);
+    canvas.addEventListener("touchend", handleMouseLeave);
+
+    const particleCount = Math.min(30, Math.floor(width / 15) || 50);
+    const particles = [];
+
+    class StreamParticle {
+      constructor() {
+        this.reset(true);
+      }
+
+      reset(initial = false) {
+        this.x = initial ? Math.random() * width : -20 - Math.random() * 40;
+        this.y = Math.random() * height;
+        this.speedX = 2.0 + Math.random() * 3.0;
+        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.length = 20 + Math.random() * 50;
+        this.thickness = 0.8 + Math.random() * 1.8;
+        this.alpha = 0.15 + Math.random() * 0.55;
+        this.isRed = Math.random() > 0.4;
+        this.color = this.isRed
+          ? `rgba(255, 45, 85, ${this.alpha})`
+          : `rgba(255, 110, 0, ${this.alpha * 0.85})`;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (mouse.isActive) {
+          const dx = this.x - mouse.x;
+          const dy = this.y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < mouse.radius) {
+            const force = (mouse.radius - dist) / mouse.radius;
+            const angle = Math.atan2(dy, dx);
+            this.y += Math.sin(angle) * force * 3.8;
+            this.x += Math.cos(angle) * force * 2.5;
+          }
+        }
+
+        if (this.x - this.length > width || this.y < -30 || this.y > height + 30) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.moveTo(this.x - this.length, this.y);
+        ctx.lineTo(this.x, this.y);
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.thickness;
+        ctx.lineCap = "round";
+        ctx.stroke();
+
+        if (this.isRed && this.thickness > 1.2) {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.thickness * 1.2, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+          ctx.fill();
+        }
+      }
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new StreamParticle());
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", handleResize);
+      canvas.removeEventListener("mousemove", handleMouseMove);
+      canvas.removeEventListener("touchmove", handleTouchMove);
+      canvas.removeEventListener("mouseleave", handleMouseLeave);
+      canvas.removeEventListener("touchend", handleMouseLeave);
+    };
+  }, []);
+
+  const statsData = [
     {
-      icon: "bi bi-award",
-      title: "Quality",
-      desc: "Uncompromising standards in every service using premium products and techniques.",
+      icon: "bi bi-car-front-fill",
+      value: "5,000+",
+      label: "Vehicles Transformed",
     },
     {
-      icon: "bi bi-heart",
-      title: "Customer Relationship",
-      desc: "Building lasting relationships through exceptional service and personalized car care.",
+      icon: "bi bi-shield-check",
+      value: "10+",
+      label: "Years of Craftsmanship",
     },
     {
-      icon: "bi bi-lightbulb",
-      title: "Innovation",
-      desc: "Adopting modern technologies and advanced detailing methods for better results.",
+      icon: "bi bi-star-fill",
+      value: "99.8%",
+      label: "Client Satisfaction",
     },
     {
-      icon: "bi bi-lightning-charge",
-      title: "Passion",
-      desc: "Driven by genuine love for automobiles and commitment to perfection in every detail.",
+      icon: "bi bi-patch-check-fill",
+      value: "Certified",
+      label: "Master Technicians",
     },
   ];
 
-  const visionCards = [
+  const bentoFeatures = [
     {
-      icon: "bi bi-globe",
-      title: "Pan-India Presence",
-      desc: "Expanding our footprint with consistent premium quality.",
+      badge: "Environment",
+      icon: "bi bi-snow",
+      title: "Climate-Controlled Bay",
+      desc: "Dust-free, temperature-stabilized clean room engineered specifically for zero-defect PPF bonding and optimal ceramic coating cure.",
+      pills: [
+        { icon: "bi bi-wind", label: "HEPA Filtration" },
+        { icon: "bi bi-thermometer-half", label: "22°C Stabilized" },
+        { icon: "bi bi-lightbulb", label: "Anti-Static Lighting" },
+      ],
     },
     {
-      icon: "bi bi-gear",
-      title: "Innovation First",
-      desc: "Adopting global technologies and advanced automotive solutions.",
+      badge: "Exclusive Portal",
+      icon: "bi bi-safe2",
+      title: "Real-Time Car Vault",
+      desc: "Private online portal for every vehicle owner to track high-resolution inspection photos, service logs, and digital warranty certificates anytime.",
+      pills: [
+        { icon: "bi bi-shield-lock", label: "Digital Warranty" },
+        { icon: "bi bi-camera", label: "Inspection Archive" },
+        { icon: "bi bi-clock-history", label: "Service Logs" },
+      ],
     },
     {
-      icon: "bi bi-star",
-      title: "Unmatched Excellence",
-      desc: "Setting new benchmarks in quality, trust and customer satisfaction.",
+      badge: "Craftsmanship",
+      icon: "bi bi-layers-half",
+      title: "Multi-Stage Correction",
+      desc: "Scientific digital paint depth gauging and precision machine polishing that permanently erases swirls without sacrificing OEM clear coat.",
+      pills: [
+        { icon: "bi bi-speedometer2", label: "Digital Depth Gauge" },
+        { icon: "bi bi-magic", label: "Multi-Step Polish" },
+        { icon: "bi bi-check2-circle", label: "Zero Swirls" },
+      ],
+    },
+    {
+      badge: "Material Science",
+      icon: "bi bi-shield-shaded",
+      title: "Self-Healing Technology",
+      desc: "Thermoplastic polyurethane films with elastomeric top coats that heal micro-scratches with heat, paired with ultra-hydrophobic 9H ceramic matrices.",
+      pills: [
+        { icon: "bi bi-gem", label: "9H Ceramic Matrix" },
+        { icon: "bi bi-arrow-repeat", label: "Self-Healing TPU" },
+        { icon: "bi bi-droplet-half", label: "Hydrophobic Shield" },
+      ],
     },
   ];
 
@@ -160,7 +332,7 @@ const About = () => {
             <img src={selectedImage} alt={story.title} />
             <span>
               <i className="bi bi-arrows-fullscreen"></i>
-              View
+              Expand
             </span>
           </div>
         )}
@@ -189,53 +361,68 @@ const About = () => {
   };
 
   return (
-    <div className="about-page">
+    <div className="about-page bg-black text-white">
+      <Seo
+        title="About RYDAX Studio | Built With Passion For Cars"
+        description="Learn about RYDAX Studio, our journey, master detailing experts, climate-controlled studio, and commitment to luxury automotive excellence."
+      />
+
+      {/* Hero Section with Interactive Aerodynamic Canvas */}
       <section className="about-hero-section">
-        <div className="container text-center">
+        <canvas ref={canvasRef} className="about-hero-canvas" />
+
+        <div className="container text-center position-relative" style={{ zIndex: 2 }}>
           <div className="section-top-title">
             <span></span>
-            <p>About RyDAX</p>
+            <p>ABOUT RYDAX STUDIO</p>
             <span></span>
           </div>
 
           <h1 className="about-main-title">
-            Built With <span>Passion</span> For Cars
+            Crafting Automotive <span>Perfection</span>
           </h1>
-
-          <p className="about-main-subtitle">
-            From premium detailing to advanced automotive protection, RYDAX is
-            built with passion, precision and trust.
-          </p>
         </div>
       </section>
 
+      {/* Stats Counter Strip */}
+      <section className="about-stats-section">
+        <div className="container">
+          <div className="about-stats-grid">
+            {statsData.map((stat, idx) => (
+              <div className="about-stat-card" key={idx}>
+                <div className="about-stat-icon">
+                  <i className={stat.icon}></i>
+                </div>
+                <div className="about-stat-value">{stat.value}</div>
+                <p className="about-stat-label">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* RYDAX Journey (Timeline Showcase) */}
       <section className="about-journey-section">
         <div className="container">
           <div className="services-heading text-center">
             <div className="section-top-title">
               <span></span>
-              <p>Our Story</p>
+              <p>OUR EVOLUTION</p>
               <span></span>
             </div>
             <h2 className="services-title">
-              RYDAX <span>Journey</span>
+              The RYDAX <span>Journey</span>
             </h2>
             <p className="services-subtitle">
-              A visual story of how RYDAX evolved with trust, quality and
-              premium automotive care.
+              A visual chronicle of milestones, technical breakthroughs, and relentless dedication to automotive care.
             </p>
           </div>
 
           {activeStory && (
             <>
+              {/* Desktop Showcase */}
               <div className="journey-showcase desktop-journey-view">
                 <div className="journey-feature-card">
-                  {/* <div className="journey-feature-kicker">
-                    <span><i className="bi bi-record-circle-fill"></i> RYDAX ARCHIVE</span>
-                    <span className="journey-feature-index">
-                      {String(Math.max(timeline.findIndex((item) => item._id === activeStory._id), 0) + 1).padStart(2, "0")} / {String(timeline.length).padStart(2, "0")}
-                    </span>
-                  </div> */}
                   <div className="journey-card-header">
                     <div>
                       <h3>{activeStory.title}</h3>
@@ -243,23 +430,24 @@ const About = () => {
 
                     <div className="journey-image-count">
                       <i className="bi bi-images"></i>
-                      {activeStory.images?.length || 0}
+                      {activeStory.images?.length || 0} Photos
                     </div>
                   </div>
 
-                  <p className="journey-feature-description">{activeStory.description}</p>
+                  <p>{activeStory.description}</p>
 
                   {activeImage && (
                     <div
                       className="journey-main-image"
                       onClick={() => openPreview(activeImage)}
+                      title="Click to view fullscreen"
                     >
                       <img src={activeImage} alt={activeStory.title} />
-                        <div className="journey-image-overlay">
+                      <div className="journey-image-overlay">
                         <i className="bi bi-arrows-fullscreen"></i>
-                          Expand story image
+                        Click to view full photo
                       </div>
-                        <span className="journey-image-label">RYDAX / {activeStory.year}</span>
+                      <span className="journey-image-label">RYDAX / {activeStory.year}</span>
                     </div>
                   )}
 
@@ -273,6 +461,7 @@ const About = () => {
                             activeImage === img.url ? "active" : ""
                           }`}
                           onClick={() => setActiveImage(img.url)}
+                          title="View photo"
                         >
                           <img src={img.url} alt="" />
                         </button>
@@ -281,6 +470,7 @@ const About = () => {
                   )}
                 </div>
 
+                {/* Right Rail List */}
                 <div className="journey-rail">
                   {timeline.map((item, index) => (
                     <button
@@ -306,10 +496,10 @@ const About = () => {
                 </div>
               </div>
 
+              {/* Mobile Accordion */}
               <div className="mobile-journey-view">
                 {timeline.map((item, index) => {
                   const isActive = activeId === item._id;
-
                   return (
                     <div className={`mobile-story-item ${isActive ? "active" : ""}`} key={item._id}>
                       <button
@@ -338,63 +528,92 @@ const About = () => {
           )}
         </div>
       </section>
-      <section className="about-core-section">
+
+      {/* Luxury Bento Grid ("The Studio Standard") */}
+      <section className="about-bento-section">
         <div className="container">
           <div className="services-heading text-center">
             <div className="section-top-title">
               <span></span>
-              <p>What Defines Us</p>
+              <p>THE RYDAX STANDARD</p>
               <span></span>
             </div>
             <h2 className="services-title">
-              Our Core <span>Values</span>
+              Engineered For <span>Pure Perfection</span>
             </h2>
           </div>
 
-          <div className="about-core-grid">
-            {coreValues.map((item, index) => (
-              <div className="about-core-card" key={index}>
-                <div className="about-core-icon">
-                  <i className={item.icon}></i>
+          <div className="about-bento-grid">
+            {bentoFeatures.map((feat, index) => (
+              <div className="bento-card" key={index}>
+                <div className="bento-card-top">
+                  <div className="bento-card-icon">
+                    <i className={feat.icon}></i>
+                  </div>
+                  <span className="bento-card-badge">{feat.badge}</span>
                 </div>
-                <h4>{item.title}</h4>
-                <p>{item.desc}</p>
+
+                <h4>{feat.title}</h4>
+                <p className="bento-card-desc">{feat.desc}</p>
+
+                <div className="bento-card-pills">
+                  {feat.pills.map((pill, pIdx) => (
+                    <span className="bento-pill" key={pIdx}>
+                      <i className={pill.icon}></i>
+                      {pill.label}
+                    </span>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="about-vision-section">
-        <div className="container text-center">
-          <div className="section-top-title">
-            <span></span>
-            <p>Our Vision</p>
-            <span></span>
-          </div>
-
-          <h2 className="services-title">
-            Driving The Future Of <span>Automotive Excellence</span>
-          </h2>
-
-          <p className="services-subtitle">
-            Our vision is to become India’s most trusted and innovative
-            automotive detailing brand, delivering world-class quality,
-            advanced technology and unmatched customer experiences.
-          </p>
-
-          <div className="about-vision-grid">
-            {visionCards.map((item, index) => (
-              <div className="about-vision-card" key={index}>
-                <i className={item.icon}></i>
-                <h5>{item.title}</h5>
-                <p>{item.desc}</p>
-              </div>
-            ))}
+      {/* Cinematic Brand Statement */}
+      <section className="about-quote-section">
+        <div className="container">
+          <div className="about-quote-box">
+            <div className="about-quote-icon">
+              <i className="bi bi-quote"></i>
+            </div>
+            <p className="about-quote-text">
+              "To us, automotive detailing isn't merely a service—it is the relentless pursuit of perfection.
+              We treat every machine that enters our studio as a canvas of engineering art."
+            </p>
+            <div className="about-quote-author">
+              <strong>RYDAX STUDIO</strong>
+              <span>AHMEDABAD, INDIA</span>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* Bottom Call-To-Action Banner */}
+      <section className="about-cta-section">
+        <div className="container">
+          <div className="about-cta-card">
+            <h2 className="about-cta-title">
+              Ready To Give Your Vehicle The <span>RYDAX Treatment?</span>
+            </h2>
+            <p className="about-cta-subtitle">
+              Explore our comprehensive service packages or consult with our master detailing technicians today.
+            </p>
+            <div className="about-cta-actions">
+              <Link to="/online-services" className="about-cta-primary">
+                <i className="bi bi-lightning-charge-fill"></i>
+                Explore Services & Pricing
+              </Link>
+              <Link to="/contact-us" className="about-cta-secondary">
+                <i className="bi bi-chat-dots-fill"></i>
+                Schedule Consultation
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Lightbox Preview Modal */}
       {preview && (
         <div className="about-image-preview" onClick={closePreview}>
           {previewImages.length > 1 && (
@@ -406,6 +625,7 @@ const About = () => {
                   e.stopPropagation();
                   changePreviewImage(-1);
                 }}
+                title="Previous photo"
               >
                 <i className="bi bi-chevron-left"></i>
               </button>
@@ -417,17 +637,27 @@ const About = () => {
                   e.stopPropagation();
                   changePreviewImage(1);
                 }}
+                title="Next photo"
               >
                 <i className="bi bi-chevron-right"></i>
               </button>
             </>
           )}
 
-          <button type="button" className="about-preview-close" onClick={closePreview}>
+          <button
+            type="button"
+            className="about-preview-close"
+            onClick={closePreview}
+            title="Close preview"
+          >
             ×
           </button>
 
-          <img src={preview} alt="" onClick={(e) => e.stopPropagation()} />
+          <img
+            src={preview}
+            alt="Preview"
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
       )}
     </div>

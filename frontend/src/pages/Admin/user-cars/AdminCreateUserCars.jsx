@@ -72,24 +72,24 @@ const AdminCreateUserCars = () => {
 
     return (
         <AdminLayout>
-            <div className="container">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h4 className="section-title">
+            <div className="container-fluid p-0 p-sm-2">
+                <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
+                    <h4 className="section-title m-0">
                         <span className="first-letter">C</span>
                         reate User Car
                     </h4>
 
-                    <button type="button" className="btn btn-outline-danger d-flex align-items-center gap-2" onClick={() => navigate("/admin/user-cars")}>
+                    <button type="button" className="btn btn-outline-danger d-flex align-items-center gap-2 px-3 py-2" onClick={() => navigate("/admin/user-cars")}>
                         <i className="bi bi-arrow-left"></i> Back
                     </button>
                 </div>
-                <form className="row g-3 bg-dark rounded text-white p-4" onSubmit={handleSubmit}>
+                <form className="row g-3 bg-dark rounded text-white p-3 p-md-4 border border-secondary border-opacity-25" onSubmit={handleSubmit}>
                     <div className="col-md-4">
                         <label className="form-label">Customer *</label>
                         <select
                             value={form.userId}
                             onChange={(e) => setForm({ ...form, userId: e.target.value })}
-                            className="form-control bg-dark text-white"
+                            className="form-control bg-dark text-white border-secondary"
                             ref={createUserRef.userId}
                         >
                             <option value="">Select Customer...</option>
@@ -106,7 +106,7 @@ const AdminCreateUserCars = () => {
                         <input
                             type="text"
                             name="brand"
-                            className="form-control bg-dark text-white"
+                            className="form-control bg-dark text-white border-secondary"
                             value={form.brand}
                             onChange={handleChange}
                             placeholder="e.g. Toyota"
@@ -119,7 +119,7 @@ const AdminCreateUserCars = () => {
                         <input
                             type="text"
                             name="model"
-                            className="form-control bg-dark text-white"
+                            className="form-control bg-dark text-white border-secondary"
                             value={form.model}
                             onChange={handleChange}
                             placeholder="e.g. Corolla"
@@ -132,7 +132,7 @@ const AdminCreateUserCars = () => {
                         <input
                             type="number"
                             name="year"
-                            className="form-control bg-dark text-white"
+                            className="form-control bg-dark text-white border-secondary"
                             value={form.year}
                             onChange={handleChange}
                             min={1900}
@@ -147,7 +147,7 @@ const AdminCreateUserCars = () => {
                         <input
                             type="text"
                             name="color"
-                            className="form-control bg-dark text-white"
+                            className="form-control bg-dark text-white border-secondary"
                             value={form.color}
                             onChange={handleChange}
                             placeholder="e.g. Red"
@@ -160,7 +160,7 @@ const AdminCreateUserCars = () => {
                         <input
                             type="text"
                             name="registrationNumber"
-                            className="form-control bg-dark text-white"
+                            className="form-control bg-dark text-white border-secondary"
                             value={form.registrationNumber}
                             onChange={(e) => setForm({ ...form, registrationNumber: e.target.value.toUpperCase() })}
                             placeholder="e.g. ABC-1234"
@@ -173,7 +173,7 @@ const AdminCreateUserCars = () => {
                         <input
                             type="text"
                             name="vinNumber"
-                            className="form-control bg-dark text-white"
+                            className="form-control bg-dark text-white border-secondary"
                             value={form.vinNumber}
                             onChange={handleChange}
                             placeholder="e.g. 1HGCM82633A004352"
@@ -181,11 +181,11 @@ const AdminCreateUserCars = () => {
                         />
                     </div>
 
-                    <div className="col-12 d-flex justify-content-end gap-2">
-                        <button type="button" className="btn btn-outline-secondary" onClick={() => navigate('/admin/user-cars')}>
+                    <div className="col-12 d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4">
+                        <button type="button" className="btn btn-outline-secondary px-4 py-2" onClick={() => navigate('/admin/user-cars')}>
                             Cancel
                         </button>
-                        <button type="submit" className="btn btn-danger">
+                        <button type="submit" className="btn btn-danger px-4 py-2">
                             <i className="bi bi-plus-circle me-1"></i>
                             Create Car
                         </button>

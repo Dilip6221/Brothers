@@ -35,30 +35,51 @@ const TextEditor = ({ value, onChange }) => {
   };
 
   return (
-    <div className="bg-dark text-white p-3 rounded mb-3">
+    <div className="text-white p-2 p-md-3 rounded">
       {/* Toolbar */}
-      <div className="mb-2 d-flex flex-wrap gap-2">
-        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()}><b>B</b></button>
-        <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()}><i>I</i></button>
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>H1</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>H3</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()}>• List</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()}>1. List</button>
-        <button type="button" onClick={addImage}>Image</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleCodeBlock().run()}>Code</button>
-        <button type="button" onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}>Clear</button>
+      <div className="mb-3 d-flex flex-wrap gap-1 p-2 rounded bg-black bg-opacity-50 border border-secondary">
+        <button type="button" className="btn btn-sm btn-outline-secondary text-light px-2 py-1" onClick={() => editor.chain().focus().toggleBold().run()} title="Bold">
+          <b>B</b>
+        </button>
+        <button type="button" className="btn btn-sm btn-outline-secondary text-light px-2 py-1" onClick={() => editor.chain().focus().toggleItalic().run()} title="Italic">
+          <i>I</i>
+        </button>
+        <button type="button" className="btn btn-sm btn-outline-secondary text-light px-2 py-1" onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
+          H1
+        </button>
+        <button type="button" className="btn btn-sm btn-outline-secondary text-light px-2 py-1" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
+          H2
+        </button>
+        <button type="button" className="btn btn-sm btn-outline-secondary text-light px-2 py-1" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
+          H3
+        </button>
+        <button type="button" className="btn btn-sm btn-outline-secondary text-light px-2 py-1" onClick={() => editor.chain().focus().toggleBulletList().run()}>
+          • List
+        </button>
+        <button type="button" className="btn btn-sm btn-outline-secondary text-light px-2 py-1" onClick={() => editor.chain().focus().toggleOrderedList().run()}>
+          1. List
+        </button>
+        <button type="button" className="btn btn-sm btn-outline-secondary text-light px-2 py-1" onClick={addImage}>
+          <i className="bi bi-image me-1"></i>Image
+        </button>
+        <button type="button" className="btn btn-sm btn-outline-secondary text-light px-2 py-1" onClick={() => editor.chain().focus().toggleCodeBlock().run()}>
+          &lt;/&gt; Code
+        </button>
+        <button type="button" className="btn btn-sm btn-outline-danger px-2 py-1 ms-auto" onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}>
+          Clear
+        </button>
       </div>
 
       {/* Editor */}
       <EditorContent 
         editor={editor} 
         style={{
-          minHeight: "280px",
-          background: "#111",
-          padding: "12px",
+          minHeight: "260px",
+          background: "#0c0c0c",
+          padding: "14px",
           borderRadius: "6px",
-          border: "1px solid #333"
+          border: "1px solid #333",
+          color: "#fff"
         }} 
       />
     </div>

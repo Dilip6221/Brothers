@@ -8,12 +8,17 @@ const AdminJobCards = () => {
     const navigate = useNavigate();
     const [jobs, setJobs] = useState([]);
     const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
+
     const fetchJobs = async () => {
         try {
+            setLoading(true);
             const res = await axios.get("jobcard/admin/get-job-cards");
             setJobs(res.data.data || []);
         } catch (error) {
             toast.error("Error fetching Job Cards");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -25,104 +30,164 @@ const AdminJobCards = () => {
         job.jobCode?.toLowerCase().includes(search.toLowerCase()) ||
         job.carId?.registrationNumber?.toLowerCase().includes(search.toLowerCase()) ||
         job.carId?.brand?.toLowerCase().includes(search.toLowerCase()) ||
+        job.carId?.model?.toLowerCase().includes(search.toLowerCase()) ||
         job.userId?.name?.toLowerCase().includes(search.toLowerCase()) ||
         job.userId?.phone?.toLowerCase().includes(search.toLowerCase())
     );
 
+    const getStatusBadge = (status) => {
+        switch (status) {
+            case "DELIVERED":
+                return <span className="badge bg-success">{status}</span>;
+            case "READY":
+                return <span className="badge bg-info text-dark">{status}</span>;
+            case "QUALITY_CHECK":
+                return <span className="badge bg-warning text-dark">{status}</span>;
+            case "PART_REPLACED":
+            case "WORK_STARTED":
+            case "IN_PROGRESS":
+                return <span className="badge bg-primary">{status?.replaceAll("_", " ")}</span>;
+            case "INSPECTION":
+                return <span className="badge bg-info">{status}</span>;
+            case "CHECK_IN":
+                return <span className="badge bg-secondary">{status?.replaceAll("_", " ")}</span>;
+            default:
+                return <span className="badge bg-warning text-dark">{status || "PENDING"}</span>;
+        }
+    };
+
     return (
         <AdminLayout>
-            <div className="container-fluid">
-                <div className="bg-dark rounded p-4">
+            <div className="container-fluid p-0 p-sm-2">
+                <div className="bg-dark rounded p-3 p-md-4 shadow-sm">
 
-                    <h4 className="text-white border-bottom pb-2 mb-3 d-flex justify-content-between align-items-center">
-                        <span>
-                            <i className="bi bi-card-checklist me-2"></i>
-                            Job Cards Management
-                        </span>
+                    {/* Responsive Header */}
+                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3 mb-4 pb-2 border-bottom border-secondary">
+                        <div>
+                            <h4 className="text-white mb-1 d-flex align-items-center gap-2">
+                                <i className="bi bi-card-checklist text-danger"></i>
+                                <span>Job Cards Management</span>
+                            </h4>
+                            <span className="badge bg-secondary text-white">
+                                Total: {filteredData.length} {filteredData.length === 1 ? 'Job' : 'Jobs'}
+                            </span>
+                        </div>
 
-                        <div className="d-flex align-items-center gap-3">
-                            <input
-                                type="search"
-                                className="form-control bg-dark text-white border-white"
-                                placeholder="Search..."
-                                style={{ width: "220px" }}
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
+                        <div className="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2">
+                            <div className="input-group" style={{ minWidth: "220px" }}>
+                                <span className="input-group-text bg-dark text-secondary border-secondary">
+                                    <i className="bi bi-search"></i>
+                                </span>
+                                <input
+                                    type="search"
+                                    className="form-control bg-dark text-white border-secondary"
+                                    placeholder="Search code, car, user..."
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
+                            </div>
 
-                            <Link to="/admin/job-cards/create">
-                                <button className="btn btn-outline-danger">
-                                    <i className="bi bi-plus-circle me-1"></i>
-                                    Create Job Card
-                                </button>
+                            <Link to="/admin/job-cards/create" className="btn btn-outline-danger text-nowrap d-flex align-items-center justify-content-center gap-2">
+                                <i className="bi bi-plus-circle"></i>
+                                <span>Create Job Card</span>
                             </Link>
                         </div>
-                    </h4>
+                    </div>
 
-                    <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
-                        <table className="table table-dark table-hover table-bordered align-middle">
+                    {/* Responsive Table Wrapper */}
+                    <div className="table-responsive" style={{ maxHeight: "65vh", overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+                        <table className="table table-dark table-hover table-bordered align-middle mb-0" style={{ minWidth: "850px" }}>
                             <thead className="table-secondary text-dark sticky-top">
                                 <tr>
-                                    <th>#</th>
+                                    <th style={{ width: "50px" }}>#</th>
                                     <th>Job Code</th>
                                     <th>Customer</th>
                                     <th>Car</th>
                                     <th>Reg No</th>
                                     <th>Status</th>
                                     <th>Check-In</th>
-                                    <th>Action</th>
+                                    <th className="text-center" style={{ width: "110px" }}>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredData.length > 0 ? (
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan="8" className="text-center text-white py-4">
+                                            <div className="spinner-border spinner-border-sm text-danger me-2" role="status"></div>
+                                            Loading Job Cards...
+                                        </td>
+                                    </tr>
+                                ) : filteredData.length > 0 ? (
                                     filteredData.map((job, index) => (
                                         <tr key={job._id}>
                                             <td>{index + 1}</td>
-                                            <td
-                                                style={{ cursor: "pointer" }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    navigate(`/admin/job-cards/${job._id}/timeline`);
-                                                }}
-                                            >
-                                                {job.jobCode}
-                                                <i className="bi bi-arrow-right-circle ms-2 text-info"></i>
+                                            <td>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-sm btn-outline-info text-nowrap fw-semibold d-inline-flex align-items-center gap-1"
+                                                    onClick={() => navigate(`/admin/job-cards/${job._id}/timeline`)}
+                                                    title="View Timeline"
+                                                >
+                                                    {job.jobCode}
+                                                    <i className="bi bi-arrow-right-circle"></i>
+                                                </button>
                                             </td>
                                             <td>
-                                                {job.userId?.name}<br />
-                                                <small className="text-info">
-                                                    {job.userId?.phone}
-                                                </small>
+                                                <div className="fw-semibold text-white">{job.userId?.name || "N/A"}</div>
+                                                {job.userId?.phone && (
+                                                    <small className="text-info d-flex align-items-center gap-1 mt-1">
+                                                        <i className="bi bi-telephone text-secondary"></i>
+                                                        {job.userId?.phone}
+                                                    </small>
+                                                )}
                                             </td>
                                             <td>
-                                                {job.carId?.brand} {job.carId?.model}
-                                            </td>
-                                            <td>{job.carId?.registrationNumber}</td>
-                                            <td>
-                                                <span className="badge bg-warning text-dark">
-                                                    {job.status}
+                                                <span className="text-white">
+                                                    {job.carId?.brand} {job.carId?.model}
                                                 </span>
                                             </td>
                                             <td>
-                                                {job.checkInTime
-                                                    ? new Date(job.checkInTime).toLocaleDateString()
-                                                    : "-"}
+                                                <span className="badge bg-secondary font-monospace px-2 py-1">
+                                                    {job.carId?.registrationNumber || "-"}
+                                                </span>
                                             </td>
-                                            <td className="text-center">
-                                                {job.status !== "DELIVERED" && (
-                                                    <Link
-                                                        to={`/admin/job-cards/update/${job._id}`}
-                                                        className="fa-solid fa-pen-to-square text-warning"
-                                                        title="Edit Job"
-                                                    />
-                                                )}
+                                            <td>
+                                                {getStatusBadge(job.status)}
                                             </td>
-
+                                            <td className="text-nowrap">
+                                                <small className="text-light">
+                                                    {job.checkInTime
+                                                        ? new Date(job.checkInTime).toLocaleDateString()
+                                                        : "-"}
+                                                </small>
+                                            </td>
+                                            <td className="text-center text-nowrap">
+                                                <div className="d-flex justify-content-center gap-1">
+                                                    {job.status !== "DELIVERED" && (
+                                                        <Link
+                                                            to={`/admin/job-cards/update/${job._id}`}
+                                                            className="btn btn-sm btn-outline-warning p-1 px-2"
+                                                            title="Edit Job Progress"
+                                                        >
+                                                            <i className="bi bi-pencil-square"></i>
+                                                        </Link>
+                                                    )}
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-primary p-1 px-2"
+                                                        onClick={() => navigate(`/admin/job-cards/${job._id}/timeline`)}
+                                                        title="View Timeline & Details"
+                                                    >
+                                                        <i className="bi bi-clock-history"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="7" className="text-center text-white">
+                                        <td colSpan="8" className="text-center text-white py-4">
+                                            <i className="bi bi-folder-x fs-4 d-block mb-1 text-secondary"></i>
                                             No Job Cards Found
                                         </td>
                                     </tr>
